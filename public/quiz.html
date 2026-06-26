@@ -8,232 +8,163 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --ink:  #0d0f18; --deep: #12151f; --panel: #181c29; --card: #1d2133;
-      --rim:  #242840; --blue: #4b72ff; --sky:  #67c6f0;
-      --text: #dce2f5; --muted:#5a6182; --soft: #8b9ab8; --white:#f4f6ff;
-      --green:#3dd68c; --gold: #f5c842; --red:  #f26b6b;
-      --blue-dim: rgba(75,114,255,0.09);
+      --bg: #f1f4f8;
+      --surface: #ffffff;
+      --panel: #ffffff;
+      --card: #f9fafb;
+      --line: #e5e7eb;
+      --blue: #1a56db;
+      --blue-dim: rgba(26,86,219,0.08);
+      --text: #374151;
+      --sub: #6b7280;
+      --white: #111827;
+      --green: #0f6e56;
+      --gold: #b45309;
+      --red: #dc2626;
     }
-    body.light {
-      --ink:  #f1f4f8; --deep: #e8ecf2; --panel: #ffffff; --card: #f9fafb;
-      --rim:  #e5e7eb; --blue: #1a56db; --sky:  #0284c7;
-      --text: #111827; --muted:#6b7280; --soft: #6b7280; --white:#111827;
-      --green:#0f6e56; --gold: #b45309; --red:  #dc2626;
-      --blue-dim: rgba(26,86,219,0.07);
-    }
-    body { font-family:'Outfit',sans-serif; background:var(--ink); color:var(--text); min-height:100vh; transition:background 0.2s,color 0.2s; }
-    .theme-toggle { background:none; border:1px solid var(--rim); border-radius:8px; padding:5px 10px; color:var(--soft); font-size:14px; cursor:pointer; transition:border-color 0.2s,color 0.2s; line-height:1; }
-    .theme-toggle:hover { border-color:var(--blue); color:var(--blue); }
+    body { font-family:'Outfit',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-    /* ── NAV ── */
     nav {
       position:sticky; top:0; z-index:100;
-      background:rgba(13,15,24,0.92); backdrop-filter:blur(16px);
-    }
-    body.light nav { background:rgba(255,255,255,0.92); }
-      border-bottom:1px solid var(--rim);
-      padding:0 30px; height:58px;
+      background:rgba(255,255,255,0.95); backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+      padding:0 32px; height:60px;
       display:flex; align-items:center; justify-content:space-between;
     }
-    .nl { display:flex; align-items:center; gap:10px; }
-    .logo { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:700; color:var(--white); }
-    .logo em { color:var(--blue); font-style:italic; }
-    .vsep { width:1px; height:15px; background:var(--rim); }
-    .nav-subj { font-size:13px; color:var(--soft); }
+    .nav-left { display:flex; align-items:center; gap:12px; }
+    .nav-logo { font-family:'Cormorant Garamond',Georgia,serif; font-size:17px; font-weight:700; color:#0d1b2e; }
+    .nav-logo span { color:var(--blue); font-style:italic; }
+    .nav-sep { width:1px; height:16px; background:var(--line); }
+    .nav-subj { font-size:13px; color:var(--sub); }
     .nav-subj strong { color:var(--text); font-weight:500; }
 
-    /* ── TIMER ── */
     .timer-wrap { display:flex; align-items:center; gap:8px; }
-    .timer-lbl { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
-    .timer-val {
-      font-family:'Cormorant Garamond',serif;
-      font-size:20px; font-weight:700; color:var(--gold);
-      background:var(--panel); border:1px solid var(--rim);
-      padding:5px 13px; border-radius:8px; min-width:74px; text-align:center;
-      transition:color 0.3s, border-color 0.3s;
-    }
-    .timer-val.warn { color:var(--gold); border-color:rgba(245,200,66,0.35); }
-    .timer-val.crit { color:var(--red);  border-color:rgba(242,107,107,0.4); animation:blink 1s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
-    .prac-badge {
-      font-size:12px; color:var(--soft);
-      background:var(--panel); border:1px solid var(--rim);
-      padding:5px 13px; border-radius:8px;
-    }
+    .timer-label { font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:0.5px; }
+    .timer-val { font-family:'Cormorant Garamond',Georgia,serif; font-size:20px; font-weight:700; color:var(--gold); background:var(--panel); border:1px solid var(--line); padding:5px 14px; border-radius:8px; min-width:80px; text-align:center; transition:color 0.3s, border-color 0.3s; }
+    .timer-val.warn { color:var(--gold); border-color:rgba(180,83,9,0.35); }
+    .timer-val.crit { color:var(--red); border-color:rgba(220,38,38,0.35); animation:blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .practice-badge { font-size:12px; color:var(--sub); background:var(--card); border:1px solid var(--line); padding:5px 14px; border-radius:8px; }
 
-    /* ── MAIN ── */
-    .main { max-width:720px; margin:0 auto; padding:30px 20px 80px; }
+    .main { max-width:740px; margin:0 auto; padding:32px 20px 80px; }
 
-    /* ── PROGRESS ── */
-    .prog-wrap { margin-bottom:18px; }
-    .prog-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px; }
-    .prog-row .pl { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
-    .prog-row .pr { font-size:13px; color:var(--blue); font-weight:500; }
-    .prog-track { width:100%; height:3px; background:var(--rim); border-radius:4px; overflow:hidden; }
-    .prog-bar { height:100%; background:linear-gradient(90deg,var(--blue),var(--sky)); border-radius:4px; transition:width 0.4s ease; }
+    .progress-wrap { margin-bottom:24px; }
+    .progress-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+    .progress-row .pl { font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:0.5px; }
+    .progress-row .pr { font-size:13px; color:var(--blue); font-weight:500; }
+    .progress-track { width:100%; height:4px; background:var(--line); border-radius:4px; overflow:hidden; }
+    .progress-bar { height:100%; background:var(--blue); border-radius:4px; transition:width 0.4s ease; }
 
-    /* ── DOTS ── */
-    .dot-row { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:20px; }
-    .qdot {
-      width:24px; height:24px; border-radius:6px;
-      border:1px solid var(--rim); background:var(--panel);
-      display:flex; align-items:center; justify-content:center;
-      font-size:10.5px; color:var(--muted); cursor:pointer; transition:all 0.18s;
-    }
+    .dot-row { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:24px; }
+    .qdot { width:26px; height:26px; border-radius:6px; border:1px solid var(--line); background:var(--card); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--sub); cursor:pointer; transition:all 0.2s; }
     .qdot.cur      { border-color:var(--blue); background:var(--blue); color:white; }
-    .qdot.answered { border-color:var(--green); color:var(--green); background:rgba(61,214,140,0.08); }
-    .qdot.skipped  { border-color:var(--gold);  color:var(--gold);  background:rgba(245,200,66,0.08); }
+    .qdot.answered { border-color:var(--green); color:var(--green); background:rgba(15,110,86,0.08); }
+    .qdot.skipped  { border-color:var(--gold);  color:var(--gold);  background:rgba(180,83,9,0.08); }
 
-    /* ── Q CARD ── */
-    .q-card {
-      background:var(--panel); border:1px solid var(--rim);
-      border-radius:14px; padding:28px;
-      margin-bottom:16px; animation:up 0.22s ease both;
-    }
-    @keyframes up { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-    .q-num { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; }
-    .q-text {
-      font-family:'Cormorant Garamond',serif;
-      font-size:20px; font-weight:700; line-height:1.45;
-      color:var(--white); margin-bottom:24px;
-    }
+    .q-card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:30px; margin-bottom:18px; animation:fadeUp 0.25s ease both; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .q-num { font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; }
+    .q-text { font-family:'Cormorant Garamond',Georgia,serif; font-size:20px; font-weight:700; line-height:1.45; color:var(--white); margin-bottom:26px; }
 
-    /* ── OPTIONS ── */
-    .opts { display:flex; flex-direction:column; gap:9px; }
-    .opt {
-      width:100%; padding:13px 16px;
-      background:var(--card); border:1px solid var(--rim);
-      border-radius:10px; color:var(--text);
-      font-family:'Outfit',sans-serif; font-size:13.5px;
-      cursor:pointer; transition:all 0.16s; text-align:left;
-      display:flex; align-items:center; gap:12px;
-    }
+    .opts { display:flex; flex-direction:column; gap:10px; }
+    .opt { width:100%; padding:14px 18px; background:var(--card); border:1px solid var(--line); border-radius:10px; color:var(--text); font-family:'Outfit',system-ui,sans-serif; font-size:14px; cursor:pointer; transition:all 0.18s; text-align:left; display:flex; align-items:center; gap:14px; }
     .opt:hover:not(:disabled) { border-color:var(--blue); background:var(--blue-dim); }
-    .opt-lbl {
-      width:25px; height:25px; border-radius:6px;
-      border:1px solid var(--rim);
-      display:flex; align-items:center; justify-content:center;
-      font-size:11px; font-weight:600; color:var(--muted); flex-shrink:0;
-      transition:all 0.16s;
-    }
+    .opt-lbl { width:26px; height:26px; border-radius:6px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--sub); flex-shrink:0; transition:all 0.18s; }
     .opt:hover:not(:disabled) .opt-lbl { border-color:var(--blue); color:var(--blue); }
     .opt.chosen { border-color:var(--blue); background:var(--blue-dim); }
     .opt.chosen .opt-lbl { background:var(--blue); border-color:var(--blue); color:white; }
-    .opt.right  { border-color:var(--green) !important; background:rgba(61,214,140,0.07) !important; }
+    .opt.right  { border-color:var(--green) !important; background:rgba(15,110,86,0.07) !important; }
     .opt.right .opt-lbl { background:var(--green) !important; border-color:var(--green) !important; color:white !important; }
-    .opt.wrong  { border-color:var(--red) !important; background:rgba(242,107,107,0.07) !important; }
+    .opt.wrong  { border-color:var(--red) !important; background:rgba(220,38,38,0.06) !important; }
     .opt.wrong .opt-lbl { background:var(--red) !important; border-color:var(--red) !important; color:white !important; }
 
-    /* ── FEEDBACK ── */
-    .feedback {
-      margin-top:13px; padding:10px 14px;
-      border-radius:8px; font-size:13px; line-height:1.5; display:none;
-    }
-    .feedback.right { background:rgba(61,214,140,0.07); border:1px solid rgba(61,214,140,0.2); color:#86efb8; display:block; }
-    .feedback.wrong { background:rgba(242,107,107,0.07); border:1px solid rgba(242,107,107,0.2); color:#f9a8a8; display:block; }
+    .feedback { margin-top:14px; padding:11px 15px; border-radius:8px; font-size:13px; line-height:1.5; display:none; }
+    .feedback.right { background:rgba(15,110,86,0.07); border:1px solid rgba(15,110,86,0.2); color:#0f6e56; display:block; }
+    .feedback.wrong { background:rgba(220,38,38,0.06); border:1px solid rgba(220,38,38,0.2); color:var(--red); display:block; }
 
-    /* ── CONTROLS ── */
-    .controls { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .ctrl-grp { display:flex; gap:7px; }
-    .btn {
-      padding:10px 18px; border-radius:8px;
-      font-family:'Outfit',sans-serif; font-size:13px; font-weight:500;
-      cursor:pointer; transition:all 0.16s;
-    }
-    .btn-ghost  { background:none; border:1px solid var(--rim); color:var(--muted); }
+    .controls { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .ctrl-group { display:flex; gap:8px; }
+    .btn { padding:10px 20px; border-radius:8px; font-family:'Outfit',system-ui,sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.18s; }
+    .btn-ghost  { background:none; border:1px solid var(--line); color:var(--sub); }
     .btn-ghost:hover  { border-color:var(--blue); color:var(--blue); }
+    .btn-ghost:disabled { opacity:0.3; cursor:not-allowed; }
     .btn-blue   { background:var(--blue); border:none; color:white; }
     .btn-blue:hover   { opacity:0.85; transform:translateY(-1px); }
-    .btn-skip   { background:none; border:1px solid rgba(245,200,66,0.3); color:var(--gold); }
-    .btn-skip:hover   { background:rgba(245,200,66,0.07); }
-    .btn-danger { background:none; border:1px solid rgba(242,107,107,0.3); color:var(--red); }
-    .btn-danger:hover { background:rgba(242,107,107,0.07); }
+    .btn-skip   { background:none; border:1px solid rgba(180,83,9,0.3); color:var(--gold); }
+    .btn-skip:hover   { background:rgba(180,83,9,0.07); }
+    .btn-danger { background:none; border:1px solid rgba(220,38,38,0.3); color:var(--red); }
+    .btn-danger:hover { background:rgba(220,38,38,0.06); }
 
-    /* ── OVERLAY ── */
-    .overlay {
-      position:fixed; inset:0; background:rgba(0,0,0,0.65);
-      backdrop-filter:blur(6px); z-index:200;
-      display:none; align-items:center; justify-content:center;
-    }
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.35); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; }
     .overlay.show { display:flex; }
-    .modal {
-      background:var(--panel); border:1px solid var(--rim);
-      border-radius:14px; padding:30px; max-width:370px; width:90%;
-      text-align:center; animation:pop 0.22s ease both;
-    }
-    @keyframes pop { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
-    .modal h3 {
-      font-family:'Cormorant Garamond',serif;
-      font-size:21px; font-weight:700; color:var(--white); margin-bottom:7px;
-    }
-    .modal p { font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6; }
-    .modal-stats { display:flex; gap:9px; justify-content:center; margin-bottom:20px; }
-    .mstat { background:var(--card); border:1px solid var(--rim); border-radius:8px; padding:9px 13px; flex:1; }
-    .mstat .mv { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; }
-    .mstat .mk { font-size:11px; color:var(--muted); margin-top:2px; }
+    .modal { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:32px; max-width:380px; width:90%; text-align:center; animation:popIn 0.25s ease both; box-shadow:0 8px 32px rgba(0,0,0,0.12); }
+    @keyframes popIn { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+    .modal h3 { font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; font-weight:700; color:var(--white); margin-bottom:8px; }
+    .modal p { font-size:13px; color:var(--sub); margin-bottom:22px; line-height:1.6; }
+    .modal-stats { display:flex; gap:10px; justify-content:center; margin-bottom:22px; }
+    .mstat { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:10px 14px; flex:1; }
+    .mstat .mv { font-family:'Cormorant Garamond',Georgia,serif; font-size:20px; font-weight:700; }
+    .mstat .mk { font-size:11px; color:var(--sub); margin-top:2px; }
     .modal-btns { display:flex; gap:8px; }
-    .modal-btns button { flex:1; padding:11px; border-radius:8px; font-family:'Outfit',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.16s; }
-    .mbtn-cancel { background:none; border:1px solid var(--rim); color:var(--muted); }
+    .modal-btns button { flex:1; padding:11px; border-radius:8px; font-family:'Outfit',system-ui,sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.18s; }
+    .mbtn-cancel { background:none; border:1px solid var(--line); color:var(--sub); }
     .mbtn-cancel:hover { border-color:var(--blue); color:var(--blue); }
     .mbtn-submit { background:var(--blue); border:none; color:white; }
-    .mbtn-submit:hover { opacity:0.85; }
+
+    .no-qs { text-align:center; padding:60px 20px; }
+    .no-qs h3 { font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; color:var(--white); margin-bottom:8px; }
+    .no-qs p { font-size:14px; color:var(--sub); margin-bottom:24px; }
+    .no-qs a { color:var(--blue); text-decoration:none; }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="nl">
-    <div class="logo">QuizVerse <em>PoU</em></div>
-    <div class="vsep"></div>
-    <div class="nav-subj"><strong id="navSubj">Loading…</strong></div>
+  <div class="nav-left">
+    <div class="nav-logo">QuizVerse <span>PoU</span></div>
+    <div class="nav-sep"></div>
+    <div class="nav-subj"><strong id="navSubj">Loading...</strong></div>
   </div>
   <div class="timer-wrap">
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">☀</button>
-    <span class="timer-lbl" id="timerLbl">Time</span>
-    <div class="timer-val" id="timerVal">20:00</div>
-    <div class="prac-badge" id="pracBadge" style="display:none">Practice Mode</div>
+    <span class="timer-label" id="timerLabel">Time Remaining</span>
+    <div class="timer-val" id="timerVal">25:00</div>
+    <div class="practice-badge" id="pracBadge" style="display:none">Practice Mode</div>
   </div>
 </nav>
 
-<div class="main">
-
-  <div class="prog-wrap">
-    <div class="prog-row">
+<div class="main" id="mainWrap">
+  <div class="progress-wrap">
+    <div class="progress-row">
       <span class="pl">Progress</span>
-      <span class="pr" id="progText">1 / 20</span>
+      <span class="pr" id="progText">1 / 25</span>
     </div>
-    <div class="prog-track"><div class="prog-bar" id="progBar" style="width:5%"></div></div>
+    <div class="progress-track"><div class="progress-bar" id="progBar" style="width:4%"></div></div>
   </div>
-
   <div class="dot-row" id="dotRow"></div>
-
   <div class="q-card">
-    <div class="q-num" id="qNum">Question 1 of 20</div>
-    <div class="q-text" id="qText">Loading…</div>
+    <div class="q-num" id="qNum">Question 1 of 25</div>
+    <div class="q-text" id="qText">Loading question...</div>
     <div class="opts" id="optsGrid"></div>
     <div class="feedback" id="feedback"></div>
   </div>
-
   <div class="controls">
-    <button class="btn btn-ghost" onclick="prevQ()" id="btnPrev">← Previous</button>
-    <div class="ctrl-grp">
+    <button class="btn btn-ghost" onclick="prevQ()" id="btnPrev" disabled>← Previous</button>
+    <div class="ctrl-group">
       <button class="btn btn-skip"   onclick="skipQ()">Skip</button>
       <button class="btn btn-danger" onclick="openModal()">Submit Quiz</button>
     </div>
     <button class="btn btn-blue" onclick="nextQ()" id="btnNext">Next →</button>
   </div>
-
 </div>
 
-<!-- SUBMIT MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <h3>Submit Quiz?</h3>
-    <p>Once submitted you cannot change your answers. Review your progress below.</p>
+    <h3>Submit Quiz</h3>
+    <p>Once submitted, you cannot change your answers. Review your progress below before confirming.</p>
     <div class="modal-stats">
       <div class="mstat"><div class="mv" id="mAns" style="color:var(--green)">0</div><div class="mk">Answered</div></div>
       <div class="mstat"><div class="mv" id="mSkip" style="color:var(--gold)">0</div><div class="mk">Skipped</div></div>
-      <div class="mstat"><div class="mv" id="mLeft" style="color:var(--red)">20</div><div class="mk">Remaining</div></div>
+      <div class="mstat"><div class="mv" id="mLeft" style="color:var(--red)">25</div><div class="mk">Remaining</div></div>
     </div>
     <div class="modal-btns">
       <button class="mbtn-cancel" onclick="closeModal()">Continue Quiz</button>
@@ -243,189 +174,1576 @@
 </div>
 
 <script>
-  // ── THEME ──
-  (function(){
-    const light = localStorage.getItem('theme') === 'light';
-    if (light) document.body.classList.add('light');
-    const btn = document.getElementById('themeBtn');
-    if (btn) btn.textContent = light ? '🌙' : '☀';
-  })();
-  function toggleTheme() {
-    const isLight = document.body.classList.toggle('light');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀';
-  }
 
-  const subject = localStorage.getItem('quizSubject') || 'Programming in C';
-  const mode    = localStorage.getItem('quizMode')    || 'timed';
-  const sem     = localStorage.getItem('quizSem')     || '1';
-  document.getElementById('navSubj').textContent = subject;
+const subject = localStorage.getItem('quizSubject') || '';
+const mode    = localStorage.getItem('quizMode')    || 'timed';
+const sem     = parseInt(localStorage.getItem('quizSem') || '1');
 
-  if (mode === 'practice') {
-    document.getElementById('timerVal').style.display = 'none';
-    document.getElementById('pracBadge').style.display = 'block';
-    document.getElementById('timerLbl').style.display = 'none';
-  }
+document.getElementById('navSubj').textContent = subject || 'Unknown Subject';
 
-  // ── QUESTIONS ──
-  const Qs = [
-    {q:'What does CPU stand for?',                               opts:['Central Processing Unit','Computer Personal Unit','Central Process Utility','Core Processing Unit'],   ans:0},
-    {q:'Which data structure follows LIFO order?',               opts:['Queue','Stack','Array','Linked List'],                                                                  ans:1},
-    {q:'What is the result of the expression 2 + "3" in JavaScript?', opts:['5','23','TypeError','Undefined'],                                                                 ans:1},
-    {q:'Which logic gate outputs 1 only when all inputs are 1?', opts:['OR','NOT','AND','XOR'],                                                                                ans:2},
-    {q:'What does RAM stand for?',                               opts:['Read Access Memory','Random Access Memory','Run Access Memory','Read And Memory'],                     ans:1},
-    {q:'Which of these is NOT a programming language?',          opts:['Python','Java','HTML','C++'],                                                                          ans:2},
-    {q:'What is the base of the binary number system?',          opts:['8','10','2','16'],                                                                                     ans:2},
-    {q:'Which symbol denotes single-line comments in C?',        opts:['#','//','/* */','--'],                                                                                 ans:1},
-    {q:'What does HTTP stand for?',                              opts:['HyperText Transfer Protocol','High Text Transfer Protocol','HyperText Transmission Protocol','High Transfer Text Protocol'], ans:0},
-    {q:'The operation to add an element to a stack is called?',  opts:['Enqueue','Push','Insert','Append'],                                                                    ans:1},
-    {q:'What is the time complexity of binary search?',          opts:['O(n)','O(n²)','O(log n)','O(1)'],                                                                     ans:2},
-    {q:'Which of the following is an input device?',             opts:['Monitor','Printer','Keyboard','Speaker'],                                                              ans:2},
-    {q:'What does SQL stand for?',                               opts:['Structured Query Language','Simple Query Language','Standard Query Logic','Structured Question Language'], ans:0},
-    {q:'Which OSI layer handles routing?',                       opts:['Data Link','Network','Transport','Session'],                                                           ans:1},
-    {q:'What is the result of 5 % 2?',                          opts:['2','2.5','1','0'],                                                                                     ans:2},
-    {q:'Which sorting algorithm has average case O(n log n)?',   opts:['Bubble Sort','Selection Sort','Merge Sort','Insertion Sort'],                                          ans:2},
-    {q:'What does GUI stand for?',                               opts:['General User Interface','Graphical User Interface','General Unified Interface','Graphical Unified Interface'], ans:1},
-    {q:'Which protocol is used to send emails?',                 opts:['HTTP','FTP','SMTP','SSH'],                                                                             ans:2},
-    {q:'What does an operating system primarily manage?',        opts:['Only memory','Only files','Hardware and software resources','Only processes'],                         ans:2},
-    {q:'Which of these is a NoSQL database?',                    opts:['MySQL','Oracle','PostgreSQL','MongoDB'],                                                               ans:3},
-  ];
+if (mode === 'practice') {
+  document.getElementById('timerVal').style.display   = 'none';
+  document.getElementById('timerLabel').style.display = 'none';
+  document.getElementById('pracBadge').style.display  = 'block';
+}
 
-  const TOTAL    = Qs.length;
-  let cur        = 0;
-  let answers    = new Array(TOTAL).fill(null);
-  let skipped    = new Array(TOTAL).fill(false);
-  let revealed   = new Array(TOTAL).fill(false);
-  let secLeft    = 20 * 60;
-  let ticker     = null;
+const QB = {
 
-  // ── DOTS ──
+  // ── SEMESTER 1 ──────────────────────────────────────────────
+  'Calculus I': [
+    {q:'What is the derivative of sin(x)?',opts:['cos(x)','-cos(x)','tan(x)','-sin(x)'],ans:0},
+    {q:'What is the integral of 1/x dx?',opts:['x²','ln|x|','1/x²','e^x'],ans:1},
+    {q:'What is the limit of (sin x)/x as x → 0?',opts:['0','∞','1','undefined'],ans:2},
+    {q:'Which rule is used to differentiate a product of two functions?',opts:['Chain Rule','Quotient Rule','Product Rule','Power Rule'],ans:2},
+    {q:'The derivative of e^x is?',opts:['xe^(x-1)','e^x','e^(x+1)','1'],ans:1},
+    {q:'What is d/dx(ln x)?',opts:['1/x','ln x','x','e^x'],ans:0},
+    {q:'∫cos(x)dx = ?',opts:['sin(x)+C','-sin(x)+C','cos(x)+C','-cos(x)+C'],ans:0},
+    {q:'The second derivative of a function tells us about?',opts:['Slope','Concavity','Area','Volume'],ans:1},
+    {q:'What is the derivative of x^n?',opts:['nx','nx^(n-1)','x^(n+1)/(n+1)','n/x'],ans:1},
+    {q:'Rolle\'s theorem requires the function to be?',opts:['Discontinuous','Differentiable on (a,b)','Only continuous','Not defined'],ans:1},
+    {q:'The chain rule formula is?',opts:['dy/dx = dy/du * du/dx','dy/dx = dy/du + du/dx','dy/dx = dy/du - du/dx','dy/dx = du/dy * dx/du'],ans:0},
+    {q:'∫e^x dx = ?',opts:['xe^x + C','e^x + C','e^(x+1) + C','1/e^x + C'],ans:1},
+    {q:'A critical point occurs when?',opts:["f'(x) = 1","f'(x) = 0 or undefined","f(x) = 0","f''(x) = 0"],ans:1},
+    {q:'What does a definite integral represent geometrically?',opts:['Slope of tangent','Area under the curve','Volume','Perimeter'],ans:1},
+    {q:'The Taylor series of e^x starts with?',opts:['1 - x + x²/2!','1 + x + x²/2!','x + x²/2! + x³/3!','1 + x² + x⁴'],ans:1},
+    {q:'lim(x→∞) 1/x = ?',opts:['1','∞','0','-1'],ans:2},
+    {q:'Which test uses f\'\'(x) to classify critical points?',opts:['First derivative test','Second derivative test','Limit test','Squeeze theorem'],ans:1},
+    {q:'∫(from 0 to 1) x dx = ?',opts:['1','0.5','2','0.25'],ans:1},
+    {q:'The derivative of tan(x) is?',opts:['sec²(x)','cot(x)','cos²(x)','sin²(x)'],ans:0},
+    {q:'What is the antiderivative of 0?',opts:['0','x','C','1'],ans:2},
+    {q:'L\'Hopital\'s rule applies when a limit gives which form?',opts:['0/1','1/0','0/0 or ∞/∞','0*∞ only'],ans:2},
+    {q:'The MVT states that there exists c in (a,b) such that f\'(c) equals?',opts:['f(b)-f(a)','[f(b)-f(a)]/(b-a)','(b-a)/f(b)','f(a)+f(b)'],ans:1},
+    {q:'d/dx[sin²(x)] = ?',opts:['2sin(x)','sin(2x)','2cos(x)','cos(2x)'],ans:1},
+    {q:'A function is increasing when?',opts:["f'(x) < 0","f'(x) = 0","f'(x) > 0","f''(x) > 0"],ans:2},
+    {q:'∫sec²(x) dx = ?',opts:['sec(x)tan(x)+C','tan(x)+C','-cot(x)+C','sec(x)+C'],ans:1},
+  ],
+
+  'Digital Logic': [
+    {q:'How many values can a single bit represent?',opts:['1','2','4','8'],ans:1},
+    {q:'Which gate outputs 1 only when all inputs are 1?',opts:['OR','AND','NOT','XOR'],ans:1},
+    {q:'The complement of 1 in binary is?',opts:['1','0','2','undefined'],ans:1},
+    {q:'Which Boolean expression represents De Morgan\'s theorem?',opts:["(A+B)' = A'.B'","(AB)' = A'+B'","Both A and B","None"],ans:2},
+    {q:'A half adder can add how many bits?',opts:['1','2','3','4'],ans:1},
+    {q:'What is the decimal equivalent of binary 1010?',opts:['8','9','10','11'],ans:2},
+    {q:'A flip-flop stores how many bits?',opts:['4','8','1','2'],ans:2},
+    {q:'Which logic family is most commonly used in modern ICs?',opts:['TTL','CMOS','ECL','RTL'],ans:1},
+    {q:'A multiplexer selects one of how many inputs?',opts:['Only 2','Only 4','2^n based on select lines','Unlimited'],ans:2},
+    {q:'XOR of a number with itself gives?',opts:['The number itself','All 1s','0','Undefined'],ans:2},
+    {q:'A Karnaugh map is used to?',opts:['Add binary numbers','Minimize Boolean expressions','Convert decimal to binary','Design flip-flops'],ans:1},
+    {q:'Which number system uses digits 0-7?',opts:['Binary','Decimal','Octal','Hexadecimal'],ans:2},
+    {q:'Hexadecimal F equals decimal?',opts:['14','15','16','12'],ans:1},
+    {q:'A full adder has how many inputs?',opts:['2','3','4','1'],ans:1},
+    {q:'Which gate is called a universal gate?',opts:['AND','OR','NAND','XOR'],ans:2},
+    {q:'The 2\'s complement of 0110 is?',opts:['1001','1010','0110','1100'],ans:1},
+    {q:'A D flip-flop captures input on?',opts:['Any time','Reset','Clock edge','Power on'],ans:2},
+    {q:'Sum of Products (SOP) is also called?',opts:['Minterm form','Maxterm form','Canonical form','DNF form'],ans:0},
+    {q:'A decoder with n inputs can have how many outputs?',opts:['n','n²','2^n','2n'],ans:2},
+    {q:'Which gate inverts the output of an AND gate?',opts:['NOR','NAND','XNOR','NOT'],ans:1},
+    {q:'Binary 1111 = decimal?',opts:['14','15','16','13'],ans:1},
+    {q:'A JK flip-flop with J=1, K=1 does what on clock edge?',opts:['Sets','Resets','Toggles','No change'],ans:2},
+    {q:'Propagation delay in a logic gate refers to?',opts:['Power consumed','Time for output to respond to input change','Heat generated','Frequency'],ans:1},
+    {q:'Which expression is always 1?',opts:['A AND 0','A OR 0',"A OR A'",'A AND A'],ans:2},
+    {q:'Gray code differs from binary in that?',opts:['Uses more bits','Only one bit changes between consecutive values','Uses letters','Represents negative numbers'],ans:1},
+  ],
+
+  'Programming in C': [
+    {q:'Which symbol is used for single-line comments in C?',opts:['#','//','/* */','--'],ans:1},
+    {q:'What does printf() do in C?',opts:['Takes input','Prints output','Declares variable','Loops'],ans:1},
+    {q:'Which data type stores a single character in C?',opts:['int','float','char','string'],ans:2},
+    {q:'What is the correct syntax to declare an integer variable x?',opts:['integer x;','int x;','var x;','x int;'],ans:1},
+    {q:'The for loop in C has how many parts?',opts:['1','2','3','4'],ans:2},
+    {q:'Which operator is used to access value at a pointer address?',opts:['&','*','->','.'],ans:1},
+    {q:'What does scanf() do?',opts:['Print output','Take user input','Declare function','Return value'],ans:1},
+    {q:'An array index in C starts at?',opts:['1','0','-1','Depends on compiler'],ans:1},
+    {q:'Which keyword exits a loop in C?',opts:['exit','stop','break','return'],ans:2},
+    {q:'What is the size of int in most 32-bit systems?',opts:['1 byte','2 bytes','4 bytes','8 bytes'],ans:2},
+    {q:'Which header file is needed for printf and scanf?',opts:['stdlib.h','string.h','stdio.h','math.h'],ans:2},
+    {q:'What does the & operator do when used with a variable?',opts:['Multiplies','Gets memory address','Dereferences','Adds'],ans:1},
+    {q:'A function that calls itself is called?',opts:['Iteration','Loop','Recursion','Pointer function'],ans:2},
+    {q:'What is the return type of main() in C?',opts:['void','char','float','int'],ans:3},
+    {q:'Which loop checks the condition at the end?',opts:['for','while','do-while','foreach'],ans:2},
+    {q:'What does malloc() do?',opts:['Frees memory','Allocates dynamic memory','Copies memory','Prints memory address'],ans:1},
+    {q:'Strings in C are terminated with?',opts:["'\\n'","'\\0'","'\\t'","'\\r'"],ans:1},
+    {q:'Which operator compares two values for equality in C?',opts:['=','==','!=','==='],ans:1},
+    {q:'What is the output of 5 % 2 in C?',opts:['2','2.5','1','0'],ans:2},
+    {q:'A structure in C is defined using which keyword?',opts:['class','struct','type','record'],ans:1},
+    {q:'What does the continue statement do in a loop?',opts:['Exits loop','Skips current iteration','Restarts loop','None'],ans:1},
+    {q:'Pointers store?',opts:['Values','Memory addresses','Characters','Functions'],ans:1},
+    {q:'Which function is used to find string length in C?',opts:['len()','length()','strlen()','strsize()'],ans:2},
+    {q:'A void function?',opts:['Returns 0','Returns nothing','Returns -1','Returns char'],ans:1},
+    {q:'Which of these is a valid C variable name?',opts:['2count','my-var','_total','float'],ans:2},
+  ],
+
+  'Basic Electrical Engineering': [
+    {q:'Ohm\'s law states V = ?',opts:['I/R','IR','I+R','I-R'],ans:1},
+    {q:'The unit of resistance is?',opts:['Volt','Ampere','Ohm','Watt'],ans:2},
+    {q:'The unit of electric current is?',opts:['Volt','Ohm','Ampere','Joule'],ans:2},
+    {q:'Power in a circuit is calculated as?',opts:['V/I','V+I','VI','V-I'],ans:2},
+    {q:'In a series circuit, the total resistance is?',opts:['Sum of all resistances','Product of all resistances','Less than smallest','Average of all'],ans:0},
+    {q:'Kirchhoff\'s Current Law states that at any node?',opts:['Sum of voltages = 0','Sum of currents = 0','Voltage is constant','Current is constant'],ans:1},
+    {q:'The unit of capacitance is?',opts:['Henry','Ohm','Farad','Tesla'],ans:2},
+    {q:'What does AC stand for?',opts:['Actual Current','Alternating Current','Absolute Current','Applied Current'],ans:1},
+    {q:'A transformer is used to?',opts:['Convert AC to DC','Step up or step down AC voltage','Store charge','Measure current'],ans:1},
+    {q:'The frequency of AC supply in Nepal is?',opts:['50 Hz','60 Hz','100 Hz','25 Hz'],ans:0},
+    {q:'Which material is the best conductor of electricity?',opts:['Iron','Copper','Rubber','Glass'],ans:1},
+    {q:'The unit of inductance is?',opts:['Farad','Tesla','Henry','Weber'],ans:2},
+    {q:'In a parallel circuit, the voltage across each component is?',opts:['Different','Zero','The same','Divided equally'],ans:2},
+    {q:'Fleming\'s right hand rule relates to?',opts:['Electric motors','Electric generators','Transformers','Capacitors'],ans:1},
+    {q:'What is the SI unit of electric charge?',opts:['Ampere','Volt','Coulomb','Watt'],ans:2},
+    {q:'The power factor of a purely resistive circuit is?',opts:['0','0.5','1','Infinity'],ans:2},
+    {q:'Which device converts electrical energy to mechanical energy?',opts:['Generator','Transformer','Motor','Battery'],ans:2},
+    {q:'RMS value of AC is approximately what of peak value?',opts:['0.5','0.707','0.866','1'],ans:1},
+    {q:'What is the unit of electric power?',opts:['Joule','Volt','Watt','Newton'],ans:2},
+    {q:'Lenz\'s law is related to?',opts:['Ohm\'s law','Faraday\'s law of induction','Kirchhoff\'s law','Coulomb\'s law'],ans:1},
+    {q:'A fuse is used to?',opts:['Increase current','Store energy','Protect circuits from excess current','Measure voltage'],ans:2},
+    {q:'The impedance of a pure capacitor in DC is?',opts:['Zero','Infinite','1 Ohm','Depends on frequency'],ans:1},
+    {q:'Which instrument measures electric current?',opts:['Voltmeter','Ohmmeter','Ammeter','Wattmeter'],ans:2},
+    {q:'Energy stored in a capacitor is?',opts:['½CV','½CV²','CV²','CV'],ans:1},
+    {q:'The relationship between frequency f and time period T is?',opts:['f = 2T','f = 1/T','T = 2/f','f = T²'],ans:1},
+  ],
+
+  'Communication Technique': [
+    {q:'Communication is defined as the process of?',opts:['Storing information','Transmitting information between sender and receiver','Computing data','Encrypting data'],ans:1},
+    {q:'Which of these is a barrier to communication?',opts:['Clear language','Feedback','Noise','Eye contact'],ans:2},
+    {q:'Technical writing should primarily be?',opts:['Creative and artistic','Clear, concise and accurate','Long and detailed','Informal'],ans:1},
+    {q:'An executive summary in a report is placed?',opts:['At the end','In the middle','At the beginning','After references'],ans:2},
+    {q:'What does active voice mean in writing?',opts:['Subject receives the action','Subject performs the action','Action is implied','Verb is omitted'],ans:1},
+    {q:'A memo is used for?',opts:['External communication','Internal communication in an organization','Legal documents','Formal letters'],ans:1},
+    {q:'The purpose of a topic sentence is to?',opts:['Conclude the paragraph','Introduce the main idea of a paragraph','Add examples','List references'],ans:1},
+    {q:'Formal reports typically include?',opts:['Only conclusions','Introduction, body, conclusions','Just data tables','Executive summary only'],ans:1},
+    {q:'Body language belongs to which type of communication?',opts:['Verbal','Written','Non-verbal','Digital'],ans:2},
+    {q:'Feedback in communication means?',opts:['Sending a message','Receiving the original message','The receiver\'s response to the sender','Encoding information'],ans:2},
+    {q:'Which of these is an example of downward communication?',opts:['Employee to manager','Manager to employee','Peer to peer','Customer to company'],ans:1},
+    {q:'A bibliography lists?',opts:['Only figures','Sources used in a document','Abbreviations','Glossary terms'],ans:1},
+    {q:'Plagiarism means?',opts:['Proper citation','Using others\' work without credit','Paraphrasing correctly','Writing a summary'],ans:1},
+    {q:'Which paragraph structure is most common in technical writing?',opts:['Inverted pyramid','Chronological','PEEL (Point, Evidence, Explanation, Link)','Stream of consciousness'],ans:2},
+    {q:'What is the primary purpose of an abstract?',opts:['Full paper replacement','Brief summary of a document','Introduction section','Conclusion'],ans:1},
+    {q:'In group communication, a chairperson\'s role is to?',opts:['Do all the talking','Facilitate and manage discussion','Take notes only','Vote on decisions'],ans:1},
+    {q:'Which of the following improves email communication?',opts:['Long paragraphs','Informal language','Clear subject line and concise body','No greeting'],ans:2},
+    {q:'A pie chart is best used to show?',opts:['Trends over time','Proportional data','Comparison of many items','Flow of a process'],ans:1},
+    {q:'7Cs of communication include clarity, conciseness, and?',opts:['Creativity','Correctness','Complexity','Complication'],ans:1},
+    {q:'Which type of listening involves full concentration on the speaker?',opts:['Passive','Selective','Active','Appreciative'],ans:2},
+    {q:'An appendix in a report contains?',opts:['Main findings','Supplementary material','Executive summary','Introduction'],ans:1},
+    {q:'The tone of a formal letter should be?',opts:['Casual and friendly','Professional and respectful','Emotional','Humorous'],ans:1},
+    {q:'A flowchart is used to show?',opts:['Statistical data','Hierarchy','Step-by-step process or algorithm','Comparison'],ans:2},
+    {q:'Which is NOT a component of verbal communication?',opts:['Words used','Tone of voice','Facial expression','Vocabulary'],ans:2},
+    {q:'Proofreading focuses on?',opts:['Content structure','Grammar, spelling and punctuation errors','Research quality','Adding more content'],ans:1},
+  ],
+
+  'Electronics Devices and Circuits': [
+    {q:'A diode allows current to flow in?',opts:['Both directions','One direction only','No direction','Depends on frequency'],ans:1},
+    {q:'The p-n junction is formed by?',opts:['Two n-type semiconductors','p-type and n-type semiconductor','Two p-type semiconductors','Metal and semiconductor'],ans:1},
+    {q:'A Zener diode is used mainly for?',opts:['Amplification','Rectification','Voltage regulation','Oscillation'],ans:2},
+    {q:'The transistor has how many layers of semiconductor?',opts:['1','2','3','4'],ans:2},
+    {q:'In a BJT, the three terminals are?',opts:['Source, Gate, Drain','Base, Collector, Emitter','Anode, Cathode, Gate','Plus, Minus, Ground'],ans:1},
+    {q:'A half-wave rectifier uses how many diodes?',opts:['1','2','4','3'],ans:0},
+    {q:'A full-wave bridge rectifier uses how many diodes?',opts:['1','2','3','4'],ans:3},
+    {q:'The forward voltage drop of a silicon diode is approximately?',opts:['0.1V','0.3V','0.7V','1.5V'],ans:2},
+    {q:'An NPN transistor is ON when the base is?',opts:['Negative with respect to emitter','Positive with respect to emitter','Same as emitter','Grounded'],ans:1},
+    {q:'Which configuration of BJT gives highest current gain?',opts:['Common Base','Common Emitter','Common Collector','All equal'],ans:1},
+    {q:'An op-amp has how many input terminals?',opts:['1','2','3','4'],ans:1},
+    {q:'The ideal op-amp has input impedance of?',opts:['Zero','Finite','Infinite','100 Ohms'],ans:2},
+    {q:'MOSFET stands for?',opts:['Metal Oxide Semiconductor Field Effect Transistor','Multiple Output Signal Field Effect Transistor','Metal Output Semiconductor FET','None'],ans:0},
+    {q:'A filter that passes low frequencies and blocks high frequencies is called?',opts:['High Pass Filter','Band Pass Filter','Low Pass Filter','Notch Filter'],ans:2},
+    {q:'The ripple factor of a full wave rectifier is?',opts:['1.21','0.482','0.406','2.0'],ans:1},
+    {q:'Which semiconductor material is most commonly used?',opts:['Germanium','Carbon','Silicon','Gallium Arsenide'],ans:2},
+    {q:'Intrinsic semiconductor has how many free electrons at 0K?',opts:['Many','Few','Zero','Infinite'],ans:2},
+    {q:'A capacitor in a filter circuit is used to?',opts:['Amplify signal','Block DC','Smooth ripple voltage','Increase current'],ans:2},
+    {q:'The gain of a common emitter amplifier is?',opts:['Less than 1','Equal to 1','Greater than 1','Zero'],ans:2},
+    {q:'Avalanche breakdown in a diode is caused by?',opts:['Low temperature','High reverse voltage causing carrier multiplication','Forward bias','Low doping'],ans:1},
+    {q:'An LED emits light when?',opts:['Reverse biased','Forward biased','No bias','AC applied'],ans:1},
+    {q:'The depletion region in a p-n junction contains?',opts:['Many free carriers','No free carriers','Only holes','Only electrons'],ans:1},
+    {q:'JFET is controlled by?',opts:['Base current','Gate voltage','Collector current','Emitter voltage'],ans:1},
+    {q:'A voltage divider bias circuit is used to?',opts:['Amplify signal','Stabilize the Q-point','Rectify AC','Filter noise'],ans:1},
+    {q:'The unit of transconductance in a FET is?',opts:['Ohm','Siemens (mhos)','Farad','Henry'],ans:1},
+  ],
+  'Computer Workshop': [
+  {q:'What does CPU stand for?',opts:['Central Process Unit','Central Processing Unit','Computer Personal Unit','Central Program Utility'],ans:1},
+  {q:'Which device is used to input text into a computer?',opts:['Monitor','Printer','Keyboard','Speaker'],ans:2},
+  {q:'Which part of a computer stores data permanently?',opts:['RAM','ROM','Cache','Register'],ans:1},
+  {q:'What is the main function of an operating system?',opts:['Play games','Manage hardware and software','Browse internet','Compile programs'],ans:1},
+  {q:'Which software is used to create presentations?',opts:['MS Word','MS Excel','MS PowerPoint','Paint'],ans:2},
+  {q:'What does RAM stand for?',opts:['Random Access Memory','Read Access Memory','Rapid Access Module','Random Allocation Memory'],ans:0},
+  {q:'Which shortcut key is used to copy text?',opts:['Ctrl + X','Ctrl + V','Ctrl + C','Ctrl + P'],ans:2},
+  {q:'Which shortcut key is used to paste copied text?',opts:['Ctrl + V','Ctrl + C','Ctrl + X','Ctrl + Z'],ans:0},
+  {q:'Which device prints documents on paper?',opts:['Scanner','Monitor','Printer','Plotter'],ans:2},
+  {q:'Which software is used for spreadsheet calculations?',opts:['MS Excel','MS Word','Photoshop','Notepad'],ans:0},
+  {q:'What does URL stand for?',opts:['Uniform Resource Locator','Universal Resource Link','Uniform Read Link','Universal Reference Locator'],ans:0},
+  {q:'Which protocol is mainly used for web browsing?',opts:['FTP','SMTP','HTTP','TCP'],ans:2},
+  {q:'Which memory is volatile?',opts:['ROM','Hard Disk','RAM','SSD'],ans:2},
+  {q:'Which device is used to scan documents?',opts:['Printer','Scanner','Monitor','Projector'],ans:1},
+  {q:'What is the full form of LAN?',opts:['Local Area Network','Large Area Network','Logical Area Network','Long Area Node'],ans:0},
+  {q:'Which key is used to delete characters to the left of cursor?',opts:['Delete','Backspace','Esc','Shift'],ans:1},
+  {q:'Which file extension is used for MS Word documents?',opts:['.xls','.ppt','.docx','.jpg'],ans:2},
+  {q:'Which software is used to browse the internet?',opts:['Compiler','Browser','Debugger','Assembler'],ans:1},
+  {q:'Which company developed Windows OS?',opts:['Apple','IBM','Microsoft','Intel'],ans:2},
+  {q:'What is phishing?',opts:['Programming technique','Cyber attack to steal information','Data compression','Computer hardware'],ans:1},
+  {q:'Which topology connects all devices to a central hub?',opts:['Bus','Ring','Star','Mesh'],ans:2},
+  {q:'What does GUI stand for?',opts:['Graphical User Interface','General User Interface','Graph Utility Interface','General Utility Interaction'],ans:0},
+  {q:'Which storage device has the largest capacity?',opts:['CD','DVD','Blu-ray Disc','Floppy Disk'],ans:2},
+  {q:'Which command is used to save a file?',opts:['Ctrl + N','Ctrl + S','Ctrl + O','Ctrl + A'],ans:1},
+  {q:'What is antivirus software used for?',opts:['Create viruses','Protect against malware','Increase internet speed','Edit videos'],ans:1},
+],
+
+  // ── SEMESTER 2 ──────────────────────────────────────────────
+  'Algebra and Geometry': [
+    {q:'The roots of x² - 5x + 6 = 0 are?',opts:['2 and 3','1 and 6','2 and 4','3 and 4'],ans:0},
+    {q:'The determinant of a 2x2 matrix [[a,b],[c,d]] is?',opts:['ac-bd','ad-bc','ab-cd','ad+bc'],ans:1},
+    {q:'If A and B are matrices, (AB)^T equals?',opts:['A^T B^T','B^T A^T','AB','BA'],ans:1},
+    {q:'The equation of a circle with center (0,0) and radius r is?',opts:['x+y=r','x²+y²=r','x²+y²=r²','xy=r²'],ans:2},
+    {q:'The slope of a line parallel to y=3x+5 is?',opts:['5','1/3','-3','3'],ans:3},
+    {q:'A matrix with equal number of rows and columns is called?',opts:['Row matrix','Column matrix','Square matrix','Identity matrix'],ans:2},
+    {q:'The eigenvalues of matrix [[2,0],[0,3]] are?',opts:['1 and 1','2 and 3','0 and 5','6 and 0'],ans:1},
+    {q:'What is the modulus of complex number 3+4i?',opts:['3','4','5','7'],ans:2},
+    {q:'The dot product of perpendicular vectors is?',opts:['1','-1','0','Undefined'],ans:2},
+    {q:'The rank of a zero matrix is?',opts:['1','0','n','Undefined'],ans:1},
+    {q:'The distance between points (1,2) and (4,6) is?',opts:['3','4','5','7'],ans:2},
+    {q:'The angle between two lines with slopes m1 and m2 is found using?',opts:['m1+m2','m1*m2','(m1-m2)/(1+m1*m2)','m1/m2'],ans:2},
+    {q:'A singular matrix has determinant?',opts:['1','-1','0','Infinity'],ans:2},
+    {q:'The identity matrix has ones on?',opts:['All positions','Off-diagonal','Main diagonal','Last row only'],ans:2},
+    {q:'Cramer\'s rule is used to solve?',opts:['Quadratic equations','Systems of linear equations','Differential equations','Integration problems'],ans:1},
+    {q:'The cross product of two parallel vectors is?',opts:['1','A unit vector','Zero vector','Infinity'],ans:2},
+    {q:'Which conic section is formed when a plane cuts a cone parallel to the base?',opts:['Parabola','Ellipse','Circle','Hyperbola'],ans:2},
+    {q:'The conjugate of complex number a+bi is?',opts:['a-bi','-a+bi','-a-bi','a+bi'],ans:0},
+    {q:'In Gaussian elimination, we reduce a matrix to?',opts:['Identity form','Row echelon form','Column form','Diagonal form'],ans:1},
+    {q:'The equation of parabola with vertex at origin opening upward is?',opts:['x²=-4ay','y²=4ax','x²=4ay','y=4ax²'],ans:2},
+    {q:'The trace of a matrix is?',opts:['Sum of all elements','Product of diagonal elements','Sum of diagonal elements','Determinant'],ans:2},
+    {q:'A vector with magnitude 1 is called?',opts:['Zero vector','Unit vector','Position vector','Free vector'],ans:1},
+    {q:'The standard form of an ellipse with semi-axes a,b is?',opts:['x²/a + y²/b = 1','x²/a² + y²/b² = 1','x²+y²=a+b','x/a + y/b = 1'],ans:1},
+    {q:'For a symmetric matrix A, A^T equals?',opts:['-A','A⁻¹','A','0'],ans:2},
+    {q:'Cayley-Hamilton theorem states that every matrix satisfies?',opts:['Its own transpose','Its own characteristic equation','Det(A)=0','Eigenvalue equation'],ans:1},
+  ],
+
+  'Applied Physics': [
+    {q:'Newton\'s second law states F = ?',opts:['mv','ma','m/a','m+a'],ans:1},
+    {q:'The SI unit of force is?',opts:['Joule','Watt','Newton','Pascal'],ans:2},
+    {q:'Which law states every action has an equal and opposite reaction?',opts:['Newton\'s 1st law','Newton\'s 2nd law','Newton\'s 3rd law','Hooke\'s law'],ans:2},
+    {q:'The work done is defined as?',opts:['F+d','F/d','F*d*cos θ','F*d*sin θ'],ans:2},
+    {q:'The SI unit of energy is?',opts:['Watt','Newton','Joule','Pascal'],ans:2},
+    {q:'The speed of light in vacuum is approximately?',opts:['3×10⁶ m/s','3×10⁸ m/s','3×10¹⁰ m/s','3×10⁴ m/s'],ans:1},
+    {q:'Which type of wave does not require a medium?',opts:['Sound wave','Water wave','Electromagnetic wave','Mechanical wave'],ans:2},
+    {q:'The first law of thermodynamics is related to?',opts:['Entropy','Conservation of energy','Absolute zero','Heat death'],ans:1},
+    {q:'Moment of inertia depends on?',opts:['Mass and velocity','Mass and distribution from axis','Force and acceleration','Temperature'],ans:1},
+    {q:'The Doppler effect relates to change in?',opts:['Speed of wave','Amplitude','Frequency due to relative motion','Wavelength only'],ans:2},
+    {q:'Bernoulli\'s principle applies to?',opts:['Solids under stress','Fluid flow','Electromagnetic fields','Thermal expansion'],ans:1},
+    {q:'Young\'s modulus measures?',opts:['Compressibility','Shear stress','Stiffness (ratio of stress to strain)','Viscosity'],ans:2},
+    {q:'The phenomenon of light bending around obstacles is?',opts:['Refraction','Reflection','Diffraction','Interference'],ans:2},
+    {q:'Entropy in a closed system tends to?',opts:['Decrease','Stay constant','Increase','Fluctuate'],ans:2},
+    {q:'Which of these is a vector quantity?',opts:['Mass','Temperature','Velocity','Speed'],ans:2},
+    {q:'Centripetal acceleration is directed?',opts:['Tangentially','Outward from center','Toward center','Upward'],ans:2},
+    {q:'The wavelength and frequency of a wave are related by v = ?',opts:['λ/f','f/λ','λf','λ+f'],ans:2},
+    {q:'Photoelectric effect was explained by?',opts:['Newton','Maxwell','Einstein','Bohr'],ans:2},
+    {q:'The pressure at depth h in a fluid is?',opts:['ρg','ρgh','hg/ρ','ρ/gh'],ans:1},
+    {q:'Which quantum number determines the shape of an orbital?',opts:['Principal','Azimuthal','Magnetic','Spin'],ans:1},
+    {q:'Simple harmonic motion requires a restoring force proportional to?',opts:['Velocity','Acceleration','Displacement','Mass'],ans:2},
+    {q:'The escape velocity from Earth is approximately?',opts:['7.9 km/s','11.2 km/s','5 km/s','20 km/s'],ans:1},
+    {q:'Huygen\'s principle describes the propagation of?',opts:['Particles','Wavefronts','Electric fields','Magnetic fields'],ans:1},
+    {q:'Latent heat is the heat required to change?',opts:['Temperature','Pressure','State without temperature change','Volume'],ans:2},
+    {q:'The de Broglie wavelength is given by λ = ?',opts:['h/mv','mv/h','h*mv','m/hv'],ans:0},
+  ],
+
+  'Applied Chemistry': [
+    {q:'The atomic number of an element represents?',opts:['Number of neutrons','Number of protons','Mass number','Number of electrons in outer shell'],ans:1},
+    {q:'Which bond involves sharing of electrons?',opts:['Ionic bond','Covalent bond','Metallic bond','Hydrogen bond'],ans:1},
+    {q:'pH of a neutral solution at 25°C is?',opts:['0','7','14','1'],ans:1},
+    {q:'An acid is a substance that?',opts:['Accepts protons','Donates protons','Is always liquid','Has pH > 7'],ans:1},
+    {q:'The law of conservation of mass states that?',opts:['Mass is always gained','Mass is always lost','Total mass of reactants equals total mass of products','Mass changes with temperature'],ans:2},
+    {q:'Which of these is a noble gas?',opts:['Oxygen','Nitrogen','Argon','Chlorine'],ans:2},
+    {q:'Avogadro\'s number is approximately?',opts:['6.022×10²³','6.022×10²²','3.011×10²³','1.602×10¹⁹'],ans:0},
+    {q:'An oxidation reaction involves?',opts:['Gain of electrons','Loss of electrons','Gain of protons','Loss of neutrons'],ans:1},
+    {q:'The IUPAC name of CH₄ is?',opts:['Ethane','Propane','Methane','Butane'],ans:2},
+    {q:'A catalyst?',opts:['Is consumed in the reaction','Speeds up the reaction without being consumed','Slows down the reaction','Provides activation energy'],ans:1},
+    {q:'Electroplating uses which process?',opts:['Electrolysis','Distillation','Sublimation','Evaporation'],ans:0},
+    {q:'The polymer formed from ethylene is?',opts:['Nylon','PVC','Polythene','Teflon'],ans:2},
+    {q:'Hardness of water is due to the presence of?',opts:['NaCl','Dissolved Ca²⁺ and Mg²⁺ ions','CO₂','O₂'],ans:1},
+    {q:'Which gas is responsible for the greenhouse effect?',opts:['O₂','N₂','CO₂','H₂'],ans:2},
+    {q:'Corrosion of iron is called?',opts:['Oxidation','Rusting','Reduction','Galvanization'],ans:1},
+    {q:'The molecular formula of water is?',opts:['HO','H₂O₂','H₂O','HO₂'],ans:2},
+    {q:'A buffer solution resists changes in?',opts:['Temperature','Volume','pH','Pressure'],ans:2},
+    {q:'Boyle\'s law relates pressure and volume at constant?',opts:['Pressure','Volume','Temperature','Mass'],ans:2},
+    {q:'The process of converting ore to metal is called?',opts:['Alloying','Smelting','Annealing','Casting'],ans:1},
+    {q:'Which type of reaction releases heat?',opts:['Endothermic','Exothermic','Photochemical','Reversible'],ans:1},
+    {q:'Amino acids are the building blocks of?',opts:['Carbohydrates','Lipids','Proteins','Nucleic acids'],ans:2},
+    {q:'Concentration of a solution is measured in?',opts:['Grams','Moles','Molarity (mol/L)','Liters'],ans:2},
+    {q:'Which element has the highest electronegativity?',opts:['Oxygen','Nitrogen','Chlorine','Fluorine'],ans:3},
+    {q:'The half-life of a radioactive element is?',opts:['Time to fully decay','Time for half the atoms to decay','Time to double','Constant only at high temperature'],ans:1},
+    {q:'Soap is produced by the process of?',opts:['Esterification','Saponification','Hydrogenation','Fermentation'],ans:1},
+  ],
+
+  'Data Structure and Algorithm': [
+    {q:'Which data structure uses LIFO?',opts:['Queue','Stack','Array','Linked List'],ans:1},
+    {q:'Which data structure uses FIFO?',opts:['Stack','Queue','Tree','Graph'],ans:1},
+    {q:'The time complexity of binary search is?',opts:['O(n)','O(n²)','O(log n)','O(1)'],ans:2},
+    {q:'A linked list node contains?',opts:['Only data','Only pointer','Data and pointer to next node','Only address'],ans:2},
+    {q:'Which sorting algorithm has worst case O(n²)?',opts:['Merge Sort','Heap Sort','Quick Sort','Radix Sort'],ans:2},
+    {q:'A binary tree node has at most how many children?',opts:['1','2','3','4'],ans:1},
+    {q:'The height of a balanced binary tree with n nodes is?',opts:['O(n)','O(n²)','O(log n)','O(1)'],ans:2},
+    {q:'BFS uses which data structure?',opts:['Stack','Queue','Priority Queue','Hash Table'],ans:1},
+    {q:'DFS uses which data structure?',opts:['Queue','Stack','Hash Table','Array'],ans:1},
+    {q:'Bubble sort works by?',opts:['Dividing array in half','Comparing and swapping adjacent elements','Selecting minimum element','Inserting elements in order'],ans:1},
+    {q:'A hash table provides average case lookup time of?',opts:['O(n)','O(log n)','O(1)','O(n²)'],ans:2},
+    {q:'An AVL tree is a?',opts:['Directed graph','Self-balancing binary search tree','Min-heap','Max-heap'],ans:1},
+    {q:'Dijkstra\'s algorithm finds?',opts:['Minimum spanning tree','Shortest path from source to all vertices','Longest path','Maximum flow'],ans:1},
+    {q:'A priority queue is typically implemented using?',opts:['Array','Linked List','Heap','Stack'],ans:2},
+    {q:'The space complexity of merge sort is?',opts:['O(1)','O(log n)','O(n)','O(n log n)'],ans:2},
+    {q:'In a max-heap, the parent node value is?',opts:['Less than children','Equal to children','Greater than or equal to children','Unrelated to children'],ans:2},
+    {q:'Dynamic programming solves problems by?',opts:['Brute force','Greedy selection','Storing results of subproblems','Random approach'],ans:2},
+    {q:'Which of these is NOT a linear data structure?',opts:['Array','Stack','Queue','Tree'],ans:3},
+    {q:'The time complexity of insertion in a linked list at head is?',opts:['O(n)','O(log n)','O(1)','O(n²)'],ans:2},
+    {q:'Kruskal\'s algorithm is used for?',opts:['Shortest path','Minimum spanning tree','Sorting','Searching'],ans:1},
+    {q:'A circular queue solves the problem of?',opts:['Overflow','Underflow','Wasted space in linear queue','Slow access'],ans:2},
+    {q:'Inorder traversal of a BST gives?',opts:['Random order','Reverse sorted','Sorted ascending order','Level order'],ans:2},
+    {q:'A graph with no cycles is called?',opts:['Complete graph','Cyclic graph','Acyclic graph (tree)','Dense graph'],ans:2},
+    {q:'The best case time complexity of quick sort is?',opts:['O(n²)','O(n log n)','O(n)','O(log n)'],ans:1},
+    {q:'Which traversal visits root, left, right?',opts:['Inorder','Postorder','Preorder','Level order'],ans:2},
+  ],
+
+  'Basic Engineering Drawing': [
+  {q:'What is the standard angle used in isometric drawing?',opts:['30°','45°','60°','90°'],ans:0},
+  {q:'Which instrument is used to draw circles?',opts:['Divider','Compass','Scale','Protractor'],ans:1},
+  {q:'What does CAD stand for?',opts:['Computer Aided Design','Computer Assisted Draft','Creative Art Design','Control Aided Drawing'],ans:0},
+  {q:'A line drawn to represent visible edges is called?',opts:['Hidden line','Center line','Object line','Dimension line'],ans:2},
+  {q:'Which projection is commonly used in engineering drawing?',opts:['Orthographic projection','Perspective projection','Oblique projection','Artistic projection'],ans:0},
+  {q:'Which instrument measures angles?',opts:['Compass','Scale','Divider','Protractor'],ans:3},
+  {q:'What type of line represents hidden edges?',opts:['Continuous thick line','Dashed line','Chain line','Zigzag line'],ans:1},
+  {q:'The top view of an object is also called?',opts:['Elevation','Plan','Section','Projection'],ans:1},
+  {q:'What is the purpose of dimensioning?',opts:['Decoration','Measurement indication','Coloring','Cutting'],ans:1},
+  {q:'Which sheet size is largest among A-series?',opts:['A4','A3','A2','A0'],ans:3},
+  {q:'Which pencil grade is darker?',opts:['H','2H','HB','B'],ans:3},
+  {q:'A sectional view is used to show?',opts:['Outer appearance','Internal details','Color','Texture'],ans:1},
+  {q:'The front view of an object is called?',opts:['Plan','Elevation','Section','Isometric'],ans:1},
+  {q:'What is scaling in drawing?',opts:['Coloring objects','Enlarging or reducing proportionally','Cutting shapes','Rotating figures'],ans:1},
+  {q:'Which line type is used for dimensions?',opts:['Continuous thin line','Dashed line','Object line','Center line'],ans:0},
+  {q:'Engineering drawing is mainly used for?',opts:['Entertainment','Technical communication','Painting','Advertising'],ans:1},
+  {q:'Which angle projection is commonly used in Nepal?',opts:['First angle projection','Third angle projection','Oblique projection','Perspective projection'],ans:0},
+  {q:'A drawing without dimensions is?',opts:['Complete','Useful','Incomplete','Colored'],ans:2},
+  {q:'Which tool is used to draw parallel lines?',opts:['Compass','Divider','T-square','French curve'],ans:2},
+  {q:'What does BIS stand for in engineering standards?',opts:['Board of Indian Standards','Bureau of Indian Standards','Basic Industrial Standards','Building Inspection Service'],ans:1},
+  {q:'The side view of an object is called?',opts:['Plan','Elevation','Profile view','Section'],ans:2},
+  {q:'Hidden lines are drawn using?',opts:['Continuous thick lines','Dashed thin lines','Zigzag lines','Chain thick lines'],ans:1},
+  {q:'Which curve tool is used for irregular curves?',opts:['Compass','French curve','Divider','Scale'],ans:1},
+  {q:'The ratio of drawing size to actual size is called?',opts:['Scale','Projection','Section','Dimension'],ans:0},
+  {q:'Orthographic projection uses how many principal planes?',opts:['1','2','3','4'],ans:2},
+],
+
+  'Object Oriented Programming in C++': [
+  {q:'Which symbol is used to define a class in C++?',opts:['class','Class','define','struct'],ans:0},
+  {q:'Which concept binds data and functions together?',opts:['Inheritance','Encapsulation','Polymorphism','Abstraction'],ans:1},
+  {q:'Which operator is used to access class members?',opts:['::','.','->','#'],ans:1},
+  {q:'What is a constructor?',opts:['Function to destroy object','Special function to initialize object','Loop statement','Operator'],ans:1},
+  {q:'Which feature allows code reusability?',opts:['Inheritance','Compilation','Looping','Parsing'],ans:0},
+  {q:'Which keyword is used for inheritance?',opts:['extends','inherits',':','super'],ans:2},
+  {q:'What is polymorphism?',opts:['Many forms of a function','Data hiding','Error handling','Memory allocation'],ans:0},
+  {q:'Which function has same name as class?',opts:['Destructor','Constructor','Operator','Main'],ans:1},
+  {q:'Which access specifier makes members private?',opts:['public','protected','private','internal'],ans:2},
+  {q:'Which concept hides implementation details?',opts:['Abstraction','Inheritance','Recursion','Compilation'],ans:0},
+  {q:'Which symbol is used for scope resolution?',opts:['::','==','&&','%%'],ans:0},
+  {q:'What is function overloading?',opts:['Using many variables','Same function name with different parameters','Overwriting memory','Using loops'],ans:1},
+  {q:'Which keyword creates an object dynamically?',opts:['malloc','alloc','new','create'],ans:2},
+  {q:'Which keyword frees dynamically allocated memory?',opts:['delete','free','remove','destroy'],ans:0},
+  {q:'Which type of inheritance has one base and one derived class?',opts:['Multiple','Single','Hierarchical','Hybrid'],ans:1},
+  {q:'What is operator overloading?',opts:['Changing operators meaning','Deleting operators','Combining variables','Overwriting classes'],ans:0},
+  {q:'Which function is called automatically when object is destroyed?',opts:['Constructor','Main','Destructor','Operator'],ans:2},
+  {q:'What is the default access specifier in class?',opts:['public','protected','private','friend'],ans:2},
+  {q:'Which loop executes at least once?',opts:['for','while','do-while','foreach'],ans:2},
+  {q:'What is a virtual function?',opts:['Invisible function','Function for runtime polymorphism','Static function','Inline function'],ans:1},
+  {q:'Which keyword is used to inherit publicly?',opts:['public','private','protected','virtual'],ans:0},
+  {q:'Which stream object is used for output?',opts:['cin','cout','cerr','clog'],ans:1},
+  {q:'Which stream object is used for input?',opts:['cin','cout','getline','input'],ans:0},
+  {q:'What is inheritance?',opts:['Data hiding','Acquiring properties of another class','Looping','Debugging'],ans:1},
+  {q:'Which keyword is used to define constant values?',opts:['fixed','const','static','immutable'],ans:1},
+],
+
+  'Instrumentation': [
+  {q:'What is an instrument used for?',opts:['Decoration','Measurement','Painting','Cutting'],ans:1},
+  {q:'Which instrument measures voltage?',opts:['Ammeter','Voltmeter','Wattmeter','Ohmmeter'],ans:1},
+  {q:'Which instrument measures current?',opts:['Voltmeter','Ammeter','Barometer','Thermometer'],ans:1},
+  {q:'Which instrument measures resistance?',opts:['Ammeter','Ohmmeter','Voltmeter','Speedometer'],ans:1},
+  {q:'What is the SI unit of pressure?',opts:['Pascal','Newton','Joule','Watt'],ans:0},
+  {q:'A sensor converts?',opts:['Mechanical energy to sound','Physical quantity into signal','Voltage to current','Heat to pressure'],ans:1},
+  {q:'Which instrument measures temperature?',opts:['Barometer','Thermometer','Hydrometer','Lux meter'],ans:1},
+  {q:'What does LCD stand for?',opts:['Liquid Crystal Display','Light Control Device','Linear Current Display','Liquid Current Device'],ans:0},
+  {q:'Which instrument measures power?',opts:['Voltmeter','Ammeter','Wattmeter','Ohmmeter'],ans:2},
+  {q:'What is calibration?',opts:['Repairing instruments','Adjusting accuracy','Cleaning instruments','Connecting circuits'],ans:1},
+  {q:'Which instrument measures atmospheric pressure?',opts:['Barometer','Thermometer','Hygrometer','Altimeter'],ans:0},
+  {q:'Which transducer converts sound into electrical signal?',opts:['Speaker','Microphone','Motor','Relay'],ans:1},
+  {q:'The accuracy of an instrument refers to?',opts:['Speed','Closeness to true value','Size','Weight'],ans:1},
+  {q:'Which instrument measures humidity?',opts:['Hygrometer','Hydrometer','Thermometer','Lux meter'],ans:0},
+  {q:'Digital instruments display output in?',opts:['Graphical form','Numeric form','Analog form','Mechanical form'],ans:1},
+  {q:'Analog instruments use?',opts:['Continuous signals','Binary signals','Digital codes','Optical signals'],ans:0},
+  {q:'What is sensitivity in instruments?',opts:['Ability to detect small changes','Weight','Voltage','Power'],ans:0},
+  {q:'Which instrument measures speed of rotation?',opts:['Tachometer','Barometer','Altimeter','Galvanometer'],ans:0},
+  {q:'A galvanometer detects?',opts:['Voltage','Small current','Pressure','Temperature'],ans:1},
+  {q:'Which instrument measures light intensity?',opts:['Lux meter','Thermometer','Voltmeter','Ammeter'],ans:0},
+  {q:'What is the function of a relay?',opts:['Amplify sound','Switch circuits','Store energy','Measure current'],ans:1},
+  {q:'Which device converts electrical energy into mechanical motion?',opts:['Relay','Motor','Sensor','Transformer'],ans:1},
+  {q:'The range of an instrument means?',opts:['Maximum and minimum measurable values','Weight','Accuracy','Voltage'],ans:0},
+  {q:'Which bridge is used to measure resistance?',opts:['Wheatstone bridge','Maxwell bridge','Schering bridge','Kelvin bridge'],ans:0},
+  {q:'What is hysteresis error?',opts:['Delay in response','Difference in output during increasing/decreasing input','Power loss','Noise'],ans:1},
+],
+
+  // ── SEMESTER 3 ──────────────────────────────────────────────
+  'Database Management System': [
+    {q:'What does DBMS stand for?',opts:['Data Base Management System','Digital Base Management System','Data Base Modelling System','Data Binary Management System'],ans:0},
+    {q:'Which language is used to query a relational database?',opts:['HTML','Python','SQL','Java'],ans:2},
+    {q:'Primary key is used to?',opts:['Join two tables','Uniquely identify a record','Link foreign keys','Store passwords'],ans:1},
+    {q:'A foreign key in a table references?',opts:['Any column','Primary key of another table','Index column','NULL values'],ans:1},
+    {q:'Which normal form eliminates partial dependency?',opts:['1NF','2NF','3NF','BCNF'],ans:1},
+    {q:'The SELECT statement in SQL is used to?',opts:['Insert data','Delete data','Retrieve data','Update data'],ans:2},
+    {q:'ACID properties stand for?',opts:['Atomicity, Consistency, Isolation, Durability','Accuracy, Completeness, Integrity, Data','All Correct In Database','None'],ans:0},
+    {q:'An ER diagram represents?',opts:['Network topology','Entity-Relationship model of a database','Flow of data','Hardware components'],ans:1},
+    {q:'Which JOIN returns all rows from both tables?',opts:['INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL OUTER JOIN'],ans:3},
+    {q:'Normalization is the process of?',opts:['Adding redundancy','Reducing redundancy and dependency','Encrypting data','Compressing data'],ans:1},
+    {q:'Which command removes all rows from a table without deleting the table?',opts:['DROP','DELETE','TRUNCATE','REMOVE'],ans:2},
+    {q:'A view in SQL is?',opts:['A physical table','A virtual table based on a query','An index','A stored procedure'],ans:1},
+    {q:'Which of these is a DDL command?',opts:['SELECT','INSERT','CREATE','UPDATE'],ans:2},
+    {q:'Deadlock in DBMS occurs when?',opts:['Too many queries run','Two transactions wait for each other indefinitely','Database crashes','Network fails'],ans:1},
+    {q:'The GROUP BY clause is used with?',opts:['WHERE','HAVING','Aggregate functions','ORDER BY'],ans:2},
+    {q:'Which is NOT a type of database model?',opts:['Relational','Hierarchical','Network','Sequential'],ans:3},
+    {q:'Concurrency control ensures?',opts:['Fast queries','Correct simultaneous access by multiple users','Data encryption','Backup management'],ans:1},
+    {q:'A transaction that is committed?',opts:['Can be rolled back','Cannot be undone','Is temporary','Is incomplete'],ans:1},
+    {q:'The WHERE clause filters?',opts:['Columns','Tables','Rows based on condition','Aggregate results'],ans:2},
+    {q:'An index in a database improves?',opts:['Storage','Update speed','Query search speed','Normalization'],ans:2},
+    {q:'Which key uniquely identifies a record across related tables?',opts:['Composite key','Candidate key','Foreign key','Super key'],ans:3},
+    {q:'The cardinality of a relationship refers to?',opts:['Number of tables','Number of records','Number of entities in a relationship','Number of attributes'],ans:2},
+    {q:'DML stands for?',opts:['Data Manipulation Language','Data Management Layer','Database Model Logic','Data Mapping Library'],ans:0},
+    {q:'A subquery is?',opts:['A stored procedure','A query nested inside another query','An index','A view'],ans:1},
+    {q:'Which aggregate function returns the number of rows?',opts:['SUM','AVG','COUNT','MAX'],ans:2},
+  ],
+
+  'Operating Systems': [
+    {q:'An operating system is?',opts:['Hardware','System software managing hardware and software','Application software','A database'],ans:1},
+    {q:'Process scheduling is managed by?',opts:['Compiler','BIOS','Scheduler (part of OS)','User'],ans:2},
+    {q:'Round Robin scheduling uses?',opts:['Priority','Time quantum','First come first served','Random selection'],ans:1},
+    {q:'Deadlock can be prevented by?',opts:['Increasing RAM','Breaking one of the four necessary conditions','Slowing processes','Reducing CPU'],ans:1},
+    {q:'Virtual memory allows?',opts:['Running programs larger than physical RAM','Faster processing','More CPU cores','Network access'],ans:0},
+    {q:'A semaphore is used for?',opts:['Memory management','Process synchronization','File management','I/O control'],ans:1},
+    {q:'Which page replacement algorithm replaces the least recently used page?',opts:['FIFO','Optimal','LRU','MFU'],ans:2},
+    {q:'Thrashing occurs when?',opts:['CPU is idle','Too much time is spent paging rather than executing','Memory is full','Disk is corrupted'],ans:1},
+    {q:'The critical section problem involves?',opts:['CPU scheduling','Mutual exclusion for shared resources','Memory allocation','File I/O'],ans:1},
+    {q:'Fragmentation in memory is of how many types?',opts:['1','2','3','4'],ans:1},
+    {q:'A process in the waiting state is waiting for?',opts:['CPU','I/O or an event','Memory','Termination'],ans:1},
+    {q:'Which OS scheduling algorithm may cause starvation?',opts:['Round Robin','FCFS','Priority Scheduling','SJF'],ans:2},
+    {q:'A kernel is?',opts:['The user interface','Core of OS managing resources','An application','A hardware component'],ans:1},
+    {q:'Paging divides memory into?',opts:['Segments','Fixed-size pages and frames','Variable blocks','Sectors'],ans:1},
+    {q:'Which is NOT an OS service?',opts:['File management','Memory management','Compiling programs','Device management'],ans:2},
+    {q:'A thread is?',opts:['A separate process','Lightweight unit of execution within a process','A type of memory','A file'],ans:1},
+    {q:'Banker\'s algorithm is used for?',opts:['Memory allocation','Deadlock avoidance','CPU scheduling','File management'],ans:1},
+    {q:'Fork() system call creates?',opts:['A thread','A file','A child process','A socket'],ans:2},
+    {q:'Inode in Unix contains?',opts:['File name','File metadata (not name)','Directory listing','User passwords'],ans:1},
+    {q:'Spooling is used for managing?',opts:['CPU','Slow I/O devices like printers','Memory','Network'],ans:1},
+    {q:'The state of a process just created is called?',opts:['Running','Ready','New','Blocked'],ans:2},
+    {q:'Context switching is?',opts:['Switching programming languages','Saving and restoring process state when switching CPU','Changing memory pages','Switching users'],ans:1},
+    {q:'Demand paging loads pages?',opts:['All at once on start','Only when needed','Randomly','Based on priority'],ans:1},
+    {q:'A zombie process is?',opts:['A process consuming high CPU','Terminated but still in process table','A virus','A sleeping process'],ans:1},
+    {q:'The Dining Philosophers problem illustrates?',opts:['Memory management','Deadlock and starvation in concurrent systems','CPU scheduling','File systems'],ans:1},
+  ],
+
+  'Calculus II': [
+  {q:'The derivative of sin x is?',opts:['cos x','-cos x','sin x','-sin x'],ans:0},
+  {q:'∫ x dx equals?',opts:['x²/2 + C','x + C','2x + C','x² + C'],ans:0},
+  {q:'The limit of (sin x)/x as x→0 is?',opts:['0','1','∞','-1'],ans:1},
+  {q:'A function is continuous if?',opts:['No breaks in graph','Derivative is zero','Integral is zero','Slope is infinite'],ans:0},
+  {q:'Derivative of e^x is?',opts:['e^x','x e^x','1','0'],ans:0},
+  {q:'Second derivative represents?',opts:['Rate of change of slope','Area','Volume','Limit'],ans:0},
+  {q:'∫ 1/x dx equals?',opts:['ln x + C','x ln x','1/x²','e^x'],ans:0},
+  {q:'Maxima and minima are found using?',opts:['Differentiation','Integration','Multiplication','Division'],ans:0},
+  {q:'Chain rule is used for?',opts:['Composite functions','Matrices','Limits','Vectors'],ans:0},
+  {q:'If f(x)=x², then f\'(x)=?',opts:['x','2x','x²','2'],ans:1},
+  {q:'∫ cos x dx equals?',opts:['sin x + C','-sin x + C','cos x','-cos x'],ans:0},
+  {q:'A stationary point occurs when?',opts:['Derivative = 0','Function = 0','Integral = 0','Slope = 1'],ans:0},
+  {q:'Taylor series is used for?',opts:['Function approximation','Sorting','Encryption','Compression'],ans:0},
+  {q:'∫ e^x dx equals?',opts:['e^x + C','x e^x','1','0'],ans:0},
+  {q:'If slope is positive, function is?',opts:['Increasing','Decreasing','Constant','Undefined'],ans:0},
+  {q:'Partial derivatives are used for?',opts:['Multivariable functions','Single variable only','Matrices','Graphs'],ans:0},
+  {q:'Definite integral gives?',opts:['Area under curve','Slope','Point','Vector'],ans:0},
+  {q:'Integration is reverse of?',opts:['Differentiation','Multiplication','Addition','Limit'],ans:0},
+  {q:'If f(x)=constant, derivative is?',opts:['0','1','x','∞'],ans:0},
+  {q:'Gradient represents?',opts:['Rate of change','Area','Volume','Time'],ans:0},
+  {q:'Critical points are where?',opts:['Derivative = 0','Function = 1','Integral = 0','Slope = ∞'],ans:0},
+  {q:'Mean Value Theorem relates?',opts:['Derivative and function','Area and volume','Matrix and vector','Limit and series'],ans:0},
+  {q:'If f(x)=x³, derivative is?',opts:['3x²','x²','3x','x³'],ans:0},
+  {q:'Integral of constant k is?',opts:['kx + C','k/x','k²','0'],ans:0},
+  {q:'L\'Hospital rule is used for?',opts:['Indeterminate forms','Matrices','Graphs','Sorting'],ans:0},
+],
+
+  'Microprocessor and Assembly Language': [
+  {q:'Microprocessor is?',opts:['CPU on a chip','RAM module','Hard disk','Monitor'],ans:0},
+  {q:'8085 is a?',opts:['Microprocessor','Compiler','Router','OS'],ans:0},
+  {q:'Assembly language is?',opts:['Low-level language','High-level language','Markup language','Database'],ans:0},
+  {q:'Opcode means?',opts:['Operation code','Open code','Output code','Object code'],ans:0},
+  {q:'Accumulator is used for?',opts:['Arithmetic operations','Storage only','Display','Networking'],ans:0},
+  {q:'Program counter stores?',opts:['Next instruction address','Data','Result','Opcode'],ans:0},
+  {q:'ALU performs?',opts:['Arithmetic and logic operations','Storage','Input','Output'],ans:0},
+  {q:'Registers are?',opts:['Fast storage locations','Hard disks','Software','Networks'],ans:0},
+  {q:'Machine language is?',opts:['Binary code','English text','Assembly only','HTML'],ans:0},
+  {q:'Instruction cycle includes?',opts:['Fetch-decode-execute','Compile-run-save','Input-output-store','Link-load-run'],ans:0},
+  {q:'Addressing mode defines?',opts:['How operand is accessed','CPU speed','Memory size','Voltage'],ans:0},
+  {q:'Immediate addressing uses?',opts:['Constant value','Memory address','Register only','Stack only'],ans:0},
+  {q:'Interrupt is?',opts:['Signal to CPU','Program error','Memory type','Compiler rule'],ans:0},
+  {q:'8085 has how many address lines?',opts:['16','8','32','64'],ans:0},
+  {q:'Stack follows?',opts:['LIFO','FIFO','Random','Priority'],ans:0},
+  {q:'CALL instruction is used for?',opts:['Subroutine call','Looping','Stopping CPU','Data transfer'],ans:0},
+  {q:'RET instruction means?',opts:['Return from subroutine','Restart CPU','Reset memory','Run program'],ans:0},
+  {q:'Flags register stores?',opts:['Status of operations','Data','Instructions','Address'],ans:0},
+  {q:'MOV instruction is used for?',opts:['Data transfer','Addition','Jump','Compare'],ans:0},
+  {q:'Halt instruction stops?',opts:['CPU execution','Memory','Disk','Network'],ans:0},
+  {q:'Assembler converts?',opts:['Assembly to machine code','High-level to assembly','Binary to text','Code to image'],ans:0},
+  {q:'Zero flag is set when?',opts:['Result is zero','Overflow occurs','Carry occurs','Negative result'],ans:0},
+  {q:'Program execution starts from?',opts:['Memory address 0000H','Random address','Stack','Register'],ans:0},
+  {q:'Microprocessor communicates using?',opts:['Bus system','Wi-Fi','Bluetooth','USB only'],ans:0},
+],
+
+  'Computer Graphics': [
+  {q:'Computer graphics deals with?',opts:['Images and visuals','Networks','Databases','Compilers'],ans:0},
+  {q:'Pixel is?',opts:['Smallest picture element','CPU unit','Memory block','Network packet'],ans:0},
+  {q:'2D graphics involve?',opts:['X and Y axis','3 axes','4 axes','Time only'],ans:0},
+  {q:'Raster graphics use?',opts:['Pixels','Vectors','Lines only','Graphs'],ans:0},
+  {q:'Vector graphics use?',opts:['Mathematical equations','Pixels only','Bitmaps','Noise'],ans:0},
+  {q:'Resolution refers to?',opts:['Detail level of image','CPU speed','Memory size','Network speed'],ans:0},
+  {q:'Scan conversion is?',opts:['Mapping object to pixels','Compiling code','Storing data','Encrypting image'],ans:0},
+  {q:'Line drawing algorithm example?',opts:['Bresenham','Dijkstra','Floyd','Merge sort'],ans:0},
+  {q:'Circle drawing uses?',opts:['Midpoint algorithm','Quick sort','Stack','Queue'],ans:0},
+  {q:'Translation means?',opts:['Moving object','Rotating object','Scaling object','Deleting object'],ans:0},
+  {q:'Scaling changes?',opts:['Size of object','Color','Position only','Shape only'],ans:0},
+  {q:'Rotation is about?',opts:['Axis','Pixel','Memory','Bus'],ans:0},
+  {q:'Clipping is?',opts:['Cutting part of image','Drawing line','Scaling image','Saving file'],ans:0},
+  {q:'Window-to-viewport mapping is used for?',opts:['Display transformation','Encryption','Storage','Networking'],ans:0},
+  {q:'Bezier curves are used for?',opts:['Smooth curves','Lines only','Squares','Text only'],ans:0},
+  {q:'Color models include?',opts:['RGB','CPU','RAM','OS'],ans:0},
+  {q:'Scan line algorithm is used for?',opts:['Polygon filling','Sorting','Searching','Compression'],ans:0},
+  {q:'Frame buffer stores?',opts:['Image data','Audio','Code','Instructions'],ans:0},
+  {q:'Anti-aliasing reduces?',opts:['Jagged edges','Speed','Memory','Voltage'],ans:0},
+  {q:'Z-buffer is used for?',opts:['Depth handling','Color storage','Audio processing','Networking'],ans:0},
+  {q:'2D transformation matrix is used for?',opts:['Image manipulation','Compilation','Encryption','Sorting'],ans:0},
+  {q:'Projection converts?',opts:['3D to 2D','2D to 3D','Binary to text','Image to audio'],ans:0},
+  {q:'Orthographic projection is?',opts:['Parallel projection','Perspective only','Random view','None'],ans:0},
+  {q:'Graphics pipeline includes?',opts:['Stages of rendering','CPU only','RAM only','Network flow'],ans:0},
+],
+
+  'Data Communication': [
+  {q:'Data communication is?',opts:['Exchange of data between devices','Programming','Drawing','Compilation'],ans:0},
+  {q:'Transmission medium is?',opts:['Channel for data transfer','CPU','RAM','Software'],ans:0},
+  {q:'Bandwidth refers to?',opts:['Data transfer capacity','Storage','Voltage','Color depth'],ans:0},
+  {q:'Analog signal is?',opts:['Continuous signal','Discrete signal','Binary only','Digital code'],ans:0},
+  {q:'Digital signal is?',opts:['Binary form','Continuous wave','Sound only','Image only'],ans:0},
+  {q:'Modulation is?',opts:['Converting signal for transmission','Storing data','Deleting data','Compiling'],ans:0},
+  {q:'Demodulation is?',opts:['Recovering original signal','Encrypting data','Sending signal','Blocking noise'],ans:0},
+  {q:'Noise affects?',opts:['Signal quality','CPU speed','Memory size','Storage'],ans:0},
+  {q:'Error detection uses?',opts:['Parity bits','Sorting','Stack','Queue'],ans:0},
+  {q:'Protocol is?',opts:['Rules for communication','Hardware','Software only','Memory'],ans:0},
+  {q:'TCP ensures?',opts:['Reliable communication','Fast only','Unsecured transfer','Random transfer'],ans:0},
+  {q:'UDP is?',opts:['Connectionless protocol','Reliable protocol','Routing protocol','Encryption protocol'],ans:0},
+  {q:'Multiplexing combines?',opts:['Multiple signals','Single signal','Images','Files'],ans:0},
+  {q:'Switching technique includes?',opts:['Circuit switching','CPU switching','File switching','Memory switching'],ans:0},
+  {q:'OSI model has layers?',opts:['7','5','6','8'],ans:0},
+  {q:'Physical layer deals with?',opts:['Hardware transmission','Software','Encryption','Applications'],ans:0},
+  {q:'Data link layer handles?',opts:['Frame transmission','Routing','Encryption','Compression'],ans:0},
+  {q:'IP address identifies?',opts:['Device on network','User','File','Program'],ans:0},
+  {q:'MAC address is?',opts:['Hardware address','Software address','IP only','DNS'],ans:0},
+  {q:'Router works at?',opts:['Network layer','Physical layer','Application layer','Session layer'],ans:0},
+  {q:'Switch works at?',opts:['Data link layer','Network layer','Transport layer','Session layer'],ans:0},
+  {q:'Fiber optic uses?',opts:['Light signals','Electrical signals','Magnetic waves','Sound waves'],ans:0},
+  {q:'Latency means?',opts:['Delay in transmission','Speed increase','Storage size','Bandwidth'],ans:0},
+  {q:'Packet switching divides data into?',opts:['Packets','Frames','Bits','Bytes'],ans:0},
+  {q:'Checksum is used for?',opts:['Error detection','Encryption','Routing','Storage'],ans:0},
+],
+
+  // ── SEMESTER 4 ──────────────────────────────────────────────
+  'Applied Mathematics': [
+  {q:'Laplace transform is used to convert?',opts:['Time domain to frequency domain','Space to time','Binary to decimal','Matrix to vector'],ans:0},
+  {q:'A differential equation contains?',opts:['Derivatives','Only constants','Only variables','Only matrices'],ans:0},
+  {q:'Order of differential equation is?',opts:['Highest derivative order','Number of terms','Number of solutions','Degree only'],ans:0},
+  {q:'Partial derivatives are used for?',opts:['Functions of multiple variables','Single variable functions','Matrices','Graphs only'],ans:0},
+  {q:'Integration gives?',opts:['Area under curve','Slope','Point','Vector'],ans:0},
+  {q:'If f(x)=x², derivative is?',opts:['2x','x','x²','2'],ans:0},
+  {q:'Matrix multiplication is?',opts:['Non-commutative','Commutative','Always equal','Undefined'],ans:0},
+  {q:'Eigenvalues are associated with?',opts:['Matrices','Graphs','Signals','Networks'],ans:0},
+  {q:'Determinant of singular matrix is?',opts:['0','1','-1','Infinity'],ans:0},
+  {q:'Rank of matrix represents?',opts:['Linearly independent rows/columns','Total elements','Diagonal sum','Trace'],ans:0},
+  {q:'Taylor series is used for?',opts:['Function approximation','Sorting','Encryption','Networking'],ans:0},
+  {q:'Gradient represents?',opts:['Rate of change','Memory','Speed','Data flow'],ans:0},
+  {q:'Maxima and minima are found using?',opts:['First and second derivatives','Integration','Matrices','Limits'],ans:0},
+  {q:'Vector space contains?',opts:['Vectors','Images','Signals','Files'],ans:0},
+  {q:'Probability is always between?',opts:['0 and 1','-1 and 1','1 and 10','0 and 100'],ans:0},
+  {q:'Mean value theorem relates?',opts:['Derivative and function','Matrix and vector','Signal and noise','Time and space'],ans:0},
+  {q:'Limit of function defines?',opts:['Approach value','Exact value','Derivative','Integral'],ans:0},
+  {q:'Complex number modulus is?',opts:['Distance from origin','Angle','Sum','Difference'],ans:0},
+  {q:'Vector dot product gives?',opts:['Scalar','Vector','Matrix','Tensor'],ans:0},
+  {q:'Cross product gives?',opts:['Vector','Scalar','Matrix','Number'],ans:0},
+  {q:'Linear independence means?',opts:['No vector is combination of others','All equal','All zero','Dependent'],ans:0},
+  {q:'Orthogonal vectors have dot product?',opts:['0','1','-1','Infinity'],ans:0},
+  {q:'Derivative of constant is?',opts:['0','1','Constant','Variable'],ans:0},
+  {q:'Integration is reverse of?',opts:['Differentiation','Multiplication','Addition','Division'],ans:0},
+  {q:'Jacobian is used for?',opts:['Variable transformation','Sorting','Compression','Networking'],ans:0},
+],
+
+  'Numerical Methods': [
+  {q:'Numerical methods are used for?',opts:['Approximate solutions','Exact solutions only','Hardware design','Networking'],ans:0},
+  {q:'Bisection method is used to find?',opts:['Root of equation','Matrix inverse','Derivative','Integral'],ans:0},
+  {q:'Newton-Raphson method is based on?',opts:['Derivatives','Integration','Sorting','Graphs'],ans:0},
+  {q:'Error in numerical methods means?',opts:['Difference from exact value','Speed','Memory','Input'],ans:0},
+  {q:'Trapezoidal rule is used for?',opts:['Integration','Differentiation','Sorting','Coding'],ans:0},
+  {q:'Simpson\'s rule improves?',opts:['Accuracy of integration','Speed','Memory','Noise'],ans:0},
+  {q:'Iteration means?',opts:['Repeated computation','Single step','Random process','Final result'],ans:0},
+  {q:'Convergence means?',opts:['Approaching solution','Diverging','Random output','No solution'],ans:0},
+  {q:'Floating point error is due to?',opts:['Rounding','Hardware failure','Input error','Network error'],ans:0},
+  {q:'Gauss elimination is used for?',opts:['Solving linear equations','Integration','Sorting','Compression'],ans:0},
+  {q:'Matrix inversion finds?',opts:['Inverse matrix','Transpose','Determinant','Rank'],ans:0},
+  {q:'LU decomposition splits matrix into?',opts:['Lower and upper matrices','Diagonal only','Row only','Column only'],ans:0},
+  {q:'Interpolation estimates?',opts:['Unknown values','Exact values','Random values','Errors'],ans:0},
+  {q:'Extrapolation is?',opts:['Beyond data range estimation','Inside range','Sorting','Filtering'],ans:0},
+  {q:'Taylor series is used for?',opts:['Approximation','Encryption','Sorting','Networking'],ans:0},
+  {q:'Absolute error is?',opts:['|Exact - Approx|','Sum','Product','Ratio'],ans:0},
+  {q:'Relative error is?',opts:['Error/Exact value','Exact value/Error','Sum','Difference'],ans:0},
+  {q:'Secant method does not require?',opts:['Derivative','Root','Matrix','Vector'],ans:0},
+  {q:'Fixed point iteration uses?',opts:['Repeated substitution','Matrix inversion','Sorting','Graphing'],ans:0},
+  {q:'Numerical stability means?',opts:['Small error growth','Large error','Random output','No output'],ans:0},
+  {q:'Root finding means?',opts:['Solving equation','Integration','Sorting','Coding'],ans:0},
+  {q:'Polynomial interpolation uses?',opts:['Polynomials','Matrices','Graphs','Signals'],ans:0},
+  {q:'Round-off error affects?',opts:['Precision','Speed','Memory','Bandwidth'],ans:0},
+  {q:'Truncation error is due to?',opts:['Cutting series','Hardware failure','Input error','Noise'],ans:0},
+],
+
+  'Advanced Programming with Java': [
+  {q:'Java is?',opts:['Object-oriented language','Machine language','Assembly','Database'],ans:0},
+  {q:'JVM stands for?',opts:['Java Virtual Machine','Java Variable Model','Joint Virtual Memory','Java Verified Module'],ans:0},
+  {q:'Inheritance means?',opts:['Acquiring properties of class','Deleting class','Creating file','Looping'],ans:0},
+  {q:'Polymorphism means?',opts:['Many forms','Single form','No form','Memory reuse'],ans:0},
+  {q:'Encapsulation means?',opts:['Data hiding','Data sharing','Data deletion','Compilation'],ans:0},
+  {q:'Constructor is used for?',opts:['Initializing object','Deleting object','Looping','Compiling'],ans:0},
+  {q:'Method overloading is?',opts:['Same method name different parameters','Same output','Same class','Same object'],ans:0},
+  {q:'Exception handling uses?',opts:['try-catch','if-else','switch','loop'],ans:0},
+  {q:'Array in Java is?',opts:['Collection of same type elements','Different types','Random data','Object only'],ans:0},
+  {q:'String is?',opts:['Sequence of characters','Number','Class only','File'],ans:0},
+  {q:'Interface is?',opts:['Blueprint of class','Object','Variable','Loop'],ans:0},
+  {q:'Abstract class is?',opts:['Partially implemented class','Full class','Object','Method'],ans:0},
+  {q:'Thread is?',opts:['Lightweight process','Heavy process','File','Memory'],ans:0},
+  {q:'Garbage collection is?',opts:['Memory cleanup','Compilation','Execution','Networking'],ans:0},
+  {q:'Package is used for?',opts:['Grouping classes','Deleting files','Running programs','Looping'],ans:0},
+  {q:'Static keyword means?',opts:['Belongs to class','Object only','Memory free','Random'],ans:0},
+  {q:'Final keyword means?',opts:['Cannot be changed','Can change','Loop','Function'],ans:0},
+  {q:'Method is?',opts:['Block of code','Variable','Class','Object'],ans:0},
+  {q:'Object is?',opts:['Instance of class','Function','Loop','File'],ans:0},
+  {q:'Compilation in Java produces?',opts:['Bytecode','Machine code','HTML','Text'],ans:0},
+  {q:'JDK includes?',opts:['JVM + libraries','Only compiler','Only runtime','Only editor'],ans:0},
+  {q:'Constructor overloading is?',opts:['Multiple constructors','Single constructor','No constructor','Static constructor'],ans:0},
+  {q:'This keyword refers to?',opts:['Current object','Parent object','Class name','Method'],ans:0},
+  {q:'Super keyword refers to?',opts:['Parent class','Child class','Method','Variable'],ans:0},
+],
+
+  'Theory of Computation': [
+  {q:'Automata theory deals with?',opts:['Abstract machines','Hardware','Networks','Databases'],ans:0},
+  {q:'Finite automata has?',opts:['Finite states','Infinite states','No states','Random states'],ans:0},
+  {q:'DFA stands for?',opts:['Deterministic Finite Automata','Data Flow Algorithm','Dynamic Function Array','Digital File Access'],ans:0},
+  {q:'NFA allows?',opts:['Multiple transitions','Single transition','No transition','Fixed transition'],ans:0},
+  {q:'Regular languages are accepted by?',opts:['Finite automata','Turing machine','Compiler','OS'],ans:0},
+  {q:'Grammar defines?',opts:['Language rules','Hardware','Memory','Network'],ans:0},
+  {q:'CFG stands for?',opts:['Context Free Grammar','Code Flow Graph','Control Function Generator','Class File Generator'],ans:0},
+  {q:'Turing machine is?',opts:['Computational model','Hardware device','OS','Compiler'],ans:0},
+  {q:'Accepting state means?',opts:['Final valid state','Error state','Initial state','Random state'],ans:0},
+  {q:'Language in TOC is?',opts:['Set of strings','Set of numbers','Hardware','Program'],ans:0},
+  {q:'Pushdown automata uses?',opts:['Stack','Queue','Array','Graph'],ans:0},
+  {q:'Regular expression defines?',opts:['Pattern','Algorithm','Memory','Hardware'],ans:0},
+  {q:'Chomsky hierarchy includes?',opts:['Types of grammars','Hardware levels','OS types','Networks'],ans:0},
+  {q:'Recursive language is?',opts:['Decidable language','Undecidable','Random','Hardware'],ans:0},
+  {q:'Halting problem is?',opts:['Undecidable problem','Simple problem','Sorting problem','Graph problem'],ans:0},
+  {q:'Transition function defines?',opts:['State change','Memory size','Speed','Input'],ans:0},
+  {q:'Alphabet in TOC is?',opts:['Set of symbols','Numbers only','Machines','Programs'],ans:0},
+  {q:'String is?',opts:['Finite sequence of symbols','Number','Graph','Machine'],ans:0},
+  {q:'Empty string is represented by?',opts:['ε','0','1','null'],ans:0},
+  {q:'Closure property means?',opts:['Result stays in language set','Outside set','Random output','No output'],ans:0},
+  {q:'Equivalent automata means?',opts:['Same language','Same size','Same speed','Same memory'],ans:0},
+  {q:'Minimization reduces?',opts:['States','Speed','Memory','Input'],ans:0},
+  {q:'CFG produces?',opts:['Strings','Machines','Hardware','Networks'],ans:0},
+  {q:'Decidable problem has?',opts:['Algorithm solution','No solution','Random output','Infinite loops'],ans:0},
+],
+
+  'Computer Architecture': [
+  {q:'Computer architecture defines?',opts:['Structure and behavior','Software only','Database only','Networking only'],ans:0},
+  {q:'CPU stands for?',opts:['Central Processing Unit','Control Program Unit','Central Program Utility','Core Processing Unit'],ans:0},
+  {q:'ALU performs?',opts:['Arithmetic and logic operations','Storage','Input','Output'],ans:0},
+  {q:'Control unit manages?',opts:['Execution of instructions','Memory only','Display','Network'],ans:0},
+  {q:'Registers are?',opts:['Fast storage in CPU','Hard disk','External memory','Cache only'],ans:0},
+  {q:'Cache memory is?',opts:['Fast memory','Slow memory','External storage','Virtual disk'],ans:0},
+  {q:'Pipeline improves?',opts:['Instruction throughput','Memory size','Disk speed','Network speed'],ans:0},
+  {q:'RISC stands for?',opts:['Reduced Instruction Set Computer','Random Instruction System Code','Rapid Input System Control','Real Integrated System Code'],ans:0},
+  {q:'CISC stands for?',opts:['Complex Instruction Set Computer','Central Instruction System Code','Computer Integrated System','Core Instruction Set'],ans:0},
+  {q:'Bus system transfers?',opts:['Data between components','Power only','Graphics only','Audio only'],ans:0},
+  {q:'Instruction cycle includes?',opts:['Fetch-decode-execute','Run-save-stop','Input-output-store','Link-load-run'],ans:0},
+  {q:'Memory hierarchy is based on?',opts:['Speed and cost','Color','Size only','Voltage'],ans:0},
+  {q:'RAM is?',opts:['Volatile memory','Permanent memory','Read-only','Cache only'],ans:0},
+  {q:'ROM is?',opts:['Non-volatile memory','Volatile memory','Cache memory','Register'],ans:0},
+  {q:'I/O devices are?',opts:['Input and output devices','CPU only','Memory only','Software'],ans:0},
+  {q:'Interrupt is?',opts:['Signal to CPU','Memory error','Code bug','Network packet'],ans:0},
+  {q:'DMA stands for?',opts:['Direct Memory Access','Data Memory Allocation','Digital Memory Array','Direct Module Access'],ans:0},
+  {q:'Pipelining increases?',opts:['Performance','Memory size','Disk space','Power'],ans:0},
+  {q:'Instruction set is?',opts:['Set of CPU instructions','Software list','Hardware only','Network rules'],ans:0},
+  {q:'Address bus carries?',opts:['Memory addresses','Data','Control signals','Power'],ans:0},
+  {q:'Data bus carries?',opts:['Data','Addresses','Instructions only','Power'],ans:0},
+  {q:'Control bus carries?',opts:['Control signals','Data','Memory','Files'],ans:0},
+  {q:'Clock speed is measured in?',opts:['Hz','Bytes','Pixels','Bits'],ans:0},
+  {q:'Harvard architecture uses?',opts:['Separate memory for data and instructions','Single memory','No memory','Cache only'],ans:0},
+],
+
+  'Research Fundamentals': [
+  {q:'Research is?',opts:['Systematic investigation','Random guessing','Coding','Networking'],ans:0},
+  {q:'Hypothesis is?',opts:['Proposed explanation','Final result','Data set','Tool'],ans:0},
+  {q:'Literature review means?',opts:['Studying existing work','Writing code','Designing hardware','Testing OS'],ans:0},
+  {q:'Primary data is?',opts:['Collected first-hand','Already existing','Copied data','Random data'],ans:0},
+  {q:'Secondary data is?',opts:['Already existing data','Fresh data','Sensor data','Experimental data'],ans:0},
+  {q:'Sampling means?',opts:['Selecting subset of population','Full data collection','Deleting data','Sorting data'],ans:0},
+  {q:'Questionnaire is used for?',opts:['Data collection','Programming','Networking','Compilation'],ans:0},
+  {q:'Research paper includes?',opts:['Methodology and results','Only code','Only images','Only tables'],ans:0},
+  {q:'Plagiarism is?',opts:['Copying without credit','Writing original work','Data analysis','Experiment'],ans:0},
+  {q:'Conclusion is?',opts:['Final summary','Initial idea','Data collection','Hypothesis'],ans:0},
+  {q:'Variable in research is?',opts:['Factor that changes','Constant','Tool','Method'],ans:0},
+  {q:'Independent variable is?',opts:['Controlled factor','Result','Noise','Error'],ans:0},
+  {q:'Dependent variable is?',opts:['Outcome','Input','Constant','Method'],ans:0},
+  {q:'Correlation shows?',opts:['Relationship','Causation','Noise','Error'],ans:0},
+  {q:'Causation means?',opts:['Cause-effect relationship','Random relation','No relation','Noise'],ans:0},
+  {q:'Data analysis is?',opts:['Interpreting data','Collecting hardware','Coding OS','Building networks'],ans:0},
+  {q:'Qualitative data is?',opts:['Non-numerical','Numerical','Binary only','Matrix'],ans:0},
+  {q:'Quantitative data is?',opts:['Numerical','Text only','Image only','Sound only'],ans:0},
+  {q:'Research methodology is?',opts:['Plan of study','Random steps','Code structure','Network design'],ans:0},
+  {q:'Experiment is?',opts:['Controlled study','Random guess','Software test','Hardware design'],ans:0},
+  {q:'Report writing is?',opts:['Documenting research','Coding','Networking','Designing'],ans:0},
+  {q:'Validity means?',opts:['Accuracy of measurement','Speed','Memory','Cost'],ans:0},
+  {q:'Reliability means?',opts:['Consistency of results','Random output','Noise','Error'],ans:0},
+  {q:'Ethics in research means?',opts:['Moral guidelines','Speed rules','Coding rules','Network rules'],ans:0},
+],
+
+  // ── SEMESTER 5 ──────────────────────────────────────────────
+  'Artificial Intelligence': [
+    {q:'AI stands for?',opts:['Automated Intelligence','Artificial Intelligence','Automatic Integration','Applied Intelligence'],ans:1},
+    {q:'Which search algorithm is guaranteed to find the optimal solution?',opts:['DFS','BFS','A*','Greedy'],ans:2},
+    {q:'Machine learning is a subset of?',opts:['Statistics','Robotics','AI','Software Engineering'],ans:2},
+    {q:'Supervised learning requires?',opts:['Labeled data','Unlabeled data','No data','Only test data'],ans:0},
+    {q:'A neural network is inspired by?',opts:['Computer circuits','Human brain neurons','DNA structure','Solar system'],ans:1},
+    {q:'Overfitting means a model?',opts:['Performs well on training and test data','Performs well on training but poorly on new data','Performs poorly everywhere','Has too few parameters'],ans:1},
+    {q:'Which algorithm is used in decision trees?',opts:['Gradient descent','Information gain / Gini impurity','Backpropagation','Convolution'],ans:1},
+    {q:'Natural Language Processing deals with?',opts:['Image recognition','Understanding and generating human language','Robot movement','Sound processing'],ans:1},
+    {q:'The Turing Test evaluates?',opts:['Speed of a computer','Whether a machine can exhibit intelligent behavior indistinguishable from a human','Robot navigation','Database performance'],ans:1},
+    {q:'Reinforcement learning uses?',opts:['Labeled examples','Rewards and penalties','Clustering','Regression'],ans:1},
+    {q:'K-Nearest Neighbors is a?',opts:['Supervised algorithm','Unsupervised algorithm','Reinforcement algorithm','Search algorithm'],ans:0},
+    {q:'Which of these is an unsupervised learning algorithm?',opts:['Linear Regression','Decision Tree','K-Means Clustering','SVM'],ans:2},
+    {q:'The activation function in neural networks introduces?',opts:['Linearity','Non-linearity','Randomness','Symmetry'],ans:1},
+    {q:'Backpropagation is used to?',opts:['Initialize weights','Forward pass data','Update weights by computing gradients','Predict output'],ans:2},
+    {q:'Expert systems use?',opts:['Neural networks','If-then rules and knowledge base','Clustering','Random forests'],ans:1},
+    {q:'The heuristic in A* search estimates?',opts:['Actual cost from start','Cost from current node to goal','Total path length','Number of nodes'],ans:1},
+    {q:'Deep learning uses?',opts:['Shallow networks','Multi-layer neural networks','Decision trees','Bayesian models'],ans:1},
+    {q:'A confusion matrix is used to evaluate?',opts:['Clustering performance','Classification performance','Regression accuracy','Search efficiency'],ans:1},
+    {q:'Which optimization algorithm is most commonly used in deep learning?',opts:['Newton\'s method','Gradient Descent','Simplex method','Dynamic programming'],ans:1},
+    {q:'Transfer learning means?',opts:['Moving data between systems','Using a pre-trained model on a new task','Transferring files','Network migration'],ans:1},
+    {q:'CNN stands for?',opts:['Convolutional Neural Network','Computed Neural Node','Central Neural Network','Cyclic Neural Net'],ans:0},
+    {q:'Minimax algorithm is used in?',opts:['Search problems','Game playing (two-player games)','Clustering','Regression'],ans:1},
+    {q:'Recall in classification measures?',opts:['Precision of positive predictions','Proportion of actual positives correctly identified','Overall accuracy','F1 score'],ans:1},
+    {q:'Which of these is a probabilistic graphical model?',opts:['Decision Tree','Bayesian Network','K-Means','Linear Regression'],ans:1},
+    {q:'Bias-variance tradeoff means?',opts:['High bias leads to overfitting','High variance leads to underfitting','Reducing one often increases the other','They are independent'],ans:2},
+  ],
+
+  'Software Engineering': [
+    {q:'SDLC stands for?',opts:['System Development Life Cycle','Software Design Level Concept','System Design Logic Component','Software Development Life Cycle'],ans:3},
+    {q:'Which SDLC model is sequential and linear?',opts:['Agile','Spiral','Waterfall','Scrum'],ans:2},
+    {q:'Agile methodology emphasizes?',opts:['Heavy documentation','Fixed requirements','Iterative development and customer collaboration','Long planning phases'],ans:2},
+    {q:'A use case diagram shows?',opts:['Database schema','Interaction between actors and the system','Code flow','Network topology'],ans:1},
+    {q:'Unit testing tests?',opts:['The entire system','Individual components or functions','User interface','Database'],ans:1},
+    {q:'A software requirement specification (SRS) document describes?',opts:['Code structure','What the system should do','Implementation details','Test cases only'],ans:1},
+    {q:'Cohesion in software design refers to?',opts:['Coupling between modules','How closely related elements within a module are','Size of a module','Number of functions'],ans:1},
+    {q:'High coupling is?',opts:['Desirable','Undesirable — increases dependency','Neutral','Related only to databases'],ans:1},
+    {q:'Version control systems like Git are used to?',opts:['Deploy software','Track changes in source code','Test software','Design UI'],ans:1},
+    {q:'A bug in software is?',opts:['A feature','A security protocol','An error or flaw in the program','A design pattern'],ans:2},
+    {q:'Black box testing focuses on?',opts:['Internal code structure','Input and output behavior without knowing internals','Database testing','Only UI testing'],ans:1},
+    {q:'White box testing focuses on?',opts:['Input/output only','Internal logic and code structure','UI behavior','Random testing'],ans:1},
+    {q:'The Scrum framework uses?',opts:['Waterfall phases','Sprints (short iterations)','Only planning documents','No documentation'],ans:1},
+    {q:'A design pattern is?',opts:['A programming language','A reusable solution to a commonly occurring design problem','A testing technique','A database model'],ans:1},
+    {q:'MVC stands for?',opts:['Multiple View Controller','Model View Controller','Main View Component','Module Version Control'],ans:1},
+    {q:'Refactoring means?',opts:['Adding new features','Restructuring existing code without changing its behavior','Deleting code','Rewriting the system'],ans:1},
+    {q:'A prototype is used to?',opts:['Replace the final product','Get early feedback on design from users','Test database performance','Write documentation'],ans:1},
+    {q:'Regression testing ensures?',opts:['New features work','Previously working features still work after changes','Performance is optimized','UI looks correct'],ans:1},
+    {q:'A class diagram is part of?',opts:['ER diagram','UML (Unified Modeling Language)','Data Flow Diagram','Network diagram'],ans:1},
+    {q:'CI/CD stands for?',opts:['Code Inspection and Code Delivery','Continuous Integration and Continuous Deployment','Component Integration and Code Distribution','None'],ans:1},
+    {q:'A sprint in Agile lasts typically?',opts:['1 day','1 week','2-4 weeks','6 months'],ans:2},
+    {q:'Risk management in SE involves?',opts:['Ignoring risks','Identifying, analyzing, and mitigating risks','Only documenting risks','Avoiding all risks'],ans:1},
+    {q:'Software maintenance includes?',opts:['Only bug fixing','Bug fixing, adaptation, enhancement and preventive maintenance','Only new features','Only testing'],ans:1},
+    {q:'A feasibility study determines?',opts:['Code quality','Whether a proposed system is practical and viable','Test coverage','UI design'],ans:1},
+    {q:'The purpose of peer code review is?',opts:['To slow down development','To find defects and improve code quality','To assign blame','To document code'],ans:1},
+  ],
+
+  'Digital Signal Analysis and Processing': [
+  {q:'What does DSP stand for?',opts:['Digital Signal Processing','Data Signal Program','Digital System Processing','Dynamic Signal Processing'],ans:0},
+  {q:'A signal that varies continuously with time is called?',opts:['Digital signal','Analog signal','Binary signal','Discrete signal'],ans:1},
+  {q:'Sampling converts?',opts:['Digital signal to analog','Analog signal to discrete signal','Voltage to current','Noise to signal'],ans:1},
+  {q:'The Nyquist rate is?',opts:['Twice the highest frequency','Half the highest frequency','Equal to bandwidth','Infinite frequency'],ans:0},
+  {q:'Which transform converts time domain to frequency domain?',opts:['Laplace transform','Fourier transform','Z-transform','Hilbert transform'],ans:1},
+  {q:'A discrete signal exists at?',opts:['Continuous intervals','Specific intervals','Infinite values','No intervals'],ans:1},
+  {q:'Aliasing occurs when?',opts:['Oversampling','Undersampling','Filtering','Quantization'],ans:1},
+  {q:'Which filter passes low frequencies?',opts:['High-pass filter','Band-pass filter','Low-pass filter','Notch filter'],ans:2},
+  {q:'The output of ADC is?',opts:['Analog signal','Binary signal','Continuous wave','Current'],ans:1},
+  {q:'FFT stands for?',opts:['Fast Fourier Transform','Full Frequency Transfer','Fast Frequency Technique','Finite Fourier Transfer'],ans:0},
+  {q:'Which filter removes unwanted high frequencies?',opts:['Low-pass filter','High-pass filter','Band-stop filter','Comb filter'],ans:0},
+  {q:'Quantization is the process of?',opts:['Sampling amplitudes','Converting analog values to finite levels','Amplifying signal','Compressing data'],ans:1},
+  {q:'The basic unit of digital information is?',opts:['Byte','Bit','Word','Signal'],ans:1},
+  {q:'A system is stable if?',opts:['Output is bounded for bounded input','Output is always zero','Input equals output','Gain is infinite'],ans:0},
+  {q:'Convolution is used to?',opts:['Compress images','Find system output','Increase bandwidth','Reduce sampling'],ans:1},
+  {q:'Which transform is mainly used in DSP?',opts:['Z-transform','Taylor transform','Laplace transform','Mellin transform'],ans:0},
+  {q:'Noise in signals causes?',opts:['Improved clarity','Distortion','Amplification','Synchronization'],ans:1},
+  {q:'A band-pass filter allows?',opts:['Only low frequencies','Only high frequencies','Specific frequency range','No frequencies'],ans:2},
+  {q:'Digital signals are represented using?',opts:['Continuous values','Binary values','Analog waves','Mechanical motion'],ans:1},
+  {q:'The frequency domain represents?',opts:['Signal amplitude over time','Signal behavior over frequency','Voltage levels','Sampling intervals'],ans:1},
+  {q:'Which device converts digital to analog?',opts:['ADC','DAC','CPU','FFT'],ans:1},
+  {q:'The process of reducing sampling rate is?',opts:['Interpolation','Decimation','Modulation','Quantization'],ans:1},
+  {q:'Impulse response describes?',opts:['System output for impulse input','Signal power','Frequency bandwidth','Noise level'],ans:0},
+  {q:'An FIR filter stands for?',opts:['Finite Impulse Response','Fast Impulse Response','Fixed Input Response','Finite Input Range'],ans:0},
+  {q:'Which transform is useful for discrete-time systems?',opts:['Z-transform','Laplace transform','Fourier series','Taylor series'],ans:0},
+],
+
+  'Engineering Management': [
+  {q:'Management is mainly concerned with?',opts:['Planning and controlling','Programming','Drawing','Coding'],ans:0},
+  {q:'Which is the first function of management?',opts:['Controlling','Planning','Staffing','Directing'],ans:0},
+  {q:'What does SWOT stand for?',opts:['Strength Weakness Opportunity Threat','Software Work Office Technology','Simple Work Operation Test','None'],ans:0},
+  {q:'PERT stands for?',opts:['Program Evaluation Review Technique','Project Engineering Research Tool','Performance Evaluation Report Technique','Program Execution Research Theory'],ans:0},
+  {q:'Which chart is used for project scheduling?',opts:['Pie chart','Gantt chart','Bar graph','Histogram'],ans:1},
+  {q:'Leadership is the ability to?',opts:['Control machines','Influence people','Write reports','Prepare drawings'],ans:1},
+  {q:'Motivation improves?',opts:['Employee performance','Machine speed','Voltage','Production cost'],ans:0},
+  {q:'Decision making is a part of?',opts:['Planning','Maintenance','Programming','Drawing'],ans:0},
+  {q:'Which level of management is strategic?',opts:['Top level','Middle level','Lower level','Worker level'],ans:0},
+  {q:'The process of hiring employees is called?',opts:['Directing','Staffing','Controlling','Organizing'],ans:1},
+  {q:'Communication is important for?',opts:['Coordination','Decoration','Painting','Testing'],ans:0},
+  {q:'What is delegation?',opts:['Assigning authority','Removing workers','Hiring staff','Training employees'],ans:0},
+  {q:'Inventory management deals with?',opts:['Human resources','Stock control','Finance only','Marketing'],ans:1},
+  {q:'Which management style involves employee participation?',opts:['Autocratic','Democratic','Laissez-faire','Strict'],ans:1},
+  {q:'Risk management helps to?',opts:['Increase uncertainty','Reduce project risks','Delay projects','Reduce communication'],ans:1},
+  {q:'Budget is?',opts:['Technical drawing','Financial plan','Computer program','Network diagram'],ans:1},
+  {q:'Productivity measures?',opts:['Input only','Output only','Efficiency of production','Management salary'],ans:2},
+  {q:'Quality control ensures?',opts:['Low salaries','Product standards','Faster internet','Reduced staff'],ans:1},
+  {q:'Entrepreneurship involves?',opts:['Starting and managing business','Drawing diagrams','Programming only','Testing devices'],ans:0},
+  {q:'Time management improves?',opts:['Efficiency','Voltage','Noise','Bandwidth'],ans:0},
+  {q:'CPM stands for?',opts:['Critical Path Method','Control Program Method','Central Processing Management','Critical Process Machine'],ans:0},
+  {q:'Which skill is most important for managers?',opts:['Technical skill','Communication skill','Drawing skill','Typing skill'],ans:1},
+  {q:'Organizing means?',opts:['Arranging resources','Coding','Selling products','Operating machines'],ans:0},
+  {q:'A project has?',opts:['Temporary nature','Permanent structure','No goals','Unlimited time'],ans:0},
+  {q:'Controlling compares?',opts:['Actual performance with standards','Input with output','Cost with price','Staff with managers'],ans:0},
+],
+
+  'Embedded System': [
+  {q:'An embedded system is designed for?',opts:['General purpose tasks','Specific tasks','Gaming only','Networking only'],ans:1},
+  {q:'Which controller is commonly used in embedded systems?',opts:['Microcontroller','Printer','Scanner','Router'],ans:0},
+  {q:'Arduino is based on?',opts:['Microcontroller','CPU','GPU','Switch'],ans:0},
+  {q:'Which language is commonly used for embedded programming?',opts:['C','HTML','CSS','SQL'],ans:0},
+  {q:'ROM in embedded systems stores?',opts:['Temporary data','Permanent program','Input signals','Output signals'],ans:1},
+  {q:'A sensor in embedded system is used to?',opts:['Display output','Detect physical changes','Store data','Increase voltage'],ans:1},
+  {q:'Which operating system is used in embedded devices?',opts:['RTOS','Windows XP','DOS','UNIX only'],ans:0},
+  {q:'GPIO stands for?',opts:['General Purpose Input Output','Global Program Input Output','General Processing Interface','Graphic Port IO'],ans:0},
+  {q:'Embedded systems are found in?',opts:['Microwave ovens','Cars','Washing machines','All of these'],ans:3},
+  {q:'What is firmware?',opts:['Permanent software in hardware','Computer virus','Network cable','RAM storage'],ans:0},
+  {q:'A real-time system must?',opts:['Respond within deadline','Store huge data','Connect internet','Compile programs'],ans:0},
+  {q:'Which memory is volatile?',opts:['ROM','EEPROM','RAM','Flash'],ans:2},
+  {q:'Microcontrollers combine?',opts:['CPU, memory and I/O','Only CPU','Only memory','Only ports'],ans:0},
+  {q:'Which protocol is used for serial communication?',opts:['UART','HTTP','HTML','SMTP'],ans:0},
+  {q:'The brain of embedded system is?',opts:['Sensor','Microcontroller','Actuator','Display'],ans:1},
+  {q:'What is an actuator?',opts:['Input device','Output device producing action','Storage device','Network device'],ans:1},
+  {q:'I2C communication uses?',opts:['2 wires','4 wires','8 wires','1 wire'],ans:0},
+  {q:'SPI stands for?',opts:['Serial Peripheral Interface','System Port Interface','Signal Process Interface','Simple Peripheral Internet'],ans:0},
+  {q:'Embedded systems consume?',opts:['High power','Low power','Infinite power','No power'],ans:1},
+  {q:'EEPROM is?',opts:['Volatile memory','Non-volatile memory','Input device','Output device'],ans:1},
+  {q:'Which device converts analog signal to digital?',opts:['DAC','ADC','CPU','PWM'],ans:1},
+  {q:'PWM stands for?',opts:['Pulse Width Modulation','Power Wave Motion','Pulse Wave Method','Power Width Mechanism'],ans:0},
+  {q:'An example of embedded system is?',opts:['Traffic light controller','Desktop PC','Server','Laptop'],ans:0},
+  {q:'Interrupts are used for?',opts:['Ignoring events','Immediate response to events','Power supply','Memory allocation'],ans:1},
+  {q:'Real-time embedded systems prioritize?',opts:['Speed and timing','Graphics','Storage','Gaming'],ans:0},
+],
+
+  'Probability and Statistics': [
+  {q:'Probability value always lies between?',opts:['0 and 1','1 and 10','-1 and 1','0 and 100'],ans:0},
+  {q:'The mean of 2,4,6,8 is?',opts:['4','5','6','7'],ans:1},
+  {q:'Which measure represents middle value?',opts:['Mean','Median','Mode','Range'],ans:1},
+  {q:'The mode is?',opts:['Average value','Most frequent value','Middle value','Difference'],ans:1},
+  {q:'Variance measures?',opts:['Central tendency','Dispersion','Probability','Frequency'],ans:1},
+  {q:'Standard deviation is the square root of?',opts:['Mean','Variance','Median','Probability'],ans:1},
+  {q:'The probability of impossible event is?',opts:['0','1','0.5','Infinity'],ans:0},
+  {q:'The probability of certain event is?',opts:['0','0.5','1','100'],ans:2},
+  {q:'A coin has how many possible outcomes?',opts:['1','2','3','4'],ans:1},
+  {q:'The sum of probabilities of all outcomes is?',opts:['0','1','10','100'],ans:1},
+  {q:'Random variable is?',opts:['Fixed quantity','Variable with random outcomes','Constant number','Equation'],ans:1},
+  {q:'Which graph represents frequency distribution?',opts:['Histogram','Flowchart','Pie chart','Circuit'],ans:0},
+  {q:'A die has how many faces?',opts:['4','5','6','8'],ans:2},
+  {q:'The expected value represents?',opts:['Average outcome','Maximum value','Minimum value','Probability only'],ans:0},
+  {q:'The range is calculated as?',opts:['Max - Min','Mean + Median','Variance × SD','Mode - Mean'],ans:0},
+  {q:'If two events cannot occur together, they are?',opts:['Independent','Mutually exclusive','Dependent','Complementary'],ans:1},
+  {q:'Probability of getting head in fair coin toss?',opts:['0','0.25','0.5','1'],ans:2},
+  {q:'What does PDF stand for in statistics?',opts:['Probability Density Function','Partial Distribution Formula','Program Data Function','Power Density Factor'],ans:0},
+  {q:'The median of 1,3,5 is?',opts:['1','3','5','9'],ans:1},
+  {q:'Binomial distribution deals with?',opts:['Continuous data','Two possible outcomes','Graphs','Matrices'],ans:1},
+  {q:'A sample is?',opts:['Entire population','Subset of population','Graph','Equation'],ans:1},
+  {q:'Correlation measures?',opts:['Difference','Relationship between variables','Probability only','Frequency'],ans:1},
+  {q:'Which measure is affected most by outliers?',opts:['Median','Mode','Mean','Range'],ans:2},
+  {q:'The total area under normal distribution curve is?',opts:['0','1','100','Infinity'],ans:1},
+  {q:'Statistics is mainly concerned with?',opts:['Data collection and analysis','Programming','Networking','Drawing'],ans:0},
+],
+
+  // ── SEMESTER 6 ──────────────────────────────────────────────
+  'Information System Audit': [
+    {q:'Information System Audit is the process of examining?',opts:['Physical security only','IT controls, processes and data integrity','Network speed','Software features'],ans:1},
+    {q:'COBIT stands for?',opts:['Control Objectives for Information Technology','Certified Objectives for IT Business','Computer Oriented Business Intelligence Tool','None'],ans:0},
+    {q:'Which of these is an IT audit framework?',opts:['Scrum','ITIL','COBIT','Waterfall'],ans:2},
+    {q:'Access control audit verifies?',opts:['Network speed','Who has access to what resources','Data backup','Code quality'],ans:1},
+    {q:'A vulnerability assessment identifies?',opts:['Business opportunities','Weaknesses in a system','Employee performance','Budget allocation'],ans:1},
+    {q:'Segregation of duties means?',opts:['Combining all roles in one person','Dividing tasks among multiple people to prevent fraud','Automating all tasks','None'],ans:1},
+    {q:'ISO 27001 relates to?',opts:['Software quality','Information security management','Network performance','Database standards'],ans:1},
+    {q:'An audit trail records?',opts:['Source code','All system activities for accountability','Network packets','User preferences'],ans:1},
+    {q:'The purpose of a disaster recovery plan is?',opts:['Prevent disasters','Restore IT systems after a disaster','Audit finances','Train employees'],ans:1},
+    {q:'GDPR relates to?',opts:['Software licensing','Data privacy and protection','Network protocols','Audit standards'],ans:1},
+    {q:'Penetration testing simulates?',opts:['User behavior','Real cyberattacks to find vulnerabilities','Load testing','Business processes'],ans:1},
+    {q:'Risk assessment in IS audit involves?',opts:['Identifying and evaluating threats and vulnerabilities','Only checking hardware','Writing code','Designing UI'],ans:0},
+    {q:'Compliance audit checks?',opts:['Code efficiency','Adherence to laws, regulations and policies','Hardware performance','Network speed'],ans:1},
+    {q:'Data integrity means?',opts:['Data is accessible','Data is accurate, consistent and unaltered','Data is encrypted','Data is backed up'],ans:1},
+    {q:'An internal audit is conducted by?',opts:['External auditors','Regulators','Organization\'s own staff','Government'],ans:2},
+    {q:'Which is a logical access control?',opts:['Lock and key','Biometrics only','Passwords and user IDs','Security guards'],ans:2},
+    {q:'BCP stands for?',opts:['Business Continuity Plan','Basic Control Protocol','Binary Code Protocol','Business Control Process'],ans:0},
+    {q:'A firewall audit checks?',opts:['Code quality','Firewall rules and configurations for effectiveness','Employee skills','Data storage'],ans:1},
+    {q:'The IS audit report is presented to?',opts:['Only IT staff','Management and stakeholders','Government only','External vendors'],ans:1},
+    {q:'Which of these is a control objective?',opts:['Maximize profit','Ensure data accuracy and completeness','Reduce staff','Increase hardware'],ans:1},
+    {q:'Intrusion Detection System (IDS) is used to?',opts:['Prevent all attacks','Monitor and detect suspicious activity','Encrypt data','Assign IP addresses'],ans:1},
+    {q:'Change management in IS audit ensures?',opts:['Random changes are allowed','All changes are controlled, tested and documented','Only developers can make changes','No changes ever'],ans:1},
+    {q:'The CIA triad stands for?',opts:['Control, Integrity, Access','Confidentiality, Integrity, Availability','Compliance, Investigation, Audit','None'],ans:1},
+    {q:'A log file is used for?',opts:['Storing user passwords','Recording system events for audit and monitoring','Compiling code','Network routing'],ans:1},
+    {q:'SOC reports (SOC 1, SOC 2) are related to?',opts:['Network design','Service organization controls and trust services','Software testing','Hardware specs'],ans:1},
+  ],
+
+  'Cyber Security': [
+    {q:'Phishing is an attack that?',opts:['Floods the network','Tricks users into revealing sensitive information','Encrypts files for ransom','Exploits software bugs'],ans:1},
+    {q:'Which encryption is asymmetric?',opts:['AES','DES','RSA','3DES'],ans:2},
+    {q:'A firewall monitors?',opts:['Physical access','Network traffic based on rules','Software performance','User passwords'],ans:1},
+    {q:'Malware stands for?',opts:['Managed software','Malicious software','Manual software','Main software'],ans:1},
+    {q:'A DDoS attack stands for?',opts:['Data Delivery over Server','Distributed Denial of Service','Direct Data on Server','None'],ans:1},
+    {q:'Two-factor authentication uses?',opts:['Two passwords','Something you know + something you have','Two usernames','Double encryption'],ans:1},
+    {q:'SSL/TLS is used to?',opts:['Compress data','Encrypt data in transit','Authenticate users locally','Scan for viruses'],ans:1},
+    {q:'Social engineering exploits?',opts:['Software vulnerabilities','Human psychology to gain unauthorized access','Network weaknesses','Hardware flaws'],ans:1},
+    {q:'A VPN provides?',opts:['Faster internet','Encrypted tunnel over public network','Free internet','More bandwidth'],ans:1},
+    {q:'The CIA triad does NOT include?',opts:['Confidentiality','Integrity','Availability','Authenticity'],ans:3},
+    {q:'SQL injection attacks target?',opts:['Network packets','Databases through malicious SQL input','Operating systems','Hardware'],ans:1},
+    {q:'A zero-day vulnerability is?',opts:['A known patched bug','An unknown vulnerability with no fix yet','A test environment bug','A password vulnerability'],ans:1},
+    {q:'Encryption converts plaintext to?',opts:['Compressed text','Ciphertext','Binary','Hash'],ans:1},
+    {q:'Which algorithm is used in digital signatures?',opts:['AES','RSA','MD5','SHA-1'],ans:1},
+    {q:'A honeypot is?',opts:['A password manager','A decoy system to lure attackers','An antivirus','A firewall type'],ans:1},
+    {q:'Cross-site scripting (XSS) injects?',opts:['SQL code into databases','Malicious scripts into web pages viewed by other users','Malware into OS','Viruses into email'],ans:1},
+    {q:'Hashing is?',opts:['Reversible encryption','One-way function producing fixed-size output','Two-way encryption','Compression'],ans:1},
+    {q:'A man-in-the-middle attack involves?',opts:['Attacker between two communicating parties intercepting data','Flooding a server','Guessing passwords','Deleting files'],ans:0},
+    {q:'IDS stands for?',opts:['Internet Defense System','Intrusion Detection System','Internal Data Security','Internet Data Service'],ans:1},
+    {q:'Which port does SSH use by default?',opts:['21','22','80','443'],ans:1},
+    {q:'A brute force attack tries?',opts:['Social engineering','All possible password combinations','SQL injection','Phishing'],ans:1},
+    {q:'Public key infrastructure (PKI) manages?',opts:['Network routing','Digital certificates and encryption keys','User accounts','Software licenses'],ans:1},
+    {q:'HTTPS is HTTP with?',opts:['Faster speed','SSL/TLS encryption','Compression','More ports'],ans:1},
+    {q:'The principle of least privilege means?',opts:['Give maximum access to all','Give users only the access they need','No access to anyone','Admin access to all'],ans:1},
+    {q:'Ransomware typically?',opts:['Steals data silently','Encrypts victim\'s files and demands payment','Slows down the computer','Deletes the OS'],ans:1},
+  ],
+
+  'Data Mining and Warehousing': [
+    {q:'Data mining is the process of?',opts:['Storing large amounts of data','Discovering patterns and knowledge from large datasets','Mining cryptocurrency','Compressing data'],ans:1},
+    {q:'A data warehouse is?',opts:['A physical storage room','A central repository of integrated data from multiple sources','A database for transactions','An online store'],ans:1},
+    {q:'OLAP stands for?',opts:['Online Analytical Processing','Offline Linear Application Processing','Open Layer Access Protocol','Online Application Programming'],ans:0},
+    {q:'ETL stands for?',opts:['Encryption Transfer Logic','Extract Transform Load','Evaluate Test Launch','External Table Link'],ans:1},
+    {q:'K-Means is a?',opts:['Supervised learning algorithm','Clustering algorithm','Classification algorithm','Regression algorithm'],ans:1},
+    {q:'Association rule mining finds?',opts:['Clusters','Relationships between variables in large datasets','Classifications','Time series patterns'],ans:1},
+    {q:'Support in association rules means?',opts:['Confidence of the rule','Frequency of itemset in dataset','Lift of the rule','Number of rules'],ans:1},
+    {q:'The Apriori algorithm is used for?',opts:['Decision trees','Association rule mining','Neural networks','Sorting'],ans:1},
+    {q:'A star schema consists of?',opts:['Multiple fact tables','One fact table surrounded by dimension tables','Only dimension tables','Only fact tables'],ans:1},
+    {q:'Data cleaning involves?',opts:['Compressing data','Removing inconsistencies and errors from data','Encrypting data','Indexing data'],ans:1},
+    {q:'Classification assigns data to?',opts:['Clusters','Predefined categories','Time series','Numeric values'],ans:1},
+    {q:'Decision tree uses which measure to split nodes?',opts:['Euclidean distance','Information gain or Gini index','Mean squared error','Correlation'],ans:1},
+    {q:'Regression predicts?',opts:['Categories','Continuous numeric values','Clusters','Anomalies'],ans:1},
+    {q:'OLTP stands for?',opts:['Online Logical Transaction Protocol','Online Transaction Processing','Offline Layered Transaction Processing','None'],ans:1},
+    {q:'A data mart is?',opts:['A full data warehouse','A subset of data warehouse for a specific department','A transaction database','An ETL tool'],ans:1},
+    {q:'Dimensionality reduction is used to?',opts:['Add more features','Reduce number of features while retaining important information','Increase dataset size','Normalize data'],ans:1},
+    {q:'PCA stands for?',opts:['Principal Component Analysis','Primary Classification Algorithm','Partial Cluster Approach','None'],ans:0},
+    {q:'Outlier detection identifies?',opts:['Frequent patterns','Data points that deviate significantly from others','Missing values','Duplicate records'],ans:1},
+    {q:'Confidence in association rules measures?',opts:['How often the rule is correct given the antecedent','Frequency of itemset','Lift of the rule','Support'],ans:0},
+    {q:'Snowflake schema differs from star schema in that?',opts:['It has no fact table','Dimension tables are normalized','It has more fact tables','It uses no primary keys'],ans:1},
+    {q:'Data discretization converts?',opts:['Categorical to numerical data','Continuous data into discrete categories','Text to numbers','Images to text'],ans:1},
+    {q:'Time series data is characterized by?',opts:['Random ordering','Sequential data points indexed over time','Spatial data','Static records'],ans:1},
+    {q:'Random Forest is an ensemble of?',opts:['Neural networks','Decision trees','SVMs','K-Means clusters'],ans:1},
+    {q:'Lift in association rules measures?',opts:['Support of rule','Confidence of rule','How much better the rule is than random chance','Number of transactions'],ans:2},
+    {q:'Data integration combines data from?',opts:['Single source','Multiple heterogeneous sources','Only structured data','Only databases'],ans:1},
+  ],
+
+  'Machine Learning': [
+  {q:'Machine learning is a subset of?',opts:['Artificial Intelligence','Operating System','Database','Networking'],ans:0},
+  {q:'Supervised learning uses?',opts:['Labeled data','Unlabeled data','Random data','No data'],ans:0},
+  {q:'Unsupervised learning deals with?',opts:['Unlabeled data','Labeled data','Audio data only','Images only'],ans:0},
+  {q:'Reinforcement learning is based on?',opts:['Rewards and penalties','Static rules','Databases','Compilers'],ans:0},
+  {q:'Classification predicts?',opts:['Categories','Continuous values','Errors','Memory usage'],ans:0},
+  {q:'Regression predicts?',opts:['Continuous values','Classes','Labels only','Images'],ans:0},
+  {q:'Overfitting means?',opts:['Model learns noise too','Model underlearns','Model is perfect','Model is empty'],ans:0},
+  {q:'Underfitting means?',opts:['Model is too simple','Model is perfect','Model is complex','Model is trained well'],ans:0},
+  {q:'Training data is used for?',opts:['Learning the model','Testing hardware','Storing files','Networking'],ans:0},
+  {q:'Testing data is used for?',opts:['Evaluating model','Training model','Deleting data','Compiling code'],ans:0},
+  {q:'Accuracy measures?',opts:['Correct predictions','Speed','Memory','Noise'],ans:0},
+  {q:'Precision is?',opts:['Correct positive predictions','Total errors','Memory usage','Speed'],ans:0},
+  {q:'Recall measures?',opts:['Detected positives','False negatives only','Speed','Storage'],ans:0},
+  {q:'F1 score is?',opts:['Harmonic mean of precision and recall','Average speed','Memory usage','Loss function'],ans:0},
+  {q:'Feature in ML is?',opts:['Input variable','Output only','Noise','Error'],ans:0},
+  {q:'Label is?',opts:['Output class','Input variable','Feature set','Noise'],ans:0},
+  {q:'Model in ML is?',opts:['Mathematical representation','Hardware device','Database','Network cable'],ans:0},
+  {q:'Algorithm is?',opts:['Step-by-step procedure','Hardware','Storage','Signal'],ans:0},
+  {q:'Loss function measures?',opts:['Error in predictions','Accuracy','Speed','Memory'],ans:0},
+  {q:'Gradient descent is used for?',opts:['Minimizing loss','Increasing loss','Sorting data','Encrypting'],ans:0},
+  {q:'Epoch means?',opts:['One full pass over dataset','Single data point','Model type','Feature'],ans:0},
+  {q:'Batch size is?',opts:['Number of samples per update','Total dataset size','Model size','Feature count'],ans:0},
+  {q:'Decision tree is?',opts:['Tree-based model','Graph database','Network structure','Sorting algorithm'],ans:0},
+  {q:'KNN stands for?',opts:['K-Nearest Neighbors','Known Neural Network','Kernel Node Network','Key Neural Node'],ans:0},
+  {q:'Bias in ML means?',opts:['Error from wrong assumptions','Correct prediction','Memory size','Speed'],ans:0},
+],
+
+  'Image Processing and Pattern Recognition': [
+  {q:'Image processing is mainly used for?',opts:['Cooking','Manipulating digital images','Networking','Compiling programs'],ans:1},
+  {q:'A digital image is composed of?',opts:['Pixels','Vectors','Signals','Frames'],ans:0},
+  {q:'RGB stands for?',opts:['Red Green Blue','Random Gray Black','Red Gray Brown','Range Green Blue'],ans:0},
+  {q:'Image enhancement improves?',opts:['Storage','Image quality','Internet speed','Compression only'],ans:1},
+  {q:'Which format is commonly used for images?',opts:['JPEG','MP3','PDF','TXT'],ans:0},
+  {q:'Grayscale image contains?',opts:['Only red color','Shades of gray','Three colors','Binary code'],ans:1},
+  {q:'Edge detection is used to?',opts:['Blur image','Identify object boundaries','Reduce size','Encrypt image'],ans:1},
+  {q:'Histogram represents?',opts:['Pixel distribution','Audio signal','Compression ratio','Voltage'],ans:0},
+  {q:'Noise in images causes?',opts:['Clarity','Distortion','Compression','Synchronization'],ans:1},
+  {q:'Pattern recognition is used for?',opts:['Identifying patterns','Drawing only','Storage','Compiling'],ans:0},
+  {q:'OCR stands for?',opts:['Optical Character Recognition','Object Color Recognition','Optical Code Reader','Output Character Reader'],ans:0},
+  {q:'Which filter removes image noise?',opts:['Low-pass filter','High-pass filter','Band-pass filter','Notch filter'],ans:0},
+  {q:'Segmentation divides image into?',opts:['Signals','Regions','Graphs','Matrices'],ans:1},
+  {q:'A binary image contains?',opts:['256 colors','Two intensity values','RGB values','Infinite colors'],ans:1},
+  {q:'Compression reduces?',opts:['Image quality only','File size','Voltage','Frequency'],ans:1},
+  {q:'JPEG compression is?',opts:['Lossless','Lossy','Analog','Infinite'],ans:1},
+  {q:'Feature extraction is used in?',opts:['Pattern recognition','Drawing','Networking','Gaming'],ans:0},
+  {q:'Machine vision is related to?',opts:['Image processing','Mechanical drawing','Accounting','Statistics'],ans:0},
+  {q:'Which operation smooths image?',opts:['Sharpening','Blurring','Thresholding','Cropping'],ans:1},
+  {q:'Thresholding converts image into?',opts:['RGB image','Binary image','Video','Signal'],ans:1},
+  {q:'Face recognition uses?',opts:['Pattern recognition','Sorting','Compiling','Debugging'],ans:0},
+  {q:'Image resolution refers to?',opts:['Pixel detail','Audio quality','Voltage','Frequency'],ans:0},
+  {q:'A pixel is?',opts:['Smallest image element','Image filter','Storage device','Color model'],ans:0},
+  {q:'Computer vision is widely used in?',opts:['Self-driving cars','Cooking','Painting','Typing'],ans:0},
+  {q:'Sharpening enhances?',opts:['Edges and details','Noise','Compression','Storage'],ans:0},
+],
+
+  'Compiler Design': [
+  {q:'A compiler converts?',opts:['Machine code to source code','High-level language to machine code','Assembly to binary only','Binary to decimal'],ans:1},
+  {q:'Lexical analysis is the first phase of?',opts:['Compiler','Assembler','Interpreter','Debugger'],ans:0},
+  {q:'A token is?',opts:['Smallest meaningful unit','Compiler error','Loop','Memory block'],ans:0},
+  {q:'Syntax analysis is also called?',opts:['Parsing','Scanning','Linking','Loading'],ans:0},
+  {q:'Parser checks?',opts:['Syntax rules','Hardware','Memory','Voltage'],ans:0},
+  {q:'Semantic analysis checks?',opts:['Meaning of statements','Image quality','Signal strength','Storage'],ans:0},
+  {q:'Which table stores identifiers?',opts:['Symbol table','Hash table','Array','Stack'],ans:0},
+  {q:'An interpreter translates?',opts:['Whole program at once','Line by line','Binary only','Hardware only'],ans:1},
+  {q:'Compiler errors are detected during?',opts:['Compilation','Execution only','Storage','Networking'],ans:0},
+  {q:'Which phase generates intermediate code?',opts:['Lexical analysis','Code generation','Intermediate code generation','Optimization'],ans:2},
+  {q:'Optimization improves?',opts:['Program efficiency','Program size only','Hardware','Typing speed'],ans:0},
+  {q:'A parse tree represents?',opts:['Syntax structure','Memory map','Voltage graph','Image'],ans:0},
+  {q:'Regular expressions are used in?',opts:['Lexical analysis','Optimization','Linking','Loading'],ans:0},
+  {q:'A grammar defines?',opts:['Language syntax','Voltage','Signals','Memory'],ans:0},
+  {q:'Recursive descent parser is?',opts:['Top-down parser','Bottom-up parser','Assembler','Debugger'],ans:0},
+  {q:'Which data structure is used in parsing?',opts:['Queue','Stack','Array','Tree'],ans:1},
+  {q:'Code generation phase produces?',opts:['Machine code','Comments','Flowcharts','Tables'],ans:0},
+  {q:'Ambiguous grammar has?',opts:['More than one parse tree','No rules','Only one symbol','No parser'],ans:0},
+  {q:'Assembler converts?',opts:['Assembly code to machine code','High-level code','Binary to decimal','Decimal to binary'],ans:0},
+  {q:'Linker is used to?',opts:['Combine object files','Scan tokens','Parse grammar','Execute code'],ans:0},
+  {q:'Loader places program into?',opts:['CPU','Memory','Compiler','Disk'],ans:1},
+  {q:'A syntax error occurs due to?',opts:['Wrong grammar','Hardware failure','Power loss','Storage issue'],ans:0},
+  {q:'Finite automata are used in?',opts:['Lexical analysis','Code generation','Optimization','Linking'],ans:0},
+  {q:'Context-free grammar is used in?',opts:['Syntax analysis','Code execution','Networking','Storage'],ans:0},
+  {q:'The output of lexical analyzer is?',opts:['Tokens','Parse tree','Machine code','Assembly code'],ans:0},
+],
+
+  'Computer Networks': [
+  {q:'A computer network connects?',opts:['Only printers','Multiple devices','Only servers','Only routers'],ans:1},
+  {q:'LAN stands for?',opts:['Local Area Network','Large Access Network','Long Area Node','Logical Area Network'],ans:0},
+  {q:'WAN covers?',opts:['Small area','Large geographical area','Single building','Single room'],ans:1},
+  {q:'Which device routes packets?',opts:['Switch','Router','Hub','Repeater'],ans:1},
+  {q:'IP stands for?',opts:['Internet Protocol','Internal Program','Input Process','Integrated Port'],ans:0},
+  {q:'HTTP is used for?',opts:['Web browsing','Email','File transfer','Printing'],ans:0},
+  {q:'Which protocol transfers files?',opts:['FTP','SMTP','HTTP','ARP'],ans:0},
+  {q:'SMTP is used for?',opts:['Email sending','Web browsing','Routing','Streaming'],ans:0},
+  {q:'DNS converts?',opts:['IP to voltage','Domain names to IP addresses','Packets to signals','Signals to packets'],ans:1},
+  {q:'MAC address is?',opts:['Logical address','Physical address','Network cable','IP version'],ans:1},
+  {q:'OSI model has how many layers?',opts:['5','6','7','8'],ans:2},
+  {q:'TCP provides?',opts:['Reliable communication','Unreliable communication','Video only','Routing'],ans:0},
+  {q:'UDP is?',opts:['Reliable protocol','Connectionless protocol','Routing protocol','Email protocol'],ans:1},
+  {q:'A switch works at which OSI layer?',opts:['Physical','Data Link','Transport','Application'],ans:1},
+  {q:'A router works at?',opts:['Physical layer','Network layer','Transport layer','Session layer'],ans:1},
+  {q:'Wi-Fi is an example of?',opts:['Wired network','Wireless network','Optical network','Bus network'],ans:1},
+  {q:'Bandwidth measures?',opts:['Storage','Data transfer capacity','Voltage','Frequency'],ans:1},
+  {q:'A firewall protects against?',opts:['Unauthorized access','Power failure','Hardware damage','Storage issues'],ans:0},
+  {q:'Which topology uses central hub?',opts:['Bus','Ring','Star','Mesh'],ans:2},
+  {q:'Ping command checks?',opts:['Connectivity','Storage','Speed only','Voltage'],ans:0},
+  {q:'URL stands for?',opts:['Uniform Resource Locator','Universal Routing Link','Uniform Routing Layer','Universal Resource Line'],ans:0},
+  {q:'IPv4 uses how many bits?',opts:['16','32','64','128'],ans:1},
+  {q:'HTTPS provides?',opts:['Encryption','Storage','Compression','Routing'],ans:0},
+  {q:'Bluetooth is used for?',opts:['Short-range communication','Satellite communication','Routing','Long-distance communication'],ans:0},
+  {q:'The internet is a?',opts:['Single computer','Global network','Programming language','Database'],ans:1},
+],
+
+  'Simulation and Modeling': [
+  {q:'Simulation imitates?',opts:['Real-world systems','Only games','Hardware only','Compilers'],ans:0},
+  {q:'A model is?',opts:['Simplified representation of system','Machine only','Programming language','Database'],ans:0},
+  {q:'Simulation is useful for?',opts:['Testing systems safely','Cooking','Painting','Networking only'],ans:0},
+  {q:'Which software is used for simulation?',opts:['MATLAB','MS Paint','Notepad','Photoshop'],ans:0},
+  {q:'Discrete simulation deals with?',opts:['Continuous changes','Specific events','Analog signals','Images'],ans:1},
+  {q:'Continuous simulation changes?',opts:['Smoothly over time','Only at events','Never changes','Instantly'],ans:0},
+  {q:'Monte Carlo simulation uses?',opts:['Random sampling','Fixed values','Sorting','Compilation'],ans:0},
+  {q:'A system model helps to?',opts:['Understand behavior','Cook food','Repair hardware','Print documents'],ans:0},
+  {q:'Simulation reduces?',opts:['Risk and cost','Electricity','Storage','Bandwidth'],ans:0},
+  {q:'Input variables are?',opts:['Independent variables','Output variables','Errors','Signals'],ans:0},
+  {q:'Output variables represent?',opts:['Results of simulation','Input data','Voltage','Frequency'],ans:0},
+  {q:'Validation checks?',opts:['Model accuracy','Typing speed','Voltage','Storage'],ans:0},
+  {q:'Verification ensures?',opts:['Correct implementation','High voltage','Network speed','Memory'],ans:0},
+  {q:'Random numbers are important in?',opts:['Monte Carlo methods','Drawing','Compilers','Routing'],ans:0},
+  {q:'Queue simulation studies?',opts:['Waiting lines','Voltage','Images','Files'],ans:0},
+  {q:'Dynamic models change with?',opts:['Time','Color','Voltage','Storage'],ans:0},
+  {q:'Static models do not depend on?',opts:['Time','Variables','Data','Output'],ans:0},
+  {q:'Simulation is cheaper than?',opts:['Real-world testing','Programming','Typing','Networking'],ans:0},
+  {q:'Feedback in systems affects?',opts:['Future outputs','Storage','Voltage','Drawing'],ans:0},
+  {q:'A deterministic model has?',opts:['Randomness','Fixed outputs','Noise','Errors'],ans:1},
+  {q:'Stochastic models include?',opts:['Random variables','Only constants','No data','No outputs'],ans:0},
+  {q:'Simulation can be used in?',opts:['Engineering','Economics','Healthcare','All of these'],ans:3},
+  {q:'MATLAB is widely used for?',opts:['Modeling and simulation','Typing','Painting','Networking'],ans:0},
+  {q:'System behavior can be predicted using?',opts:['Models','Paint','Voltage','Signals'],ans:0},
+  {q:'Simulation output is analyzed to?',opts:['Make decisions','Draw graphics','Increase voltage','Store files'],ans:0},
+],
+
+  // ── SEMESTER 7 ──────────────────────────────────────────────
+  'Entrepreneurship and Professional Practice': [
+  {q:'Entrepreneurship involves?',opts:['Starting and managing business','Painting','Programming only','Testing devices'],ans:0},
+  {q:'An entrepreneur takes?',opts:['Risks','Vacations','Orders only','Exams'],ans:0},
+  {q:'Business plan describes?',opts:['Business goals and strategy','Computer hardware','Programming syntax','Network design'],ans:0},
+  {q:'Leadership helps to?',opts:['Guide teams','Increase voltage','Reduce memory','Store files'],ans:0},
+  {q:'Professional ethics means?',opts:['Moral principles at work','Gaming rules','Programming language','Drawing standards'],ans:0},
+  {q:'Innovation means?',opts:['Creating new ideas','Copying products','Deleting data','Formatting disks'],ans:0},
+  {q:'Communication skill is important for?',opts:['Professional success','Painting','Cooking','Gaming'],ans:0},
+  {q:'A startup is?',opts:['New business venture','Operating system','Compiler','Database'],ans:0},
+  {q:'Marketing helps to?',opts:['Promote products','Increase RAM','Reduce signals','Compile programs'],ans:0},
+  {q:'Teamwork improves?',opts:['Collaboration','Noise','Voltage','Errors'],ans:0},
+  {q:'Time management increases?',opts:['Productivity','Storage','Bandwidth','Signal strength'],ans:0},
+  {q:'Professionalism includes?',opts:['Responsibility','Dishonesty','Carelessness','Delay'],ans:0},
+  {q:'Customer satisfaction is important for?',opts:['Business growth','Voltage','Programming','Drawing'],ans:0},
+  {q:'Networking in career means?',opts:['Building professional relationships','Computer routing','Signal transfer','Internet speed'],ans:0},
+  {q:'Decision making is part of?',opts:['Management','Painting','Cooking','Drawing'],ans:0},
+  {q:'Ethical hacking is?',opts:['Authorized security testing','Illegal hacking','Gaming','Data deletion'],ans:0},
+  {q:'A successful entrepreneur needs?',opts:['Creativity','Fear of risks','No planning','No communication'],ans:0},
+  {q:'Professional practice requires?',opts:['Discipline','Negligence','Carelessness','Delay'],ans:0},
+  {q:'Negotiation skill helps in?',opts:['Business deals','Drawing','Storage','Programming'],ans:0},
+  {q:'Finance management handles?',opts:['Money and budgeting','Painting','Routing','Signals'],ans:0},
+  {q:'Conflict resolution improves?',opts:['Work environment','Noise','Voltage','Storage'],ans:0},
+  {q:'Intellectual property protects?',opts:['Ideas and inventions','Voltage','Hardware only','Signals'],ans:0},
+  {q:'Public speaking is useful for?',opts:['Presentations','Storage','Programming only','Signals'],ans:0},
+  {q:'Professional growth requires?',opts:['Continuous learning','Ignoring updates','No practice','No teamwork'],ans:0},
+  {q:'Entrepreneurship contributes to?',opts:['Economic growth','Signal noise','Voltage drop','Packet loss'],ans:0},
+],
+
+  'Engineering Economics': [
+  {q:'Economics studies?',opts:['Resource allocation','Painting','Programming','Networking'],ans:0},
+  {q:'Demand refers to?',opts:['Desire backed by ability to pay','Supply only','Production only','Profit'],ans:0},
+  {q:'Supply means?',opts:['Quantity available for sale','Demand','Profit','Loss'],ans:0},
+  {q:'Fixed cost does not change with?',opts:['Production level','Price','Profit','Demand'],ans:0},
+  {q:'Variable cost changes with?',opts:['Production level','Interest rate','Taxes','Savings'],ans:0},
+  {q:'Break-even point occurs when?',opts:['Profit equals cost','Revenue equals cost','Loss is maximum','Demand is zero'],ans:1},
+  {q:'Interest is?',opts:['Cost of borrowing money','Salary','Tax','Investment'],ans:0},
+  {q:'Simple interest formula is?',opts:['P×R×T/100','P+R+T','P-R-T','P×T'],ans:0},
+  {q:'Inflation causes?',opts:['Rise in prices','Fall in prices','No change','Reduced demand'],ans:0},
+  {q:'Depreciation means?',opts:['Decrease in asset value','Increase in profit','Rise in prices','Demand increase'],ans:0},
+  {q:'Opportunity cost is?',opts:['Value of next best alternative','Production cost','Tax amount','Interest rate'],ans:0},
+  {q:'GDP stands for?',opts:['Gross Domestic Product','General Data Processing','Global Development Plan','Gross Data Product'],ans:0},
+  {q:'A monopoly market has?',opts:['Single seller','Many buyers only','Many sellers','No competition'],ans:0},
+  {q:'Profit equals?',opts:['Revenue - Cost','Cost - Revenue','Revenue + Cost','Price × Demand'],ans:0},
+  {q:'Investment means?',opts:['Allocating money for future return','Spending only','Borrowing only','Saving only'],ans:0},
+  {q:'Engineering economy helps in?',opts:['Financial decision making','Drawing','Programming','Networking'],ans:0},
+  {q:'Present value refers to?',opts:['Current worth of future money','Future worth','Profit','Tax'],ans:0},
+  {q:'Future value calculates?',opts:['Value after interest','Past cost','Current tax','Demand'],ans:0},
+  {q:'Cost-benefit analysis compares?',opts:['Costs and benefits','Signals and noise','Input and output','Supply and demand'],ans:0},
+  {q:'Marginal cost is?',opts:['Extra cost of one more unit','Fixed cost','Total cost','Average cost'],ans:0},
+  {q:'Saving means?',opts:['Income not spent','Borrowed money','Tax','Loss'],ans:0},
+  {q:'Loan repayment includes?',opts:['Principal and interest','Tax only','Profit only','Salary only'],ans:0},
+  {q:'Economic growth means?',opts:['Increase in production and income','Decrease in prices','Loss in business','Tax increase'],ans:0},
+  {q:'Budget is?',opts:['Financial plan','Programming code','Network map','Drawing sheet'],ans:0},
+  {q:'Scarcity means?',opts:['Limited resources','Unlimited supply','Infinite profit','No demand'],ans:0},
+],
+
+  'Network and Cyber Security': [
+  {q:'Cybersecurity protects?',opts:['Digital systems and data','Paintings','Mechanical drawings','Buildings'],ans:0},
+  {q:'A firewall is used to?',opts:['Block unauthorized access','Increase voltage','Store files','Print documents'],ans:0},
+  {q:'Malware means?',opts:['Malicious software','Hardware device','Programming language','Network cable'],ans:0},
+  {q:'A virus is?',opts:['Self-replicating malicious code','Antivirus','Network switch','Database'],ans:0},
+  {q:'Phishing attempts to?',opts:['Steal sensitive information','Improve security','Increase speed','Backup files'],ans:0},
+  {q:'HTTPS provides?',opts:['Secure communication','File storage','Video streaming','Signal processing'],ans:0},
+  {q:'Encryption converts?',opts:['Readable data into coded form','Code into image','Signal into sound','Video into text'],ans:0},
+  {q:'A strong password should contain?',opts:['Only numbers','Mix of letters, symbols and numbers','Only lowercase letters','Only names'],ans:1},
+  {q:'VPN stands for?',opts:['Virtual Private Network','Variable Public Network','Virtual Program Node','Verified Private Node'],ans:0},
+  {q:'Antivirus software detects?',opts:['Malware','Hardware','Networks','Printers'],ans:0},
+  {q:'Authentication verifies?',opts:['User identity','Signal strength','Voltage','Storage'],ans:0},
+  {q:'A hacker is?',opts:['Person accessing systems','Printer','Compiler','Router'],ans:0},
+  {q:'Two-factor authentication improves?',opts:['Security','Storage','Bandwidth','Graphics'],ans:0},
+  {q:'SQL injection targets?',opts:['Databases','Networks','Images','Signals'],ans:0},
+  {q:'Spam emails are?',opts:['Unwanted messages','Secure messages','Encrypted data','Official emails'],ans:0},
+  {q:'Cyber attacks can cause?',opts:['Data theft','System damage','Financial loss','All of these'],ans:3},
+  {q:'A router connects?',opts:['Networks','Printers','Hard disks','Sensors'],ans:0},
+  {q:'Ethical hackers work to?',opts:['Improve security','Steal data','Spread malware','Delete files'],ans:0},
+  {q:'Ransomware demands?',opts:['Payment','Storage','Bandwidth','Passwords'],ans:0},
+  {q:'Backup helps in?',opts:['Data recovery','Virus creation','Hacking','Formatting'],ans:0},
+  {q:'Cybersecurity awareness reduces?',opts:['Risks','Bandwidth','Memory','Voltage'],ans:0},
+  {q:'Public Wi-Fi may be?',opts:['Unsafe','Always secure','Encrypted only','Offline'],ans:0},
+  {q:'The internet uses?',opts:['Protocols','Only hardware','Only software','No standards'],ans:0},
+  {q:'Data privacy protects?',opts:['Personal information','Voltage','Signals','Printers'],ans:0},
+  {q:'An IDS detects?',opts:['Intrusions','Printers','Storage','Graphics'],ans:0},
+],
+
+  'Cloud Computing and Virtualization': [
+  {q:'Cloud computing provides?',opts:['On-demand resources over internet','Local storage only','Offline software','Hardware repair'],ans:0},
+  {q:'IaaS stands for?',opts:['Infrastructure as a Service','Internet as a Service','Internal app system','Integrated as a Service'],ans:0},
+  {q:'PaaS provides?',opts:['Platform for development','Only storage','Only network','Only hardware'],ans:0},
+  {q:'SaaS means?',opts:['Software as a Service','System as a Service','Storage as a Service','Security as a Service'],ans:0},
+  {q:'Virtualization is?',opts:['Creating virtual version of resources','Deleting systems','Physical networking','Coding technique'],ans:0},
+  {q:'Hypervisor is used for?',opts:['Managing virtual machines','Compiling code','Encrypting data','Routing packets'],ans:0},
+  {q:'Type 1 hypervisor runs on?',opts:['Bare metal','Operating system','Browser','Application layer'],ans:0},
+  {q:'Type 2 hypervisor runs on?',opts:['Host operating system','Hardware directly','Network','Firmware'],ans:0},
+  {q:'VM stands for?',opts:['Virtual Machine','Visual Module','Virtual Memory','Variable Machine'],ans:0},
+  {q:'Cloud storage example?',opts:['Google Drive','Notepad','CPU','Router'],ans:0},
+  {q:'Scalability means?',opts:['Ability to grow resources','Decrease performance','Fixed system','Offline mode'],ans:0},
+  {q:'Elasticity in cloud means?',opts:['Auto scaling resources','Manual coding','Fixed memory','Hardware upgrade only'],ans:0},
+  {q:'Public cloud is?',opts:['Available to everyone','Private only','Offline system','Local network'],ans:0},
+  {q:'Private cloud is?',opts:['Dedicated to one organization','Open for all','Free internet','Public server'],ans:0},
+  {q:'Hybrid cloud combines?',opts:['Public and private cloud','Only private clouds','Only public clouds','No cloud'],ans:0},
+  {q:'Virtual machine runs on?',opts:['Host machine','Printer','Switch','Router'],ans:0},
+  {q:'Snapshot in VM is?',opts:['Saved state of system','Network packet','CPU register','Database'],ans:0},
+  {q:'Cloud computing reduces?',opts:['Infrastructure cost','Internet speed','Storage need','Programming effort'],ans:0},
+  {q:'Resource pooling means?',opts:['Sharing resources among users','Isolated systems','Manual allocation','Offline storage'],ans:0},
+  {q:'Multitenancy means?',opts:['Multiple users share same system','Single user system','No sharing','Offline system'],ans:0},
+  {q:'Docker is used for?',opts:['Containerization','Image editing','Networking','Compilation'],ans:0},
+  {q:'Container is?',opts:['Lightweight VM','Full OS','Hardware device','Router'],ans:0},
+  {q:'Cloud deployment model includes?',opts:['Public, private, hybrid','Only public','Only private','Only hybrid'],ans:0},
+  {q:'On-demand service means?',opts:['Use resources when needed','Fixed usage','Offline usage','Manual setup only'],ans:0},
+  {q:'Cloud security focuses on?',opts:['Data protection','Speed only','Graphics','Memory only'],ans:0},
+],
+
+  'Data Science and Analytics': [
+  {q:'Data science deals with?',opts:['Extracting insights from data','Building hardware','Networking only','Image editing'],ans:0},
+  {q:'Big data refers to?',opts:['Large complex datasets','Small datasets','Single file','Code only'],ans:0},
+  {q:'Data analytics is used for?',opts:['Decision making','Hardware repair','Coding only','Networking only'],ans:0},
+  {q:'Structured data is?',opts:['Organized data in rows and columns','Random files','Images only','Audio only'],ans:0},
+  {q:'Unstructured data example?',opts:['Text, images, videos','Tables','Numbers only','Matrices'],ans:0},
+  {q:'Data cleaning means?',opts:['Removing errors','Adding noise','Encrypting data','Deleting system'],ans:0},
+  {q:'Mean of dataset is?',opts:['Average value','Middle value','Most frequent','Range'],ans:0},
+  {q:'Median is?',opts:['Middle value','Average','Mode','Variance'],ans:0},
+  {q:'Mode is?',opts:['Most frequent value','Average','Middle value','Difference'],ans:0},
+  {q:'Data visualization uses?',opts:['Graphs and charts','Code only','Hardware','Networks'],ans:0},
+  {q:'Histogram shows?',opts:['Frequency distribution','CPU usage','Memory','Code flow'],ans:0},
+  {q:'Machine learning is part of?',opts:['Data science','Networking','Hardware','OS design'],ans:0},
+  {q:'Supervised learning uses?',opts:['Labeled data','Unlabeled data','Random data','No data'],ans:0},
+  {q:'Unsupervised learning uses?',opts:['Unlabeled data','Labeled data','Fixed data','No data'],ans:0},
+  {q:'Clustering is?',opts:['Grouping similar data','Sorting numbers','Encrypting data','Deleting data'],ans:0},
+  {q:'Classification is?',opts:['Assigning labels','Grouping only','Sorting only','Cleaning data'],ans:0},
+  {q:'Regression predicts?',opts:['Continuous values','Labels','Groups','Errors'],ans:0},
+  {q:'Outlier is?',opts:['Unusual data point','Normal value','Average','Median'],ans:0},
+  {q:'Data mining is?',opts:['Extracting patterns from data','Hardware design','Networking','Coding'],ans:0},
+  {q:'Python is widely used in?',opts:['Data science','Only hardware','Only networking','Only OS'],ans:0},
+  {q:'Pandas is used for?',opts:['Data manipulation','Graphics','Networking','Compilation'],ans:0},
+  {q:'NumPy is used for?',opts:['Numerical computation','Web design','Networking','Storage'],ans:0},
+  {q:'Data model represents?',opts:['Structure of data','Hardware','Software','CPU'],ans:0},
+  {q:'Correlation shows?',opts:['Relationship between variables','Speed','Memory','Storage'],ans:0},
+  {q:'Dashboard is used for?',opts:['Data visualization','Coding','Networking','Compilation'],ans:0},
+],
+
+  'Generative AI': [
+    {q:'Generative AI creates?',opts:['Only text','New data similar to training data (text, images, audio etc.)','Only predictions','Only classifications'],ans:1},
+    {q:'GAN stands for?',opts:['General Artificial Neuron','Generative Adversarial Network','Gated Activation Node','Gradient Adaptive Network'],ans:1},
+    {q:'In a GAN, the generator tries to?',opts:['Detect fake data','Create realistic data to fool the discriminator','Classify data','Compress data'],ans:1},
+    {q:'In a GAN, the discriminator tries to?',opts:['Generate new data','Distinguish real data from generated data','Compress data','Cluster data'],ans:1},
+    {q:'GPT stands for?',opts:['General Purpose Transformer','Generative Pre-trained Transformer','Gated Processing Technique','None'],ans:1},
+    {q:'Large Language Models (LLMs) are trained on?',opts:['Small curated datasets','Massive amounts of text data','Only code','Only images'],ans:1},
+    {q:'The transformer architecture uses which mechanism?',opts:['Recurrence','Self-attention','Convolution','Pooling'],ans:1},
+    {q:'Prompt engineering refers to?',opts:['Hardware design','Crafting effective inputs to guide AI model outputs','Training neural networks','Fine-tuning weights'],ans:1},
+    {q:'Hallucination in LLMs means?',opts:['High accuracy','The model generates confident but incorrect information','Slow processing','Memory overflow'],ans:1},
+    {q:'Diffusion models are used for?',opts:['Text generation','Image generation by denoising','Video compression','Audio classification'],ans:1},
+    {q:'Fine-tuning an LLM means?',opts:['Training from scratch','Further training a pre-trained model on specific data','Deleting old weights','Reducing model size'],ans:1},
+    {q:'DALL-E is a generative model for?',opts:['Text','Image generation from text prompts','Audio','Video'],ans:1},
+    {q:'Which of these is a text generation model?',opts:['ResNet','VGG','GPT-4','YOLO'],ans:2},
+    {q:'Embeddings in NLP are?',opts:['Physical hardware','Dense vector representations of words or sentences','Encryption keys','Database indexes'],ans:1},
+    {q:'Zero-shot learning means?',opts:['Training on zero data','A model performing a task without task-specific training examples','Using zero layers','No fine-tuning'],ans:1},
+    {q:'RLHF stands for?',opts:['Reinforcement Learning from Human Feedback','Recurrent Layer Hidden Function','Random Learning Hyperparameter Fine-tuning','None'],ans:0},
+    {q:'Stable Diffusion is a model for?',opts:['Text generation','Image synthesis','Speech recognition','Code generation'],ans:1},
+    {q:'Temperature in LLM inference controls?',opts:['Processing speed','Randomness/creativity of output','Memory usage','Model size'],ans:1},
+    {q:'A chatbot powered by an LLM uses?',opts:['Rule-based responses only','Generative responses based on context','Pre-written scripts','Database lookups only'],ans:1},
+    {q:'Multimodal AI can process?',opts:['Only text','Only images','Multiple types of data (text, image, audio etc.)','Only audio'],ans:2},
+    {q:'The main ethical concern with generative AI is?',opts:['High cost','Deepfakes, misinformation, and bias','Slow speed','Limited vocabulary'],ans:1},
+    {q:'Tokenization in LLMs refers to?',opts:['Data encryption','Splitting text into units (tokens) for processing','User authentication','Network segmentation'],ans:1},
+    {q:'Which company developed ChatGPT?',opts:['Google','Meta','OpenAI','Microsoft'],ans:2},
+    {q:'Few-shot learning means?',opts:['No training examples','Learning from very few examples','Training on millions of examples','Transfer learning only'],ans:1},
+    {q:'RAG stands for?',opts:['Random Access Generation','Retrieval Augmented Generation','Recurrent Attention Gate','None'],ans:1},
+  ],
+
+  'Cryptography': [
+    {q:'Cryptography is the study of?',opts:['Network protocols','Secure communication techniques','Database management','Operating systems'],ans:1},
+    {q:'Symmetric encryption uses?',opts:['Two different keys','The same key for encryption and decryption','Public key only','No key'],ans:1},
+    {q:'Asymmetric encryption uses?',opts:['One key','Same key for both','A public and private key pair','No key'],ans:2},
+    {q:'Which is a symmetric encryption algorithm?',opts:['RSA','ECC','AES','DSA'],ans:2},
+    {q:'RSA is based on the difficulty of?',opts:['Discrete logarithm','Factoring large numbers','Hash collisions','Elliptic curves'],ans:1},
+    {q:'A hash function is?',opts:['Reversible','One-way — cannot be reversed','Symmetric','Asymmetric'],ans:1},
+    {q:'SHA-256 produces a hash of how many bits?',opts:['128','160','256','512'],ans:2},
+    {q:'A digital signature provides?',opts:['Encryption only','Authentication and non-repudiation','Compression','Anonymity'],ans:1},
+    {q:'PKI stands for?',opts:['Public Knowledge Infrastructure','Public Key Infrastructure','Private Key Integration','Packet Key Interface'],ans:1},
+    {q:'A certificate authority (CA) issues?',opts:['Encryption keys','Digital certificates binding public keys to identities','Passwords','Firewalls'],ans:1},
+    {q:'The Caesar cipher is a type of?',opts:['Substitution cipher','Transposition cipher','Block cipher','Stream cipher'],ans:0},
+    {q:'Block ciphers encrypt data in?',opts:['Continuous stream','Fixed-size blocks','Random sizes','Bit by bit'],ans:1},
+    {q:'Stream ciphers encrypt data?',opts:['In blocks','Bit by bit or byte by byte','In files','In packets only'],ans:1},
+    {q:'Diffie-Hellman is used for?',opts:['Digital signatures','Symmetric encryption','Key exchange over insecure channel','Hashing'],ans:2},
+    {q:'Man-in-the-middle attack compromises?',opts:['Confidentiality only','Authentication and key exchange','Hash functions','Block ciphers only'],ans:1},
+    {q:'A nonce in cryptography is?',opts:['A type of cipher','An arbitrary number used once to prevent replay attacks','A hash value','A key'],ans:1},
+    {q:'TLS uses which type of encryption?',opts:['Only symmetric','Only asymmetric','Hybrid (asymmetric for key exchange, symmetric for data)','None'],ans:2},
+    {q:'MD5 is considered insecure because?',opts:['It is too slow','Collision vulnerabilities have been found','It uses too many bits','It is asymmetric'],ans:1},
+    {q:'Steganography hides?',opts:['Encrypts data','Information within other non-secret data','Decrypts data','Signs data'],ans:1},
+    {q:'Which algorithm is used in Bitcoin?',opts:['MD5','SHA-256','AES','RSA'],ans:1},
+    {q:'Elliptic Curve Cryptography (ECC) offers?',opts:['Weaker security than RSA','Same key sizes as RSA','Equivalent security to RSA with much smaller key sizes','No advantages'],ans:2},
+    {q:'A rainbow table attack is used against?',opts:['Encrypted communications','Hashed passwords','Public keys','Certificates'],ans:1},
+    {q:'Salt in password hashing is?',opts:['Extra encryption','Random data added before hashing to prevent rainbow table attacks','A type of cipher','A digital signature'],ans:1},
+    {q:'Non-repudiation in cryptography means?',opts:['Data is encrypted','Sender cannot deny sending a message','Data is compressed','Key is secret'],ans:1},
+    {q:'The one-time pad is theoretically?',opts:['Easily broken','Moderately secure','Perfectly secure if key is truly random and used only once','Insecure'],ans:2},
+  ],
+
+  'IP and Network Security': [
+    {q:'IPsec operates at which OSI layer?',opts:['Application','Transport','Network','Data Link'],ans:2},
+    {q:'AH in IPsec stands for?',opts:['Access Header','Authentication Header','Application Host','Address Handling'],ans:1},
+    {q:'ESP in IPsec stands for?',opts:['Encapsulating Security Payload','Extended Security Protocol','Encrypted Subnet Protocol','None'],ans:0},
+    {q:'A VPN uses which protocol for tunneling?',opts:['HTTP','FTP','IPsec or SSL/TLS','SMTP'],ans:2},
+    {q:'Which IP address range is private?',opts:['8.8.8.8','192.168.0.0/16','172.217.0.0','34.0.0.0'],ans:1},
+    {q:'Port scanning is used to?',opts:['Increase network speed','Discover open ports on a host','Assign IP addresses','Route packets'],ans:1},
+    {q:'A DMZ in network security is?',opts:['Fully protected internal network','A buffer zone between internal and external networks','A type of VPN','A firewall type'],ans:1},
+    {q:'Stateful firewall inspects?',opts:['Packet headers only','Active connections and maintains state table','Application content only','Physical access'],ans:1},
+    {q:'Which protocol is used for secure remote login?',opts:['Telnet','FTP','SSH','HTTP'],ans:2},
+    {q:'MAC spoofing involves?',opts:['Changing IP address','Falsifying MAC address','Changing DNS','Modifying routing tables'],ans:1},
+    {q:'IPS stands for?',opts:['Internet Protocol Security','Intrusion Prevention System','IP Scanning','Internet Privacy Service'],ans:1},
+    {q:'A botnet is?',opts:['A secure network','A network of compromised computers controlled by an attacker','A type of firewall','A VPN'],ans:1},
+    {q:'VLAN stands for?',opts:['Virtual Local Area Network','Very Large Area Network','Virtual Layer Address Notation','None'],ans:0},
+    {q:'ARP poisoning manipulates?',opts:['DNS records','ARP cache to redirect traffic','Routing tables','Firewall rules'],ans:1},
+    {q:'Which of these is a network vulnerability scanner?',opts:['Wireshark','Nmap','Photoshop','Excel'],ans:1},
+    {q:'DNS poisoning corrupts?',opts:['IP routing','DNS cache to redirect users to malicious sites','ARP tables','MAC addresses'],ans:1},
+    {q:'Network segmentation improves security by?',opts:['Slowing the network','Limiting lateral movement of attackers','Increasing bandwidth','Removing firewalls'],ans:1},
+    {q:'WPA2 is used to secure?',opts:['Wired networks','Wireless networks','VPNs','Firewalls'],ans:1},
+    {q:'A packet sniffer captures?',opts:['Malware','Network packets for analysis','Screenshots','Files'],ans:1},
+    {q:'HTTPS prevents which type of attack?',opts:['DDoS','SQL injection','Man-in-the-middle eavesdropping','Brute force'],ans:2},
+    {q:'The purpose of NAT is to?',opts:['Encrypt traffic','Translate private IP addresses to public IP','Block malware','Assign MAC addresses'],ans:1},
+    {q:'A SYN flood attack exploits?',opts:['DNS protocol','TCP three-way handshake','FTP','UDP'],ans:1},
+    {q:'Zero trust security model assumes?',opts:['Internal network is always safe','No user or device is trusted by default','Only external threats exist','Passwords are sufficient'],ans:1},
+    {q:'Wireshark is a?',opts:['Firewall','Network packet analyzer','IDS','VPN client'],ans:1},
+    {q:'SIEM stands for?',opts:['Security Information and Event Management','System Intrusion and Event Monitor','Secure Internet and Email Management','None'],ans:0},
+  ],
+
+  // ── SEMESTER 8 ELECTIVES ─────────────────────────────────────
+  'App Development': [
+    {q:'Flutter uses which programming language?',opts:['Java','Kotlin','Dart','Swift'],ans:2},
+    {q:'React Native is built on top of?',opts:['Vue.js','Angular','React.js','Svelte'],ans:2},
+    {q:'An APK file is used for?',opts:['iOS apps','Android apps','Windows apps','Web apps'],ans:1},
+    {q:'IPA file is the package format for?',opts:['Android','Windows','iOS apps','Linux'],ans:2},
+    {q:'Which of these is an Android IDE?',opts:['Xcode','Visual Studio','Android Studio','Eclipse only'],ans:2},
+    {q:'Xcode is used to develop apps for?',opts:['Android','Windows','iOS and macOS','Linux'],ans:2},
+    {q:'An API in mobile development is used to?',opts:['Design the UI','Communicate with backend services','Store data locally','Animate elements'],ans:1},
+    {q:'SQLite in mobile apps is used for?',opts:['Network requests','Local database storage','UI rendering','Authentication'],ans:1},
+    {q:'What is a widget in Flutter?',opts:['A backend component','Everything — UI is built from widgets','A database table','An API'],ans:1},
+    {q:'State management in mobile apps handles?',opts:['Network speed','How app data changes over time and updates UI','Database design','UI color themes'],ans:1},
+    {q:'Push notifications are sent via?',opts:['Email','FCM (Firebase Cloud Messaging) or APNs','SMS only','Local storage'],ans:1},
+    {q:'RESTful API communicates using?',opts:['SQL','HTTP methods (GET, POST, PUT, DELETE)','Bluetooth','USB'],ans:1},
+    {q:'JSON is used in mobile apps for?',opts:['UI design','Data exchange between app and backend','Local storage','Animations'],ans:1},
+    {q:'Which permission is needed to use GPS in Android?',opts:['INTERNET','ACCESS_FINE_LOCATION','CAMERA','READ_EXTERNAL_STORAGE'],ans:1},
+    {q:'Responsive design in mobile means?',opts:['Fast loading','UI adapts to different screen sizes','Only portrait mode','Only landscape mode'],ans:1},
+    {q:'Firebase provides?',opts:['Only a database','Backend services including authentication, database, storage and hosting','Only authentication','Only hosting'],ans:1},
+    {q:'A splash screen is?',opts:['A loading screen','The initial screen shown while app loads','The home screen','The settings screen'],ans:1},
+    {q:'Deep linking in mobile apps allows?',opts:['Accessing hardware','Linking directly to specific content within an app','Network access','Database access'],ans:1},
+    {q:'The MVC pattern separates?',opts:['Frontend and backend','Model (data), View (UI), and Controller (logic)','Only data and UI','Activities and fragments'],ans:1},
+    {q:'App signing is required for?',opts:['Testing only','Publishing to app stores to verify the developer','UI design','Database access'],ans:1},
+    {q:'Which lifecycle method is called when an Android Activity is first created?',opts:['onStart()','onResume()','onCreate()','onPause()'],ans:2},
+    {q:'Cross-platform development means?',opts:['Writing separate code for each platform','Writing once and deploying on multiple platforms','Only web development','Only mobile development'],ans:1},
+    {q:'Offline functionality in apps uses?',opts:['Always-on internet','Local caching and storage to work without internet','Cloud storage only','Server-side rendering'],ans:1},
+    {q:'User authentication in mobile apps commonly uses?',opts:['Only passwords','JWT tokens, OAuth or Firebase Auth','Only biometrics','Only PINs'],ans:1},
+    {q:'Play Store is the official app store for?',opts:['iOS','Android','Windows Phone','BlackBerry'],ans:1},
+  ],
+
+  'Web Development': [
+    {q:'HTML stands for?',opts:['High Text Markup Language','HyperText Markup Language','Hyperlink Text Management Language','None'],ans:1},
+    {q:'CSS is used for?',opts:['Adding functionality','Structuring content','Styling and layout of web pages','Database management'],ans:2},
+    {q:'JavaScript is used to add?',opts:['Structure','Style','Interactivity and behavior','Database connections'],ans:2},
+    {q:'Which HTML tag defines the largest heading?',opts:['<h6>','<h3>','<h1>','<head>'],ans:2},
+    {q:'The box model in CSS consists of?',opts:['Only margin and padding','Content, padding, border, and margin','Only border and margin','Content and background'],ans:1},
+    {q:'A responsive web design uses?',opts:['Fixed pixel widths','Media queries and flexible grids','Only desktop layouts','Only mobile layouts'],ans:1},
+    {q:'REST API uses which protocol?',opts:['FTP','SMTP','HTTP','SSH'],ans:2},
+    {q:'Node.js is used for?',opts:['Frontend styling','Server-side JavaScript','Database management','Mobile development'],ans:1},
+    {q:'Which SQL command retrieves data?',opts:['INSERT','UPDATE','DELETE','SELECT'],ans:3},
+    {q:'Git is used for?',opts:['Styling web pages','Version control of source code','Database management','Deploying apps'],ans:1},
+    {q:'npm stands for?',opts:['Node Package Manager','New Program Manager','Network Package Module','Node Program Maker'],ans:0},
+    {q:'A cookie is used to?',opts:['Style web pages','Store small data on the client browser','Execute server code','Route HTTP requests'],ans:1},
+    {q:'Local storage in the browser stores data?',opts:['Temporarily per session','Permanently until cleared','On the server','In a database'],ans:1},
+    {q:'React is a JavaScript library for?',opts:['Backend development','Building user interfaces','Database queries','Server configuration'],ans:1},
+    {q:'A single page application (SPA)?',opts:['Has only one HTML file with no navigation','Dynamically updates content without full page reload','Has one page only','Uses no JavaScript'],ans:1},
+    {q:'CORS stands for?',opts:['Cross-Origin Resource Sharing','Cross-Object Routing System','Client Object Resource Service','None'],ans:0},
+    {q:'JWT is used for?',opts:['Styling','Authentication and authorization via tokens','Database queries','File uploads'],ans:1},
+    {q:'Which HTTP method is used to submit form data?',opts:['GET','DELETE','POST','PUT'],ans:2},
+    {q:'A 404 HTTP status code means?',opts:['Success','Server error','Resource not found','Unauthorized'],ans:2},
+    {q:'Webpack is a?',opts:['CSS framework','JavaScript runtime','Module bundler','Database ORM'],ans:2},
+    {q:'Which of these is a CSS framework?',opts:['React','Node.js','Tailwind CSS','MongoDB'],ans:2},
+    {q:'WebSockets provide?',opts:['One-way HTTP communication','Full-duplex real-time communication','Encrypted file transfer','Database access'],ans:1},
+    {q:'What does DOM stand for?',opts:['Data Object Model','Document Object Model','Digital Output Manager','None'],ans:1},
+    {q:'HTTPS ensures?',opts:['Faster loading','Encrypted communication between browser and server','Larger file support','Better SEO only'],ans:1},
+    {q:'Which database is commonly used with Node.js?',opts:['Oracle','MS SQL Server','MongoDB','IBM DB2'],ans:2},
+  ],
+
+  'Big Data': [
+    {q:'Big Data is characterized by the 3 Vs. They are?',opts:['Volume, Velocity, Variety','Value, Validity, Volume','Velocity, Vision, Value','Variety, Verification, Volume'],ans:0},
+    {q:'Hadoop is used for?',opts:['Web development','Distributed storage and processing of large datasets','Network security','Database design'],ans:1},
+    {q:'HDFS stands for?',opts:['High Definition File System','Hadoop Distributed File System','Hierarchical Data Format System','None'],ans:1},
+    {q:'MapReduce is a programming model for?',opts:['Graph algorithms only','Processing large datasets in parallel across clusters','Web applications','Machine learning only'],ans:1},
+    {q:'Apache Spark is faster than Hadoop MapReduce because?',opts:['It uses more servers','It processes data in-memory rather than writing to disk','It uses fewer features','It uses Python only'],ans:1},
+    {q:'NoSQL databases are preferred for Big Data because?',opts:['They use SQL','They support flexible schemas and horizontal scaling','They are slower','They only store text'],ans:1},
+    {q:'Kafka is used for?',opts:['Batch processing','Real-time data streaming and messaging','Image processing','Web scraping'],ans:1},
+    {q:'Data lake stores?',opts:['Only structured data','Raw data in its native format (structured, semi-structured, unstructured)','Only images','Only logs'],ans:1},
+    {q:'Hive provides?',opts:['Real-time streaming','SQL-like query interface for Hadoop','Graph processing','Machine learning'],ans:1},
+    {q:'The Map phase in MapReduce?',opts:['Combines results','Sorts data','Processes input and produces key-value pairs','Stores results'],ans:2},
+    {q:'The Reduce phase in MapReduce?',opts:['Reads input data','Processes input','Aggregates and combines values for each key','Distributes data'],ans:2},
+    {q:'Zookeeper in Hadoop ecosystem is used for?',opts:['Data storage','Distributed coordination and configuration management','Query processing','Data visualization'],ans:1},
+    {q:'Batch processing handles data?',opts:['In real-time','In large chunks at scheduled times','One record at a time','Randomly'],ans:1},
+    {q:'Stream processing handles data?',opts:['In batches','In real-time as it arrives','Only structured data','Only in memory'],ans:1},
+    {q:'HBase is a?',opts:['SQL database','NoSQL column-family database built on HDFS','File system','Messaging queue'],ans:1},
+    {q:'Which of these is a Big Data visualization tool?',opts:['Hadoop','Spark','Tableau','Kafka'],ans:2},
+    {q:'Data replication in HDFS ensures?',opts:['Faster writes','Fault tolerance by storing multiple copies of data','Encryption','Compression'],ans:1},
+    {q:'The default replication factor in HDFS is?',opts:['1','2','3','5'],ans:2},
+    {q:'Pig in Hadoop ecosystem is used for?',opts:['Data storage','High-level data flow scripting for MapReduce','Real-time streaming','Graph processing'],ans:1},
+    {q:'Sqoop is used to?',opts:['Stream data','Transfer data between Hadoop and relational databases','Process graphs','Visualize data'],ans:1},
+    {q:'Machine learning on Big Data commonly uses?',opts:['Spreadsheets','Apache Spark MLlib','Excel macros','Access database'],ans:1},
+    {q:'Lambda architecture combines?',opts:['Only batch processing','Only stream processing','Both batch and speed (stream) processing layers','Only serving layer'],ans:2},
+    {q:'Which cloud platform provides Big Data services?',opts:['Photoshop','AWS (Amazon Web Services)','MS Office','AutoCAD'],ans:1},
+    {q:'Data governance in Big Data ensures?',opts:['Faster processing','Data quality, security, privacy and proper usage','More storage','Better visualization'],ans:1},
+    {q:'The fifth V of Big Data (in extended model) is?',opts:['Victory','Value','Vision','Verification'],ans:1},
+  ],
+};
+
+let Qs = QB[subject] || null;
+
+if (!Qs) {
+  document.getElementById('mainWrap').innerHTML = `
+    <div class="no-qs">
+      <h3>Questions not available yet</h3>
+      <p>Questions for <strong>${subject || 'this subject'}</strong> are not in the system yet.<br/>
+      Please go back and choose a subject, or ask your admin to add questions.</p>
+      <a href="student-dashboard.html">← Go back to Dashboard</a>
+    </div>`;
+} else {
+  init();
+}
+
+function init() {
+  const TOTAL  = Qs.length;
+  let cur      = 0;
+  let answers  = new Array(TOTAL).fill(null);
+  let skipped  = new Array(TOTAL).fill(false);
+  let revealed = new Array(TOTAL).fill(false);
+  let secLeft  = 25 * 60;
+  let ticker   = null;
+
   const dotRow = document.getElementById('dotRow');
-  for (let i=0;i<TOTAL;i++) {
-    const d=document.createElement('div');
-    d.className='qdot'+(i===0?' cur':'');
-    d.textContent=i+1;
-    d.onclick=()=>jump(i);
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'qdot' + (i===0?' cur':'');
+    d.textContent = i+1;
+    d.onclick = () => jump(i);
     dotRow.appendChild(d);
   }
 
-  // ── TIMER ──
-  if (mode==='timed') {
-    ticker=setInterval(()=>{
+  if (mode === 'timed') {
+    ticker = setInterval(() => {
       secLeft--;
-      const m=Math.floor(secLeft/60).toString().padStart(2,'0');
-      const s=(secLeft%60).toString().padStart(2,'0');
-      const tv=document.getElementById('timerVal');
-      tv.textContent=`${m}:${s}`;
-      if (secLeft<=60)       tv.className='timer-val crit';
-      else if (secLeft<=300) tv.className='timer-val warn';
-      if (secLeft<=0) { clearInterval(ticker); submitQuiz(); }
-    },1000);
+      const m = Math.floor(secLeft/60).toString().padStart(2,'0');
+      const s = (secLeft%60).toString().padStart(2,'0');
+      const tv = document.getElementById('timerVal');
+      tv.textContent = `${m}:${s}`;
+      if (secLeft <= 60)       tv.className = 'timer-val crit';
+      else if (secLeft <= 300) tv.className = 'timer-val warn';
+      if (secLeft <= 0) { clearInterval(ticker); submitQuiz(); }
+    }, 1000);
   }
 
-  // ── RENDER ──
   function render() {
-    const q=Qs[cur];
-    document.getElementById('qNum').textContent    =`Question ${cur+1} of ${TOTAL}`;
-    document.getElementById('qText').textContent   =q.q;
-    document.getElementById('progText').textContent=`${cur+1} / ${TOTAL}`;
-    document.getElementById('progBar').style.width =`${((cur+1)/TOTAL)*100}%`;
+    const q = Qs[cur];
+    document.getElementById('qNum').textContent     = `Question ${cur+1} of ${TOTAL}`;
+    document.getElementById('qText').textContent    = q.q;
+    document.getElementById('progText').textContent = `${cur+1} / ${TOTAL}`;
+    document.getElementById('progBar').style.width  = `${((cur+1)/TOTAL)*100}%`;
 
-    document.querySelectorAll('.qdot').forEach((d,i)=>{
-      d.className='qdot';
+    document.querySelectorAll('.qdot').forEach((d,i) => {
+      d.className = 'qdot';
       if (i===cur)              d.classList.add('cur');
       else if (answers[i]!==null) d.classList.add('answered');
       else if (skipped[i])        d.classList.add('skipped');
     });
 
-    const grid=document.getElementById('optsGrid');
-    grid.innerHTML='';
-    ['A','B','C','D'].forEach((lbl,i)=>{
-      const btn=document.createElement('button');
-      btn.className='opt';
-      btn.innerHTML=`<span class="opt-lbl">${lbl}</span>${q.opts[i]}`;
-      btn.onclick=()=>pick(i);
-      btn.disabled=revealed[cur];
+    const grid = document.getElementById('optsGrid');
+    grid.innerHTML = '';
+    ['A','B','C','D'].forEach((lbl,i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = `<span class="opt-lbl">${lbl}</span>${q.opts[i]}`;
+      btn.onclick = () => pick(i);
+      btn.disabled = revealed[cur];
       if (revealed[cur]) {
-        if (i===q.ans)             btn.classList.add('right');
-        else if (i===answers[cur]) btn.classList.add('wrong');
-      } else if (answers[cur]===i) {
+        if (i === q.ans)             btn.classList.add('right');
+        else if (i === answers[cur]) btn.classList.add('wrong');
+      } else if (answers[cur] === i) {
         btn.classList.add('chosen');
       }
       grid.appendChild(btn);
     });
 
-    const fb=document.getElementById('feedback');
-    if (revealed[cur] && mode==='practice') {
-      const ok=answers[cur]===q.ans;
-      fb.className=`feedback ${ok?'right':'wrong'}`;
-      fb.textContent=ok?'Correct. Well done.':'Incorrect. The correct answer is: '+q.opts[q.ans];
+    const fb = document.getElementById('feedback');
+    if (revealed[cur] && mode === 'practice') {
+      const ok = answers[cur] === q.ans;
+      fb.className  = `feedback ${ok?'right':'wrong'}`;
+      fb.textContent = ok ? 'Correct.' : `Incorrect. The correct answer is: ${q.opts[q.ans]}`;
     } else {
-      fb.className='feedback';
+      fb.className = 'feedback';
     }
 
-    document.getElementById('btnPrev').disabled=(cur===0);
-    document.getElementById('btnNext').textContent=(cur===TOTAL-1)?'Submit Quiz':'Next →';
+    document.getElementById('btnPrev').disabled    = cur === 0;
+    document.getElementById('btnNext').textContent = cur === TOTAL-1 ? 'Review' : 'Next →';
   }
 
   function pick(i) {
     if (revealed[cur]) return;
-    answers[cur]=i; skipped[cur]=false;
-    if (mode==='practice') revealed[cur]=true;
+    answers[cur] = i;
+    skipped[cur] = false;
+    if (mode === 'practice') revealed[cur] = true;
     render();
   }
-  function nextQ()  { if (cur<TOTAL-1){ cur++; render(); } else { openModal(); } }
-  function prevQ()  { if (cur>0){ cur--; render(); } }
-  function skipQ()  { skipped[cur]=true; if (cur<TOTAL-1){ cur++; render(); } }
-  function jump(i)  { cur=i; render(); }
 
-  function openModal() {
+  window.nextQ  = () => { if (cur < TOTAL-1) { cur++; render(); } };
+  window.prevQ  = () => { if (cur > 0)       { cur--; render(); } };
+  window.skipQ  = () => { skipped[cur]=true; if (cur < TOTAL-1) { cur++; render(); } };
+  window.jump   = (i) => { cur = i; render(); };
+
+  window.openModal = () => {
     const ans  = answers.filter(a=>a!==null).length;
     const skip = skipped.filter(Boolean).length;
     document.getElementById('mAns').textContent  = ans;
     document.getElementById('mSkip').textContent = skip;
-    document.getElementById('mLeft').textContent = Math.max(0, TOTAL-ans-skip);
+    document.getElementById('mLeft').textContent = Math.max(0, TOTAL - ans - skip);
     document.getElementById('overlay').classList.add('show');
-  }
-  function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+  };
+  window.closeModal = () => document.getElementById('overlay').classList.remove('show');
 
-  function submitQuiz() {
+  window.submitQuiz = () => {
     clearInterval(ticker);
-    let score=0;
-    answers.forEach((a,i)=>{ if(a===Qs[i].ans) score++; });
-
-    // ── save stats for dashboard ──
-    const taken = parseInt(localStorage.getItem('quizzesTaken') || '0') + 1;
-    localStorage.setItem('quizzesTaken', taken);
-
-    const pct = Math.round((score / TOTAL) * 100);
-    const scores = JSON.parse(localStorage.getItem('scoreHistory') || '[]');
-    scores.push(pct);
-    localStorage.setItem('scoreHistory', JSON.stringify(scores));
-
-    const subs = JSON.parse(localStorage.getItem('subjectsList') || '[]');
-    if (!subs.includes(subject)) subs.push(subject);
-    localStorage.setItem('subjectsList', JSON.stringify(subs));
-
-    // attempts history
-    const attempts = JSON.parse(localStorage.getItem('attemptHistory') || '[]');
-    const now = new Date();
-    attempts.push({
-      subject, sem, mode,
-      score, total: TOTAL,
-      date: now.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})
-    });
-    localStorage.setItem('attemptHistory', JSON.stringify(attempts));
-
+    let score = 0;
+    answers.forEach((a,i) => { if (a === Qs[i].ans) score++; });
     localStorage.setItem('quizScore',   score);
     localStorage.setItem('quizTotal',   TOTAL);
     localStorage.setItem('quizAnswers', JSON.stringify(answers));
     localStorage.setItem('quizCorrect', JSON.stringify(Qs.map(q=>q.ans)));
     localStorage.setItem('quizQs',      JSON.stringify(Qs));
-    window.location='results.html';
-  }
+    window.location.href = 'results.html';
+  };
 
   render();
+}
 </script>
 </body>
 </html>
