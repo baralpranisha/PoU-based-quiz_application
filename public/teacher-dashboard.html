@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructor Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <style>
+  :root {
+      --bg-page:#f1f4f8; --bg-card:#ffffff; --bg-input:#f9fafb;
+      --sb-bg:#0d1b2e; --sb-hover:rgba(255,255,255,0.07); --sb-active:#1e3a5f;
+      --sb-section:rgba(255,255,255,0.3); --sb-text:rgba(255,255,255,0.72);
+      --sb-text-muted:rgba(255,255,255,0.35); --sb-border:rgba(255,255,255,0.08);
+      --sb-width:220px; --sb-collapsed:60px;
+      --tb-bg:#ffffff; --tb-border:#e5e7eb;
+      --text-primary:#111827; --text-secondary:#6b7280; --text-muted:#9ca3af;
+      --border:#e5e7eb; --border-light:#f3f4f6;
+      --accent:#1a56db; --accent-hover:#1648c0; --accent-light:#e6f0ff;
+      --teal:#0f6e56; --teal-light:#e1f5ee;
+      --amber:#854f0b; --amber-light:#faeeda;
+      --purple:#534ab7; --purple-light:#eeedfe;
+      --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+      --font-size:14px; --r-sm:6px; --r-md:8px; --r-lg:12px;
+      --sb-transition:280ms cubic-bezier(.4,0,.2,1);
+  }
+  body.dark-theme {
+      --bg-page:#0f172a; --bg-card:#1e293b; --bg-input:#1e293b;
+      --tb-bg:#1e293b; --tb-border:#334155;
+      --text-primary:#f1f5f9; --text-secondary:#94a3b8; --text-muted:#64748b;
+      --border:#334155; --border-light:#1e293b;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{font-size:var(--font-size);}
+  body{font-family:var(--font);background:var(--bg-page);color:var(--text-primary);min-height:100vh;display:flex;transition:background 200ms,color 200ms;}
+  button{font-family:inherit;font-size:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;font-size:inherit;}
+  a{text-decoration:none;}
+  .sidebar{position:fixed;inset-block:0;inset-inline-start:0;inline-size:var(--sb-width);background:var(--sb-bg);display:flex;flex-direction:column;z-index:100;overflow:hidden;transition:inline-size var(--sb-transition);}
+  .sidebar.collapsed{inline-size:var(--sb-collapsed);}
+  .sb-top{display:flex;align-items:center;justify-content:space-between;padding:14px 10px 12px 14px;border-block-end:1px solid var(--sb-border);gap:8px;flex-shrink:0;}
+  .sb-brand{display:flex;align-items:center;gap:9px;overflow:hidden;}
+  .sb-brand-icon{inline-size:30px;block-size:30px;min-inline-size:30px;background:var(--sb-active);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:#7db5f0;font-size:16px;}
+  .sb-brand-name{font-size:12.5px;font-weight:600;color:#e2eaf6;white-space:nowrap;transition:opacity var(--sb-transition);}
+  .sidebar.collapsed .sb-brand-name{opacity:0;pointer-events:none;}
+  .sb-toggle{background:none;border:none;color:var(--sb-text-muted);font-size:18px;padding:4px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color 150ms,background 150ms;}
+  .sb-toggle:hover{color:#fff;background:var(--sb-hover);}
+  .sb-avatar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-block-end:1px solid var(--sb-border);overflow:hidden;flex-shrink:0;}
+  .sb-av-circle{inline-size:34px;block-size:34px;min-inline-size:34px;border-radius:50%;background:var(--sb-active);border:2px solid #ffc4c4;display:flex;align-items:center;justify-content:center;color:#ffc4c4;font-size:11px;font-weight:600;}
+  .sb-av-info{overflow:hidden;transition:opacity var(--sb-transition);}
+  .sidebar.collapsed .sb-av-info{opacity:0;pointer-events:none;}
+  .sb-av-name{font-size:12px;font-weight:500;color:#e2eaf6;white-space:nowrap;}
+  .sb-av-role{font-size:10px;color:var(--sb-text-muted);margin-block-start:2px;}
+  .sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding-block:8px;}
+  .sb-nav::-webkit-scrollbar{width:3px;}
+  .sb-nav::-webkit-scrollbar-thumb{background:var(--sb-border);border-radius:4px;}
+  .sb-group-header{display:flex;align-items:center;gap:6px;inline-size:calc(100% - 12px);margin:6px 6px 2px;padding:7px 14px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;transition:background 150ms;overflow:hidden;white-space:nowrap;text-align:start;}
+  .sb-group-header:hover{background:var(--sb-hover);}
+  .sb-group-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--sb-section);text-transform:uppercase;flex:1;overflow:hidden;transition:opacity var(--sb-transition);}
+  .sb-group-arrow{font-size:9px;color:var(--sb-section);transition:transform 250ms ease,opacity var(--sb-transition);flex-shrink:0;}
+  .sb-group-header.collapsed .sb-group-arrow{transform:rotate(-90deg);}
+  .sidebar.collapsed .sb-group-label,.sidebar.collapsed .sb-group-arrow{opacity:0;pointer-events:none;}
+  .sb-group-items{overflow:hidden;max-block-size:300px;transition:max-block-size 280ms cubic-bezier(.4,0,.2,1),opacity 200ms ease;opacity:1;}
+  .sb-group-items.collapsed{max-block-size:0;opacity:0;}
+  .sidebar.collapsed .sb-group-items{max-block-size:300px !important;opacity:1 !important;}
+  .nav-item{position:relative;}
+  .nav-tooltip{position:fixed;left:calc(var(--sb-collapsed) + 8px);background:#1e293b;color:#f1f5f9;font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transform:translateX(-4px);transition:opacity 150ms ease,transform 150ms ease;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.25);}
+  .nav-tooltip::before{content:'';position:absolute;left:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:#1e293b;border-left:none;}
+  .sidebar.collapsed .nav-item:hover .nav-tooltip{opacity:1;transform:translateX(0);}
+  .sidebar.collapsed .nav-item{justify-content:center;padding-inline:0;}
+  .sidebar.collapsed .sb-group-header{justify-content:center;padding-inline:0;pointer-events:none;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:none;border:none;border-radius:var(--r-sm);margin-block:1px;margin-inline:6px;inline-size:calc(100% - 12px);color:var(--sb-text);font-size:12.5px;white-space:nowrap;overflow:hidden;transition:background 150ms,color 150ms;text-align:start;}
+  .nav-item:hover{background:var(--sb-hover);}
+  .nav-item.active{background:var(--sb-active);color:#e2eaf6;}
+  .nav-item .fa{font-size:15px;min-inline-size:17px;flex-shrink:0;color:inherit;opacity:0.65;}
+  .nav-item.active .fa{opacity:1;color:#7db5f0;}
+  .nav-item span{transition:opacity var(--sb-transition);overflow:hidden;}
+  .sidebar.collapsed .nav-item span{opacity:0;pointer-events:none;}
+  .nav-badge{margin-inline-start:auto;background:#e24b4a;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:10px;min-inline-size:18px;text-align:center;flex-shrink:0;transition:opacity var(--sb-transition);}
+  .sidebar.collapsed .nav-badge{opacity:0;pointer-events:none;}
+  .sb-footer{border-block-start:1px solid var(--sb-border);padding:8px 6px;flex-shrink:0;}
+  .sb-logout{display:flex;align-items:center;gap:10px;inline-size:100%;padding:9px 14px;background:none;border:none;border-radius:var(--r-sm);color:var(--sb-text-muted);font-size:12.5px;white-space:nowrap;overflow:hidden;transition:background 150ms,color 150ms;text-align:start;}
+  .sb-logout:hover{background:var(--sb-hover);color:var(--sb-text);}
+  .sb-logout .fa{font-size:17px;flex-shrink:0;}
+  .sb-logout span{transition:opacity var(--sb-transition);}
+  .sidebar.collapsed .sb-logout span{opacity:0;pointer-events:none;}
+  .main-wrap{margin-inline-start:var(--sb-width);flex:1;display:flex;flex-direction:column;min-block-size:100vh;min-inline-size:0;overflow-x:hidden;transition:margin-inline-start var(--sb-transition);}
+  .main-wrap.collapsed{margin-inline-start:var(--sb-collapsed);}
+  .topbar{position:sticky;inset-block-start:0;z-index:50;background:var(--tb-bg);border-block-end:1px solid var(--tb-border);display:flex;align-items:center;gap:16px;padding:0 24px;block-size:58px;flex-shrink:0;transition:background 200ms,border-color 200ms;}
+  .topbar-left{flex:1;overflow:hidden;min-inline-size:0;}
+  .topbar-title{font-size:15px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .topbar-meta{font-size:11px;color:var(--text-muted);display:block;margin-block-start:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .topbar-search{display:flex;align-items:center;gap:7px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-md);padding:6px 12px;transition:border-color 150ms;}
+  .topbar-search:focus-within{border-color:var(--accent);}
+  .topbar-search .fa{color:var(--text-muted);font-size:15px;}
+  .topbar-search input{background:none;border:none;outline:none;color:var(--text-primary);font-size:12.5px;inline-size:160px;}
+  .topbar-search input::placeholder{color:var(--text-muted);}
+  .tb-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r-md);font-size:12.5px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-primary);white-space:nowrap;transition:background 150ms,border-color 150ms;}
+  .tb-btn:hover{background:var(--bg-input);}
+  .tb-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .tb-btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+  .view-area{flex:1;padding:22px 24px;min-inline-size:0;overflow-x:hidden;}
+  .view{display:none;flex-direction:column;gap:16px;min-inline-size:0;}
+  .view.active{display:flex;}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;min-inline-size:0;}
+  .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;display:flex;align-items:center;gap:14px;transition:background 200ms,border-color 200ms;}
+  .stat-icon{inline-size:40px;block-size:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .si-blue{background:var(--accent-light);color:var(--accent);}
+  .si-teal{background:var(--teal-light);color:var(--teal);}
+  .si-amber{background:var(--amber-light);color:var(--amber);}
+  .si-purple{background:var(--purple-light);color:var(--purple);}
+  .stat-val{font-size:22px;font-weight:600;color:var(--text-primary);line-height:1;}
+  .stat-lbl{font-size:11px;color:var(--text-muted);margin-block-start:3px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;min-inline-size:0;}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:background 200ms,border-color 200ms;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-block-end:1px solid var(--border-light);}
+  .card-head-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--text-primary);}
+  .card-head-title .fa{color:var(--text-secondary);font-size:16px;}
+  .card-link{font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;}
+  .card-link:hover{text-decoration:underline;}
+  .card-body{padding:16px 18px;}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .quick-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;background:var(--bg-page);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;text-align:start;font-size:12.5px;color:var(--text-primary);font-weight:500;transition:background 150ms,border-color 150ms,transform 150ms;width:100%;}
+  .quick-card .fa{font-size:20px;color:var(--accent);}
+  .quick-card:hover{background:var(--accent-light);border-color:var(--accent);transform:translateY(-1px);}
+  .dash-q-list{display:flex;flex-direction:column;}
+  .dq-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-block-end:1px solid var(--border-light);}
+  .dq-item:last-child{border-block-end:none;}
+  .dq-num{inline-size:24px;block-size:24px;min-inline-size:24px;border-radius:var(--r-sm);background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+  .dq-body{flex:1;}
+  .dq-text{font-size:12.5px;color:var(--text-primary);line-height:1.4;}
+  .dq-meta{font-size:10.5px;color:var(--text-muted);margin-block-start:3px;}
+  .dq-correct{font-size:10px;font-weight:500;color:var(--teal);background:var(--teal-light);padding:2px 8px;border-radius:var(--r-sm);white-space:nowrap;align-self:flex-start;margin-block-start:2px;}
+  .empty-msg{text-align:center;color:var(--text-muted);font-size:12.5px;padding:24px 0;}
+  .form-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+  .form-card-head{display:flex;align-items:center;gap:8px;padding:14px 20px;border-block-end:1px solid var(--border-light);font-size:13.5px;font-weight:600;color:var(--text-primary);}
+  .form-card-head .fa{color:var(--accent);font-size:18px;}
+  .q-form{padding:20px;display:flex;flex-direction:column;gap:16px;}
+  .form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group label{font-size:12px;font-weight:500;color:var(--text-secondary);display:flex;align-items:center;gap:5px;}
+  .form-group label .fa{font-size:14px;color:var(--teal);}
+  .form-group input,.form-group select,.form-group textarea{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;color:var(--text-primary);outline:none;transition:border-color 150ms,box-shadow 150ms;resize:vertical;}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,86,219,0.1);}
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .option-group label{display:flex;align-items:center;gap:8px;}
+  .opt-marker{inline-size:20px;block-size:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+  .opt-a{background:var(--accent-light);color:var(--accent);}
+  .opt-b{background:var(--teal-light);color:var(--teal);}
+  .opt-c{background:var(--amber-light);color:var(--amber);}
+  .opt-d{background:var(--purple-light);color:var(--purple);}
+  .correct-group{background:var(--teal-light);border:1px solid #b7e3d4;border-radius:var(--r-md);padding:14px;}
+  .correct-group label{color:var(--teal);font-weight:600;}
+  .correct-group input{background:var(--bg-card);border-color:#b7e3d4;}
+  .form-actions{display:flex;justify-content:flex-end;gap:10px;}
+  .btn-primary{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-md);font-size:13px;font-weight:500;cursor:pointer;transition:background 150ms;}
+  .btn-primary:hover{background:var(--accent-hover);}
+  .btn-ghost{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1px solid var(--border);border-radius:var(--r-md);font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:background 150ms,border-color 150ms;}
+  .btn-ghost:hover{background:var(--bg-input);border-color:var(--text-muted);}
+  .btn-danger{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r-sm);font-size:12px;font-weight:500;color:#dc2626;cursor:pointer;transition:background 150ms;}
+  .btn-danger:hover{background:#fee2e2;}
+  .filter-controls{display:flex;gap:8px;flex-wrap:wrap;}
+  .mini-select{font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg-input);color:var(--text-primary);cursor:pointer;}
+  .sq-item{border:1px solid var(--border-light);border-radius:var(--r-md);padding:14px 16px;margin-block-end:10px;background:var(--bg-page);transition:border-color 150ms;}
+  .sq-item:last-child{margin-block-end:0;}
+  .sq-item:hover{border-color:var(--accent);}
+  .sq-head{display:flex;align-items:center;gap:8px;margin-block-end:8px;flex-wrap:wrap;}
+  .badge-subject{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--accent-light);color:var(--accent);}
+  .badge-sem{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border);}
+  .sq-text{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.5;margin-block-end:10px;}
+  .sq-opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-block-end:10px;}
+  .sq-opt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--r-sm);padding:5px 10px;}
+  .sq-opt.is-correct{background:var(--teal-light);color:var(--teal);border-color:#b7e3d4;font-weight:600;}
+  .sq-correct{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:var(--teal);background:var(--teal-light);padding:3px 10px;border-radius:var(--r-sm);margin-block-end:10px;}
+  .sq-foot{display:flex;justify-content:flex-end;border-block-start:1px solid var(--border-light);padding-block-start:10px;margin-block-start:4px;}
+  .fb-summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .fb-summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;display:flex;flex-direction:column;gap:4px;}
+  .fb-sum-val{font-size:26px;font-weight:700;color:var(--accent);line-height:1;}
+  .fb-sum-lbl{font-size:11px;color:var(--text-muted);}
+  .sentiment-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .sentiment-opt{cursor:pointer;}
+  .sentiment-opt input[type="radio"]{display:none;}
+  .sentiment-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:12.5px;font-weight:500;border:1.5px solid var(--border);color:var(--text-secondary);transition:background 150ms,border-color 150ms,color 150ms;user-select:none;cursor:pointer;}
+  .sentiment-opt input:checked + .pill-positive{background:var(--teal-light);border-color:var(--teal);color:var(--teal);}
+  .sentiment-opt input:checked + .pill-neutral{background:var(--amber-light);border-color:var(--amber);color:var(--amber);}
+  .sentiment-opt input:checked + .pill-negative{background:#fef2f2;border-color:#ef4444;color:#dc2626;}
+  .star-rating{display:flex;gap:4px;}
+  .star{background:none;border:none;font-size:22px;color:var(--border);cursor:pointer;padding:2px;transition:color 150ms,transform 100ms;line-height:1;}
+  .star:hover,.star.active{color:#f59e0b;}
+  .star:hover{transform:scale(1.15);}
+  .fb-item{padding:14px 18px;border-block-end:1px solid var(--border-light);transition:background 150ms;}
+  .fb-item:last-child{border-block-end:none;}
+  .fb-item:hover{background:var(--bg-page);}
+  .fb-item-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-block-end:8px;}
+  .fb-badge-cat{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:4px;background:var(--accent-light);color:var(--accent);}
+  .fb-badge-sentiment{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;}
+  .fb-badge-sentiment.positive{background:var(--teal-light);color:var(--teal);}
+  .fb-badge-sentiment.neutral{background:var(--amber-light);color:var(--amber);}
+  .fb-badge-sentiment.negative{background:#fef2f2;color:#dc2626;}
+  .fb-regarding{font-size:10.5px;color:var(--text-muted);margin-inline-start:auto;white-space:nowrap;}
+  .fb-stars{font-size:11px;color:#f59e0b;letter-spacing:1px;}
+  .fb-text{font-size:13px;color:var(--text-primary);line-height:1.6;margin-block-end:8px;}
+  .fb-item-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .fb-date{font-size:10.5px;color:var(--text-muted);}
+  .fb-list-body{padding:0;flex:1;overflow-y:auto;min-block-size:0;max-height:420px;}
+  .profile-hero{background:var(--sb-bg);border-radius:var(--r-lg);padding:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .profile-avatar-lg{inline-size:72px;block-size:72px;min-inline-size:72px;border-radius:50%;background:var(--sb-active);border:3px solid #ffc4c4;display:flex;align-items:center;justify-content:center;color:#ffc4c4;font-size:20px;font-weight:600;}
+  .profile-hero-info{flex:1;min-inline-size:200px;}
+  .profile-name{font-size:18px;font-weight:600;color:#f1f5f9;margin-block-end:4px;}
+  .profile-role-pill{display:inline-block;font-size:10.5px;font-weight:500;padding:2px 10px;border-radius:20px;background:#ffc4c4;color:#0d1b2e;margin-block-end:10px;}
+  .profile-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.6);margin-block-end:4px;}
+  .profile-meta .fa{font-size:14px;}
+  .profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .profile-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;text-align:center;}
+  .ps-val{font-size:22px;font-weight:600;color:var(--accent);}
+  .ps-lbl{font-size:11px;color:var(--text-muted);margin-block-start:3px;}
+  .bio-text{font-size:13px;color:var(--text-secondary);line-height:1.65;}
+  .info-list{display:flex;flex-direction:column;gap:0;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-block-end:1px solid var(--border-light);font-size:12.5px;gap:12px;}
+  .info-row:last-child{border-block-end:none;}
+  .info-label{color:var(--text-muted);min-inline-size:80px;}
+  .info-value{color:var(--text-primary);font-weight:500;text-align:end;}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-box{background:var(--bg-card);border-radius:var(--r-lg);inline-size:100%;max-inline-size:480px;box-shadow:0 20px 60px rgba(0,0,0,0.25);overflow:hidden;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-block-end:1px solid var(--border);font-size:14px;font-weight:600;color:var(--text-primary);}
+  .modal-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:2px;border-radius:var(--r-sm);display:flex;align-items:center;}
+  .modal-close:hover{color:var(--text-primary);background:var(--bg-input);}
+  .modal-body{padding:20px;display:flex;flex-direction:column;gap:14px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-block-start:1px solid var(--border);}
+  .help-search-input{inline-size:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 14px;color:var(--text-primary);outline:none;font-size:13px;transition:border-color 150ms,box-shadow 150ms;}
+  .help-search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,86,219,0.1);}
+  .faq-item{border-block-end:1px solid var(--border-light);}
+  .faq-item:last-child{border-block-end:none;}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;inline-size:100%;padding:13px 18px;background:none;border:none;text-align:start;font-size:13px;font-weight:500;color:var(--text-primary);cursor:pointer;gap:10px;transition:background 150ms;}
+  .faq-q:hover{background:var(--bg-page);}
+  .faq-arrow{font-size:15px;color:var(--text-muted);flex-shrink:0;transition:transform 200ms;}
+  .faq-item.open .faq-arrow{transform:rotate(180deg);}
+  .faq-a{display:none;padding:0 18px 14px;font-size:12.5px;color:var(--text-secondary);line-height:1.65;}
+  .faq-item.open .faq-a{display:block;}
+  .toggle-wrap{position:relative;flex-shrink:0;}
+  .toggle-wrap input{opacity:0;position:absolute;inline-size:0;block-size:0;}
+  .toggle-track{display:block;inline-size:40px;block-size:22px;background:var(--border);border-radius:11px;position:relative;transition:background 200ms;cursor:pointer;}
+  .toggle-track::after{content:'';position:absolute;inset-block-start:3px;inset-inline-start:3px;inline-size:16px;block-size:16px;border-radius:50%;background:#fff;transition:transform 200ms;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+  .toggle-wrap input:checked + .toggle-track{background:var(--accent);}
+  .toggle-wrap input:checked + .toggle-track::after{transform:translateX(18px);}
+  @media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr;}.two-col{grid-template-columns:1fr;}.profile-stats{grid-template-columns:1fr 1fr;}.fb-summary-strip{grid-template-columns:1fr 1fr;}.quick-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:600px){.stats-grid{grid-template-columns:1fr;}.profile-stats{grid-template-columns:1fr 1fr;}.options-grid{grid-template-columns:1fr;}.form-row.two{grid-template-columns:1fr;}.topbar-search{display:none;}.quick-grid{grid-template-columns:1fr;}:root{--sb-width:200px;}}
+  body.dark-theme .sq-item{background:#0f172a;}
+  body.dark-theme .quick-card{background:#0f172a;}
+  body.dark-theme .profile-hero{background:#020617;}
+  body.dark-theme .faq-q:hover{background:#0f172a;}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="fa fa-fw fa-graduation-cap"></i></div>
+      <span class="sb-brand-name">Instructor Portal</span>
+    </div>
+    <button class="sb-toggle" id="sidebarToggle" title="Toggle sidebar">
+      <i class="fa fa-fw fa-bars"></i>
+    </button>
+  </div>
+  <div class="sb-avatar">
+    <div class="sb-av-circle" id="sbAvCircle">T</div>
+    <div class="sb-av-info">
+      <div class="sb-av-name" id="sbAvName">Teacher</div>
+      <div class="sb-av-role" id="sbAvRole">Instructor</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <button class="sb-group-header" data-group="main">
+      <span class="sb-group-label">Main</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items" id="group-main">
+      <button class="nav-item" data-view="home-view">
+        <span class="nav-tooltip">Home</span>
+        <i class="fa fa-fw fa-home"></i><span>Home</span>
+      </button>
+      <button class="nav-item active" data-view="dashboard-view">
+        <span class="nav-tooltip">Dashboard</span>
+        <i class="fa fa-fw fa-tachometer"></i><span>Dashboard</span>
+      </button>
+    </div>
+    <button class="sb-group-header" data-group="questions">
+      <span class="sb-group-label">Questions</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items" id="group-questions">
+      <button class="nav-item" data-view="create-view">
+        <span class="nav-tooltip">Create question</span>
+        <i class="fa fa-fw fa-plus-circle"></i><span>Create question</span>
+      </button>
+      <button class="nav-item" data-view="stored-view">
+        <span class="nav-tooltip">Stored questions</span>
+        <i class="fa fa-fw fa-database"></i><span>Stored questions</span>
+        <span class="nav-badge" id="navBadge">0</span>
+      </button>
+      <button class="nav-item" data-view="feedback-view">
+        <span class="nav-tooltip">Feedback</span>
+        <i class="fa fa-fw fa-comment"></i><span>Feedback</span>
+      </button>
+    </div>
+    <button class="sb-group-header" data-group="account">
+      <span class="sb-group-label">Account</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items" id="group-account">
+      <button class="nav-item" data-view="profile-view">
+        <span class="nav-tooltip">Profile</span>
+        <i class="fa fa-fw fa-user-circle"></i><span>Profile</span>
+      </button>
+      <button class="nav-item" data-view="help-view">
+        <span class="nav-tooltip">Help</span>
+        <i class="fa fa-fw fa-question-circle"></i><span>Help</span>
+      </button>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <button class="sb-logout" id="sbLogoutBtn">
+      <i class="fa fa-fw fa-sign-out"></i><span>Sign out</span>
+    </button>
+  </div>
+</aside>
+
+<div class="main-wrap" id="mainWrap">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="topbar-title" id="topbarTitle">Dashboard</h1>
+      <span class="topbar-meta" id="topbarMeta">Portal metrics, performance summary, and quick activities.</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <i class="fa fa-search"></i>
+        <input type="text" placeholder="Search portal..." id="portalSearch">
+      </div>
+      <label class="toggle-wrap" title="Dark mode">
+        <input type="checkbox" id="darkToggle" onchange="toggleDark(this)"/>
+        <span class="toggle-track"></span>
+      </label>
+      <button class="tb-btn tb-btn-primary" id="topbarActionBtn">
+        <i class="fa fa-plus"></i> Create Question
+      </button>
+    </div>
+  </header>
+
+  <main class="view-area">
+
+    <!-- HOME -->
+    <div class="view" id="home-view">
+      <div style="background:linear-gradient(135deg,var(--accent),var(--accent-hover));color:#fff;padding:24px;border-radius:var(--r-lg);margin-block-end:16px;">
+        <h2 style="font-size:20px;font-weight:600;margin-block-end:6px;">Welcome Back, <span class="instructor-name-span">Teacher</span>!</h2>
+        <p style="font-size:13px;opacity:0.9;">Manage classes, build question banks, and review course feedback metrics all in one place.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-title"><i class="fa fa-bolt"></i> Quick Actions</span></div>
+        <div class="card-body">
+          <div class="quick-grid">
+            <button class="quick-card" onclick="switchView('create-view')"><i class="fa fa-plus-circle"></i><span>Add Question</span></button>
+            <button class="quick-card" onclick="switchView('feedback-view')"><i class="fa fa-comment"></i><span>Write Feedback</span></button>
+            <button class="quick-card" onclick="switchView('stored-view')"><i class="fa fa-database"></i><span>Question Bank</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="dashboard-view">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-database"></i></div><div><div class="stat-val" id="dashTotalQuestions">0</div><div class="stat-lbl">Questions Bank</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-comment-o"></i></div><div><div class="stat-val" id="dashTotalFeedback">0</div><div class="stat-lbl">Feedback Counts</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-amber"><i class="fa fa-smile-o"></i></div><div><div class="stat-val" id="dashAvgRating">0.0</div><div class="stat-lbl">Average Rating</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fa fa-clock-o"></i></div><div><div class="stat-val">2026</div><div class="stat-lbl">Academic Year</div></div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><span class="card-head-title"><i class="fa fa-list"></i> Recently Created Questions</span><button class="card-link" onclick="switchView('stored-view')">View All</button></div>
+          <div class="card-body">
+            <div class="mini-filters"><select class="mini-select" id="dashSubjectFilter"><option value="all">All Subjects</option></select></div>
+            <div class="dash-q-list" id="dashQList"><div class="empty-msg">No questions created yet.</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-head-title"><i class="fa fa-comments"></i> Recent Student Sentiments</span><button class="card-link" onclick="switchView('feedback-view')">View Feedbacks</button></div>
+          <div class="card-body">
+            <div class="dash-q-list" id="dashFBList"><div class="empty-msg">No feedback submissions yet.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE QUESTION -->
+    <div class="view" id="create-view">
+      <div class="form-card">
+        <div class="form-card-head"><i class="fa fa-plus-circle"></i> Add Question to Bank</div>
+        <form class="q-form" id="questionForm">
+          <div class="form-group"><label><i class="fa fa-question-circle"></i> Question Text</label><textarea rows="3" placeholder="Enter the question body here..." required id="qText"></textarea></div>
+          <div class="options-grid">
+            <div class="form-group option-group"><label><span class="opt-marker opt-a">A</span> Option A</label><input type="text" placeholder="First option..." required id="qOptA"></div>
+            <div class="form-group option-group"><label><span class="opt-marker opt-b">B</span> Option B</label><input type="text" placeholder="Second option..." required id="qOptB"></div>
+            <div class="form-group option-group"><label><span class="opt-marker opt-c">C</span> Option C</label><input type="text" placeholder="Third option (optional)..." id="qOptC"></div>
+            <div class="form-group option-group"><label><span class="opt-marker opt-d">D</span> Option D</label><input type="text" placeholder="Fourth option (optional)..." id="qOptD"></div>
+          </div>
+          <div class="form-row two">
+            <div class="form-group correct-group"><label><i class="fa fa-check-circle"></i> Correct Answer</label><select id="qCorrect" required><option value="" disabled selected>Choose correct option...</option><option value="A">Option A</option><option value="B">Option B</option><option value="C">Option C</option><option value="D">Option D</option></select></div>
+            <div class="form-group"><label><i class="fa fa-calendar"></i> Semester</label><select id="qSemester" required onchange="onSemesterChange()"><option value="" disabled selected>Select semester...</option><option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option><option value="5">Semester 5</option><option value="6">Semester 6</option><option value="7">Semester 7</option><option value="8">Semester 8</option></select></div>
+          </div>
+          <div class="form-row two">
+            <div class="form-group"><label><i class="fa fa-tag"></i> Subject</label><select id="qSubject" required disabled><option value="" disabled selected>Select semester first...</option></select></div>
+          </div>
+          <div class="form-actions"><button type="reset" class="btn-ghost">Clear Fields</button><button type="submit" class="btn-primary">Add Question</button></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- STORED QUESTIONS -->
+    <div class="view" id="stored-view">
+      <div class="card">
+        <div class="card-head"><span class="card-head-title"><i class="fa fa-database"></i> Stored Questions</span><div class="filter-controls"><input type="text" placeholder="Search questions..." class="mini-select" id="searchQInput" style="width:180px;"><select class="mini-select" id="filterSubject"><option value="all">All Subjects</option></select><select class="mini-select" id="filterSemester"><option value="all">All Semesters</option></select></div></div>
+        <div class="card-body" id="questionsContainer" style="max-height:700px;overflow-y:auto;"><div class="empty-msg">No questions in the database.</div></div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="view" id="feedback-view">
+      <div class="fb-summary-strip">
+        <div class="fb-summary-card"><div class="fb-sum-val" id="fbSumTotal">0</div><div class="fb-sum-lbl">Total feedback</div></div>
+        <div class="fb-summary-card"><div class="fb-sum-val" id="fbSumPositive" style="color:var(--teal);">0</div><div class="fb-sum-lbl">Positive</div></div>
+        <div class="fb-summary-card"><div class="fb-sum-val" id="fbSumNeutral" style="color:var(--amber);">0</div><div class="fb-sum-lbl">Neutral</div></div>
+        <div class="fb-summary-card"><div class="fb-sum-val" id="fbSumNegative" style="color:#dc2626;">0</div><div class="fb-sum-lbl">Needs improvement</div></div>
+      </div>
+      <div class="two-col fb-two-col">
+        <div class="card fb-compose-card">
+          <div class="card-head"><span class="card-head-title"><i class="fa fa-pencil"></i> Write feedback</span></div>
+          <div class="card-body">
+            <form class="q-form" id="feedbackForm" style="padding:0;">
+              <div class="form-group"><label>Category</label><select id="fbCategory" required><option value="" disabled selected>Select a category...</option><option value="Curriculum">Curriculum & Course Content</option><option value="Lectures">Lecture Quality & Delivery</option><option value="Assignments">Assignments & Projects</option><option value="Exams">Exams & Quizzes</option><option value="Office Hours">Office Hours & Support</option><option value="General">General / Miscellaneous</option></select></div>
+              <div class="form-group"><label>Regarding (optional)</label><input type="text" id="fbRegarding" placeholder="e.g. student name, subject, semester..."></div>
+              <div class="form-group"><label>Sentiment</label><div class="sentiment-row"><label class="sentiment-opt"><input type="radio" name="feedback-sentiment" value="positive" checked><span class="sentiment-pill pill-positive"><i class="fa fa-thumbs-up"></i> Positive</span></label><label class="sentiment-opt"><input type="radio" name="feedback-sentiment" value="neutral"><span class="sentiment-pill pill-neutral"><i class="fa fa-minus"></i> Neutral</span></label><label class="sentiment-opt"><input type="radio" name="feedback-sentiment" value="negative"><span class="sentiment-pill pill-negative"><i class="fa fa-thumbs-down"></i> Needs improvement</span></label></div></div>
+              <div class="form-group"><label>Feedback</label><textarea rows="4" id="fbText" placeholder="Write your detailed feedback here..." required></textarea></div>
+              <div class="form-group"><label>Rating (optional)</label><div class="star-rating" id="starRating"><button type="button" class="star" data-rating="1"><i class="fa fa-star"></i></button><button type="button" class="star" data-rating="2"><i class="fa fa-star"></i></button><button type="button" class="star" data-rating="3"><i class="fa fa-star"></i></button><button type="button" class="star" data-rating="4"><i class="fa fa-star"></i></button><button type="button" class="star" data-rating="5"><i class="fa fa-star"></i></button></div></div>
+              <div class="form-actions" style="margin-block-start:8px;"><button type="submit" class="btn-primary" style="inline-size:100%;justify-content:center;">Submit Feedback</button></div>
+            </form>
+          </div>
+        </div>
+        <div class="card fb-list-card">
+          <div class="card-head"><span class="card-head-title"><i class="fa fa-comments-o"></i> Submitted feedback</span><div class="filter-controls"><select class="mini-select" id="filterFbCategory"><option value="all">All categories</option><option value="Curriculum">Curriculum</option><option value="Lectures">Lectures</option><option value="Assignments">Assignments</option><option value="Exams">Exams</option><option value="Office Hours">Office Hours</option><option value="General">General</option></select><select class="mini-select" id="filterFbSentiment"><option value="all">All sentiments</option><option value="positive">Positive</option><option value="neutral">Neutral</option><option value="negative">Needs improvement</option></select></div></div>
+          <div class="fb-list-body" id="fbListContainer"><div class="empty-msg">No feedback submitted yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="view" id="profile-view">
+      <div class="profile-hero">
+        <div class="profile-avatar-lg" id="profileAvatarCircle">T</div>
+        <div class="profile-hero-info">
+          <h2 class="profile-name" id="profileHeroName">Teacher</h2>
+          <span class="profile-role-pill" id="profileHeroRole">Instructor</span>
+          <div class="profile-meta"><i class="fa fa-envelope-o"></i> <span id="profileMetaEmail">teacher@university.edu</span></div>
+          <div class="profile-meta"><i class="fa fa-building-o"></i> <span id="profileMetaDept">Computer Science</span></div>
+        </div>
+        <button class="btn-primary" id="editProfileBtn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;"><i class="fa fa-edit"></i> Edit Profile</button>
+      </div>
+      <div class="profile-stats" style="margin-block-start:16px;margin-block-end:16px;">
+        <div class="profile-stat"><div class="ps-val" id="profileQuestionsCount">0</div><div class="ps-lbl">Questions Added</div></div>
+        <div class="profile-stat"><div class="ps-val" id="profileFeedbackCount">0</div><div class="ps-lbl">Feedback Written</div></div>
+        <div class="profile-stat"><div class="ps-val">3</div><div class="ps-lbl">Active Courses</div></div>
+        <div class="profile-stat"><div class="ps-val">5+</div><div class="ps-lbl">Years Active</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card"><div class="card-head"><span class="card-head-title"><i class="fa fa-id-card-o"></i> Detailed Bio</span></div><div class="card-body"><p class="bio-text" id="profileBioText">Faculty member at Pokhara University. Teaching computer science subjects. Passionate about interactive quiz designs and continuous student feedback systems.</p></div></div>
+        <div class="card"><div class="card-head"><span class="card-head-title"><i class="fa fa-info-circle"></i> Info Registry</span></div><div class="card-body"><div class="info-list"><div class="info-row"><span class="info-label">Office Hours</span><span class="info-value" id="profileMetaOffice">Mon/Wed 2:00 PM - 4:00 PM</span></div><div class="info-row"><span class="info-label">Room Number</span><span class="info-value" id="profileMetaRoom">Tech Hall 402</span></div><div class="info-row"><span class="info-label">Joining Year</span><span class="info-value">2021</span></div><div class="info-row"><span class="info-label">Employ status</span><span class="info-value">Full-time Faculty</span></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- HELP — Technical Assistance panel removed -->
+    <div class="view" id="help-view">
+      <div class="card">
+        <div class="card-head"><span class="card-head-title"><i class="fa fa-question-circle"></i> Frequently Asked Questions</span></div>
+        <div class="card-body">
+          <input type="text" placeholder="Search FAQs..." class="help-search-input" id="faqSearchInput" style="margin-block-end:16px;">
+          <div class="faq-list" id="faqList">
+            <div class="faq-item"><button class="faq-q">How do I add a new question? <i class="fa fa-chevron-down faq-arrow"></i></button><div class="faq-a">Navigate to "Create question" using the sidebar menu. Fill in the question text, options A to D, select the correct option, assign a subject, and click "Add Question". The question bank will update automatically.</div></div>
+            <div class="faq-item"><button class="faq-q">Where are my questions stored? <i class="fa fa-chevron-down faq-arrow"></i></button><div class="faq-a">Your questions are saved locally in your browser's persistent localStorage database. They will remain saved unless your browser cache is explicitly cleared.</div></div>
+            <div class="faq-item"><button class="faq-q">How does the sentiment feedback form work? <i class="fa fa-chevron-down faq-arrow"></i></button><div class="faq-a">The feedback system allows you to document evaluations regarding lectures, course materials, or individual students. You can rate them from 1 to 5 stars, categorize them, and tag them with positive, neutral, or needs improvement sentiments.</div></div>
+            <div class="faq-item"><button class="faq-q">Can I switch to dark mode? <i class="fa fa-chevron-down faq-arrow"></i></button><div class="faq-a">Dark mode is not currently available in this portal. Check back for future updates.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- PROFILE EDIT MODAL -->
+<div class="modal-backdrop" id="profileModal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-head"><span>Edit Instructor Profile</span><button class="modal-close" id="profileModalClose"><i class="fa fa-close"></i></button></div>
+    <form id="editProfileForm">
+      <div class="modal-body">
+        <div class="form-group"><label>Instructor Name</label><input type="text" id="editName" required></div>
+        <div class="form-group"><label>Role Designation</label><input type="text" id="editRole" value="Instructor" required></div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="editEmail" value="teacher@university.edu" required></div>
+        <div class="form-group"><label>Department</label><input type="text" id="editDept" value="Computer Science" required></div>
+        <div class="form-group"><label>Office Hours</label><input type="text" id="editOffice" value="Mon/Wed 2:00 PM - 4:00 PM" required></div>
+        <div class="form-group"><label>Room Number</label><input type="text" id="editRoom" value="Tech Hall 402" required></div>
+        <div class="form-group"><label>Detailed Biography</label><textarea id="editBio" rows="3">Faculty member at Pokhara University. Teaching computer science subjects.</textarea></div>
+      </div>
+      <div class="modal-foot"><button type="button" class="btn-ghost" id="profileModalCancel">Cancel</button><button type="submit" class="btn-primary">Save Changes</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ── READ USERNAME FROM LOCALSTORAGE (set by login page) ──
+const loggedInName = localStorage.getItem('userName') || 'Teacher';
+
+let questions = JSON.parse(localStorage.getItem('portal_questions')) || [];
+let feedbacks = JSON.parse(localStorage.getItem('portal_feedbacks')) || [];
+let profile   = JSON.parse(localStorage.getItem('portal_profile')) || {
+  name:   loggedInName,
+  role:   'Instructor',
+  email:  localStorage.getItem('userEmail') || 'teacher@university.edu',
+  dept:   'Computer Science',
+  office: 'Mon/Wed 2:00 PM - 4:00 PM',
+  room:   'Tech Hall 402',
+  bio:    'Faculty member at Pokhara University. Teaching computer science subjects.'
+};
+
+// Always sync name from login session
+profile.name = loggedInName;
+localStorage.setItem('portal_profile', JSON.stringify(profile));
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar();
+  initForms();
+  renderAll();
+});
+
+function toggleDark(cb) { document.body.classList.toggle('dark-theme', cb.checked); }
+
+function initSidebar() {
+  const sidebar   = document.getElementById('sidebar');
+  const mainWrap  = document.getElementById('mainWrap');
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    mainWrap.classList.toggle('collapsed');
+  });
+  document.querySelectorAll('.sb-group-header').forEach(h => {
+    h.addEventListener('click', () => {
+      if (sidebar.classList.contains('collapsed')) return;
+      const group  = h.getAttribute('data-group');
+      const target = document.getElementById(`group-${group}`);
+      h.classList.toggle('collapsed');
+      if (target) target.classList.toggle('collapsed');
+    });
+  });
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const view = item.getAttribute('data-view');
+      switchView(view);
+    });
+  });
+}
+
+function switchView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById(viewId);
+  if (!target) return;
+  target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.getAttribute('data-view') === viewId);
+  });
+  const map = {
+    'home-view':      { t:'Home',               m:'Welcome to the portal overview panel.',                        a:true,  label:'<i class="fa fa-plus"></i> Create Question', cb:()=>switchView('create-view') },
+    'dashboard-view': { t:'Dashboard',           m:'Portal metrics, performance summary, and quick activities.',   a:true,  label:'<i class="fa fa-plus"></i> Create Question', cb:()=>switchView('create-view') },
+    'create-view':    { t:'Create Question',     m:'Design a new evaluation question and add it to the bank.',     a:false },
+    'stored-view':    { t:'Stored Questions',    m:'Browse, search, and manage your custom questions library.',    a:true,  label:'<i class="fa fa-plus"></i> Add Question',    cb:()=>switchView('create-view') },
+    'feedback-view':  { t:'Feedback Portal',     m:'Manage course evaluations, ratings, and student reviews.',     a:false },
+    'profile-view':   { t:'Instructor Profile',  m:'View and modify your academic credentials and settings.',      a:false },
+    'help-view':      { t:'Help & FAQs',         m:'Browse system instructions and frequently asked questions.',   a:false }
+  };
+  const cfg = map[viewId] || { t:'Portal', m:'', a:false };
+  document.getElementById('topbarTitle').textContent = cfg.t;
+  document.getElementById('topbarMeta').textContent  = cfg.m;
+  const btn = document.getElementById('topbarActionBtn');
+  if (cfg.a) { btn.style.display='inline-flex'; btn.innerHTML=cfg.label; btn.onclick=cfg.cb||(() => {}); }
+  else        { btn.style.display='none'; }
+}
+
+let currentFeedbackRating = 0;
+
+/* ─── POU SUBJECTS ─── */
+const POU_SUBJECTS = {
+  1:['Calculus I','Digital Logic','Programming in C','Basic Electrical Engineering','Computer Workshop','Communication Technique','Electronics Devices and Circuits'],
+  2:['Algebra and Geometry','Applied Physics','Applied Chemistry','Basic Engineering Drawing','Object Oriented Programming in C++','Data Structure and Algorithm','Instrumentation'],
+  3:['Calculus II','Database Management System','Operating Systems','Microprocessor and Assembly Language','Computer Graphics','Data Communication'],
+  4:['Applied Mathematics','Numerical Methods','Advanced Programming with Java','Theory of Computation','Computer Architecture','Research Fundamentals'],
+  5:['Probability and Statistics','Embedded System','Engineering Management','Artificial Intelligence','Digital Signal Analysis and Processing','Software Engineering'],
+  6:['Image Processing and Pattern Recognition','Machine Learning','Compiler Design','Computer Networks','Simulation and Modeling','Information System Audit','Data Mining and Warehouse','Cyber Security'],
+  7:['Entrepreneurship and Professional Practice','Engineering Economics','Network and Cyber Security','Cloud Computing and Virtualization','Data Science and Analytics','Cryptography','Generative AI','IP and Network Security'],
+  8:['Big Data','Web Development','App Development']
+};
+
+function onSemesterChange() {
+  const sem = document.getElementById('qSemester').value;
+  const subjSel = document.getElementById('qSubject');
+  subjSel.innerHTML = '<option value="" disabled selected>Select subject...</option>';
+  if (sem && POU_SUBJECTS[sem]) {
+    POU_SUBJECTS[sem].forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      subjSel.appendChild(opt);
+    });
+    subjSel.disabled = false;
+  } else {
+    subjSel.innerHTML = '<option value="" disabled selected>Select semester first...</option>';
+    subjSel.disabled = true;
+  }
+  subjSel.value = '';
+}
+
+function initForms() {
+  document.getElementById('questionForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const newQ = {
+      id:       Date.now(),
+      text:     document.getElementById('qText').value.trim(),
+      optA:     document.getElementById('qOptA').value.trim(),
+      optB:     document.getElementById('qOptB').value.trim(),
+      optC:     document.getElementById('qOptC').value.trim(),
+      optD:     document.getElementById('qOptD').value.trim(),
+      correct:  document.getElementById('qCorrect').value,
+      subject:  document.getElementById('qSubject').value,
+      semester: 'Semester ' + document.getElementById('qSemester').value
+    };
+    questions.push(newQ);
+    localStorage.setItem('portal_questions', JSON.stringify(questions));
+    document.getElementById('questionForm').reset();
+    // reset subject dropdown state
+    const subjSel = document.getElementById('qSubject');
+    subjSel.innerHTML = '<option value="" disabled selected>Select semester first...</option>';
+    subjSel.disabled = true;
+    renderAll();
+    swal('Question Created', 'Successfully added to the portal library.', 'success');
+    switchView('stored-view');
+  });
+
+  document.querySelectorAll('#starRating .star').forEach(s => {
+    s.addEventListener('click', () => {
+      const r = parseInt(s.getAttribute('data-rating'));
+      currentFeedbackRating = r;
+      document.querySelectorAll('#starRating .star').forEach((st, idx) => st.classList.toggle('active', idx < r));
+    });
+  });
+
+  document.getElementById('feedbackForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const sentiment = document.querySelector('input[name="feedback-sentiment"]:checked')?.value || 'positive';
+    const newFb = {
+      id:        Date.now(),
+      category:  document.getElementById('fbCategory').value,
+      regarding: document.getElementById('fbRegarding').value.trim() || 'General',
+      sentiment,
+      text:      document.getElementById('fbText').value.trim(),
+      rating:    currentFeedbackRating || 0,
+      date:      new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+    };
+    feedbacks.push(newFb);
+    localStorage.setItem('portal_feedbacks', JSON.stringify(feedbacks));
+    document.getElementById('feedbackForm').reset();
+    currentFeedbackRating = 0;
+    document.querySelectorAll('#starRating .star').forEach(st => st.classList.remove('active'));
+    document.querySelector('input[name="feedback-sentiment"][value="positive"]').checked = true;
+    renderAll();
+    swal('Feedback Submitted', 'Evaluation metrics updated successfully.', 'success');
+  });
+
+  document.getElementById('searchQInput').addEventListener('input', renderStoredQuestions);
+  document.getElementById('filterSubject').addEventListener('change', renderStoredQuestions);
+  document.getElementById('filterSemester').addEventListener('change', renderStoredQuestions);
+  document.getElementById('dashSubjectFilter').addEventListener('change', renderDashboardRecentQuestions);
+  document.getElementById('filterFbCategory').addEventListener('change', renderFeedbackList);
+  document.getElementById('filterFbSentiment').addEventListener('change', renderFeedbackList);
+
+  document.getElementById('faqSearchInput').addEventListener('input', e => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const txt = item.querySelector('.faq-q').textContent.toLowerCase() + item.querySelector('.faq-a').textContent.toLowerCase();
+      item.style.display = txt.includes(term) ? 'block' : 'none';
+    });
+  });
+  document.querySelectorAll('.faq-q').forEach(q => q.addEventListener('click', function() { this.parentElement.classList.toggle('open'); }));
+
+  const modal = document.getElementById('profileModal');
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    document.getElementById('editName').value   = profile.name;
+    document.getElementById('editRole').value   = profile.role;
+    document.getElementById('editEmail').value  = profile.email;
+    document.getElementById('editDept').value   = profile.dept;
+    document.getElementById('editOffice').value = profile.office;
+    document.getElementById('editRoom').value   = profile.room;
+    document.getElementById('editBio').value    = profile.bio;
+    modal.style.display = 'flex';
+  });
+  document.getElementById('profileModalClose').addEventListener('click',  () => modal.style.display='none');
+  document.getElementById('profileModalCancel').addEventListener('click', () => modal.style.display='none');
+  document.getElementById('editProfileForm').addEventListener('submit', e => {
+    e.preventDefault();
+    profile.name   = document.getElementById('editName').value.trim();
+    profile.role   = document.getElementById('editRole').value.trim();
+    profile.email  = document.getElementById('editEmail').value.trim();
+    profile.dept   = document.getElementById('editDept').value.trim();
+    profile.office = document.getElementById('editOffice').value.trim();
+    profile.room   = document.getElementById('editRoom').value.trim();
+    profile.bio    = document.getElementById('editBio').value.trim();
+    localStorage.setItem('portal_profile', JSON.stringify(profile));
+    modal.style.display = 'none';
+    renderProfile();
+    swal('Profile Updated', 'Credentials saved successfully.', 'success');
+  });
+
+  document.getElementById('sbLogoutBtn').addEventListener('click', () => {
+    swal({ title:'Log out?', text:'Are you sure you want to sign out?', icon:'warning', buttons:true, dangerMode:true })
+      .then(will => { if (will) { localStorage.clear(); window.location='login.html'; } });
+  });
+}
+
+function renderAll() {
+  updateBadges();
+  renderDashboardStats();
+  renderDashboardRecentQuestions();
+  renderDashboardRecentFeedbacks();
+  renderStoredQuestions();
+  renderFeedbackList();
+  renderProfile();
+  updateFiltersDropdowns();
+}
+
+function updateBadges() { document.getElementById('navBadge').textContent = questions.length; }
+
+function updateFiltersDropdowns() {
+  const subjects = [...new Set(questions.map(q => q.subject))].filter(Boolean);
+  ['filterSubject','dashSubjectFilter'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.innerHTML = '<option value="all">All Subjects</option>' + subjects.map(s=>`<option value="${s}">${s}</option>`).join('');
+  });
+}
+
+function renderProfile() {
+  const name     = profile.name;
+  const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'T';
+  document.querySelectorAll('.instructor-name-span').forEach(s => s.textContent = name);
+  document.getElementById('sbAvName').textContent             = name;
+  document.getElementById('sbAvRole').textContent             = profile.role;
+  document.getElementById('sbAvCircle').textContent           = initials;
+  document.getElementById('profileAvatarCircle').textContent  = initials;
+  document.getElementById('profileHeroName').textContent      = name;
+  document.getElementById('profileHeroRole').textContent      = profile.role;
+  document.getElementById('profileMetaEmail').textContent     = profile.email;
+  document.getElementById('profileMetaDept').textContent      = profile.dept;
+  document.getElementById('profileBioText').textContent       = profile.bio;
+  document.getElementById('profileMetaOffice').textContent    = profile.office;
+  document.getElementById('profileMetaRoom').textContent      = profile.room;
+  document.getElementById('profileQuestionsCount').textContent= questions.length;
+  document.getElementById('profileFeedbackCount').textContent = feedbacks.length;
+}
+
+function renderDashboardStats() {
+  document.getElementById('dashTotalQuestions').textContent = questions.length;
+  document.getElementById('dashTotalFeedback').textContent  = feedbacks.length;
+  const avg = feedbacks.length ? (feedbacks.reduce((a,c)=>a+c.rating,0)/feedbacks.length).toFixed(1) : '0.0';
+  document.getElementById('dashAvgRating').textContent = avg;
+}
+
+function renderDashboardRecentQuestions() {
+  const list   = document.getElementById('dashQList');
+  const filter = document.getElementById('dashSubjectFilter').value;
+  let filtered = [...questions].reverse();
+  if (filter !== 'all') filtered = filtered.filter(q => q.subject === filter);
+  if (!filtered.length) { list.innerHTML='<div class="empty-msg">No matching questions found.</div>'; return; }
+  list.innerHTML = filtered.slice(0,3).map((q,idx) => `
+    <div class="dq-item">
+      <div class="dq-num">${filtered.length-idx}</div>
+      <div class="dq-body"><div class="dq-text">${q.text}</div><div class="dq-meta">${q.subject} • ${q.semester}</div></div>
+      <div class="dq-correct">Ans: ${q.correct}</div>
+    </div>`).join('');
+}
+
+function renderDashboardRecentFeedbacks() {
+  const list = document.getElementById('dashFBList');
+  const fbs  = [...feedbacks].reverse().slice(0,3);
+  if (!fbs.length) { list.innerHTML='<div class="empty-msg">No feedback submissions yet.</div>'; return; }
+  list.innerHTML = fbs.map(fb => {
+    const stars = Array(5).fill().map((_,i)=>`<span style="color:${i<fb.rating?'#f59e0b':'var(--border)'}">★</span>`).join('');
+    const badge = fb.sentiment==='positive' ? '<span class="fb-badge-sentiment positive"><i class="fa fa-thumbs-up"></i></span>'
+                : fb.sentiment==='neutral'  ? '<span class="fb-badge-sentiment neutral"><i class="fa fa-minus"></i></span>'
+                : '<span class="fb-badge-sentiment negative"><i class="fa fa-thumbs-down"></i></span>';
+    return `<div class="dq-item">
+      <div class="dq-num" style="background:var(--accent-light);"><i class="fa fa-comment-o"></i></div>
+      <div class="dq-body"><div class="dq-text" style="font-weight:500;">Regarding: ${fb.regarding}</div><div class="dq-meta">${fb.category} • ${stars}</div></div>
+      <div style="margin-inline-start:auto;padding-inline-start:10px;">${badge}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderStoredQuestions() {
+  const container = document.getElementById('questionsContainer');
+  const term = document.getElementById('searchQInput').value.toLowerCase();
+  const sub  = document.getElementById('filterSubject').value;
+  const sem  = document.getElementById('filterSemester').value;
+  let filtered = questions.filter(q =>
+    (q.text.toLowerCase().includes(term) || q.optA.toLowerCase().includes(term)) &&
+    (sub==='all' || q.subject===sub) &&
+    (sem==='all' || q.semester===sem)
+  );
+  if (!filtered.length) { container.innerHTML='<div class="empty-msg">No matching questions found.</div>'; return; }
+  container.innerHTML = filtered.slice().reverse().map(q => {
+    const optC = q.optC ? `<div class="sq-opt ${q.correct==='C'?'is-correct':''}">C. ${q.optC}</div>` : '';
+    const optD = q.optD ? `<div class="sq-opt ${q.correct==='D'?'is-correct':''}">D. ${q.optD}</div>` : '';
+    return `<div class="sq-item">
+      <div class="sq-head"><span class="badge-subject">${q.subject}</span><span class="badge-sem">${q.semester}</span></div>
+      <div class="sq-text">${q.text}</div>
+      <div class="sq-opts"><div class="sq-opt ${q.correct==='A'?'is-correct':''}">A. ${q.optA}</div><div class="sq-opt ${q.correct==='B'?'is-correct':''}">B. ${q.optB}</div>${optC}${optD}</div>
+      <div class="sq-correct"><i class="fa fa-check-circle"></i> Correct Option: ${q.correct}</div>
+      <div class="sq-foot"><button class="btn-danger" onclick="deleteQuestion(${q.id})"><i class="fa fa-trash"></i> Delete</button></div>
+    </div>`;
+  }).join('');
+}
+
+function deleteQuestion(id) {
+  swal({ title:'Delete Question?', text:'This action cannot be undone.', icon:'warning', buttons:true, dangerMode:true })
+    .then(will => {
+      if (will) {
+        questions = questions.filter(q => q.id!==id);
+        localStorage.setItem('portal_questions', JSON.stringify(questions));
+        renderAll();
+        swal('Deleted', 'Question removed.', 'success');
+      }
+    });
+}
+
+function renderFeedbackList() {
+  const container = document.getElementById('fbListContainer');
+  const cat  = document.getElementById('filterFbCategory').value;
+  const sent = document.getElementById('filterFbSentiment').value;
+  let filtered = feedbacks.filter(f => (cat==='all'||f.category===cat) && (sent==='all'||f.sentiment===sent));
+  document.getElementById('fbSumTotal').textContent    = feedbacks.length;
+  document.getElementById('fbSumPositive').textContent = feedbacks.filter(f=>f.sentiment==='positive').length;
+  document.getElementById('fbSumNeutral').textContent  = feedbacks.filter(f=>f.sentiment==='neutral').length;
+  document.getElementById('fbSumNegative').textContent = feedbacks.filter(f=>f.sentiment==='negative').length;
+  if (!filtered.length) { container.innerHTML='<div class="empty-msg">No matching feedbacks found.</div>'; return; }
+  container.innerHTML = filtered.slice().reverse().map(fb => {
+    const stars = Array(5).fill().map((_,i)=>`<span style="color:${i<fb.rating?'#f59e0b':'var(--border)'}">★</span>`).join('');
+    const badge = fb.sentiment==='positive' ? '<span class="fb-badge-sentiment positive"><i class="fa fa-thumbs-up"></i> Positive</span>'
+                : fb.sentiment==='neutral'  ? '<span class="fb-badge-sentiment neutral"><i class="fa fa-minus"></i> Neutral</span>'
+                : '<span class="fb-badge-sentiment negative"><i class="fa fa-thumbs-down"></i> Needs improvement</span>';
+    return `<div class="fb-item">
+      <div class="fb-item-head"><span class="fb-badge-cat">${fb.category}</span>${badge}<span class="fb-regarding">Regarding: ${fb.regarding}</span></div>
+      <div class="fb-text">${fb.text}</div>
+      <div class="fb-item-foot"><div class="fb-stars">${stars}</div><div class="fb-date">${fb.date}</div><button class="btn-danger" style="padding:3px 8px;font-size:10.5px;" onclick="deleteFeedback(${fb.id})"><i class="fa fa-trash"></i></button></div>
+    </div>`;
+  }).join('');
+}
+
+function deleteFeedback(id) {
+  swal({ title:'Delete Feedback?', text:'Remove this evaluation?', icon:'warning', buttons:true, dangerMode:true })
+    .then(will => {
+      if (will) {
+        feedbacks = feedbacks.filter(f => f.id!==id);
+        localStorage.setItem('portal_feedbacks', JSON.stringify(feedbacks));
+        renderAll();
+        swal('Removed', 'Evaluation deleted.', 'success');
+      }
+    });
+}
+</script>
+</body>
+</html>

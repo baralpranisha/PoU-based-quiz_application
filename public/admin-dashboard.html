@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuizVerse PoU — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <style>
+    :root {
+      --bg-page:#f1f4f8; --bg-card:#ffffff; --bg-input:#f9fafb;
+      --sb-bg:#0d1b2e; --sb-hover:rgba(255,255,255,0.07); --sb-active:#1e3a5f;
+      --sb-section:rgba(255,255,255,0.30); --sb-text:rgba(255,255,255,0.72);
+      --sb-text-muted:rgba(255,255,255,0.35); --sb-border:rgba(255,255,255,0.08);
+      --sb-width:225px; --sb-collapsed:60px;
+      --tb-bg:#ffffff; --tb-border:#e5e7eb;
+      --text-primary:#111827; --text-secondary:#6b7280; --text-muted:#9ca3af;
+      --border:#e5e7eb; --border-light:#f3f4f6;
+      --accent:#1a56db; --accent-hover:#1648c0; --accent-light:#e6f0ff;
+      --teal:#0f6e56; --teal-light:#e1f5ee;
+      --amber:#854f0b; --amber-light:#faeeda;
+      --purple:#534ab7; --purple-light:#eeedfe;
+      --gold:#b45309; --gold-light:#fef3c7;
+      --gold-dim:rgba(180,83,9,0.08); --gold-border:rgba(180,83,9,0.30);
+      --red:#dc2626; --red-light:#fef2f2;
+      --font:'Outfit',system-ui,sans-serif; --font-display:'Cormorant Garamond',Georgia,serif;
+      --r-sm:6px; --r-md:8px; --r-lg:12px;
+      --sb-transition:280ms cubic-bezier(.4,0,.2,1);
+    }
+    body.dark-theme {
+      --bg-page:#0f172a; --bg-card:#1e293b; --bg-input:#1e293b;
+      --tb-bg:#1e293b; --tb-border:#334155;
+      --text-primary:#f1f5f9; --text-secondary:#94a3b8; --text-muted:#64748b;
+      --border:#334155; --border-light:#1e293b;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:14px;}
+    body{font-family:var(--font);background:var(--bg-page);color:var(--text-primary);min-height:100vh;display:flex;transition:background 200ms,color 200ms;}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;}
+    input,select,textarea{font-family:inherit;font-size:inherit;}
+
+    /* ── SIDEBAR ── */
+    .sidebar{position:fixed;inset-block:0;inset-inline-start:0;inline-size:var(--sb-width);background:var(--sb-bg);display:flex;flex-direction:column;z-index:100;overflow:hidden;transition:inline-size var(--sb-transition);}
+    .sidebar.collapsed{inline-size:var(--sb-collapsed);}
+    .sb-top{display:flex;align-items:center;justify-content:space-between;padding:14px 10px 12px 14px;border-block-end:1px solid var(--sb-border);gap:8px;flex-shrink:0;}
+    .sb-brand{display:flex;align-items:center;gap:9px;overflow:hidden;}
+    .sb-brand-icon{inline-size:30px;block-size:30px;min-inline-size:30px;background:var(--sb-active);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:#7db5f0;font-size:16px;}
+    .sb-brand-name{font-family:var(--font-display);font-size:14px;font-weight:700;color:#e2eaf6;white-space:nowrap;transition:opacity var(--sb-transition);}
+    .sb-brand-name em{color:#f87171;font-style:italic;}
+    .sidebar.collapsed .sb-brand-name{opacity:0;pointer-events:none;}
+    .sb-toggle{background:none;border:none;color:var(--sb-text-muted);font-size:18px;padding:4px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color 150ms,background 150ms;}
+    .sb-toggle:hover{color:#fff;background:var(--sb-hover);}
+    .sb-avatar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-block-end:1px solid var(--sb-border);overflow:hidden;flex-shrink:0;}
+    .sb-av-circle{inline-size:34px;block-size:34px;min-inline-size:34px;border-radius:50%;background:#7f1d1d;border:2px solid #f87171;display:flex;align-items:center;justify-content:center;color:#fca5a5;font-size:11px;font-weight:600;font-family:var(--font-display);}
+    .sb-av-info{overflow:hidden;transition:opacity var(--sb-transition);}
+    .sidebar.collapsed .sb-av-info{opacity:0;pointer-events:none;}
+    .sb-av-name{font-size:12px;font-weight:500;color:#e2eaf6;white-space:nowrap;}
+    .sb-av-role{font-size:10px;color:var(--sb-text-muted);margin-block-start:2px;}
+    .sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding-block:8px;}
+    .sb-nav::-webkit-scrollbar{width:3px;}
+    .sb-nav::-webkit-scrollbar-thumb{background:var(--sb-border);border-radius:4px;}
+    .sb-group-header{display:flex;align-items:center;gap:6px;inline-size:calc(100% - 12px);margin:6px 6px 2px;padding:7px 14px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;transition:background 150ms;overflow:hidden;white-space:nowrap;text-align:start;}
+    .sb-group-header:hover{background:var(--sb-hover);}
+    .sb-group-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--sb-section);text-transform:uppercase;flex:1;overflow:hidden;transition:opacity var(--sb-transition);}
+    .sb-group-arrow{font-size:9px;color:var(--sb-section);transition:transform 250ms ease,opacity var(--sb-transition);flex-shrink:0;}
+    .sb-group-header.collapsed .sb-group-arrow{transform:rotate(-90deg);}
+    .sidebar.collapsed .sb-group-label,.sidebar.collapsed .sb-group-arrow{opacity:0;pointer-events:none;}
+    .sb-group-items{overflow:hidden;max-block-size:600px;transition:max-block-size 280ms cubic-bezier(.4,0,.2,1),opacity 200ms ease;opacity:1;}
+    .sb-group-items.collapsed{max-block-size:0;opacity:0;}
+    .sidebar.collapsed .sb-group-items{max-block-size:600px !important;opacity:1 !important;}
+    .nav-item{position:relative;display:flex;align-items:center;gap:10px;inline-size:calc(100% - 12px);padding:9px 14px;background:none;border:none;border-radius:var(--r-sm);margin-block:1px;margin-inline:6px;color:var(--sb-text);font-size:12.5px;white-space:nowrap;overflow:hidden;transition:background 150ms,color 150ms;text-align:start;}
+    .nav-item:hover{background:var(--sb-hover);}
+    .nav-item.active{background:var(--sb-active);color:#e2eaf6;}
+    .nav-item .fa{font-size:15px;min-inline-size:17px;flex-shrink:0;opacity:0.65;}
+    .nav-item.active .fa{opacity:1;color:#7db5f0;}
+    .nav-item span{transition:opacity var(--sb-transition);overflow:hidden;}
+    .sidebar.collapsed .nav-item span{opacity:0;pointer-events:none;}
+    .sidebar.collapsed .nav-item{justify-content:center;padding-inline:0;}
+    .nav-badge-red{margin-inline-start:auto;background:#7f1d1d;color:#fca5a5;font-size:9px;font-weight:600;padding:2px 6px;border-radius:10px;flex-shrink:0;transition:opacity var(--sb-transition);}
+    .sidebar.collapsed .nav-badge-red{opacity:0;pointer-events:none;}
+    .nav-tooltip{position:fixed;left:calc(var(--sb-collapsed) + 8px);background:#1e293b;color:#f1f5f9;font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transform:translateX(-4px);transition:opacity 150ms ease,transform 150ms ease;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.25);}
+    .nav-tooltip::before{content:'';position:absolute;left:-5px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:#1e293b;border-left:none;}
+    .sidebar.collapsed .nav-item:hover .nav-tooltip{opacity:1;transform:translateX(0);}
+    .sb-footer{border-block-start:1px solid var(--sb-border);padding:8px 6px;flex-shrink:0;}
+    .sb-logout{display:flex;align-items:center;gap:10px;inline-size:100%;padding:9px 14px;background:none;border:none;border-radius:var(--r-sm);color:var(--sb-text-muted);font-size:12.5px;white-space:nowrap;overflow:hidden;transition:background 150ms,color 150ms;text-align:start;}
+    .sb-logout:hover{background:var(--sb-hover);color:var(--sb-text);}
+    .sb-logout .fa{font-size:17px;flex-shrink:0;}
+    .sb-logout span{transition:opacity var(--sb-transition);}
+    .sidebar.collapsed .sb-logout span{opacity:0;pointer-events:none;}
+
+    /* ── MAIN ── */
+    .main-wrap{margin-inline-start:var(--sb-width);flex:1;display:flex;flex-direction:column;min-block-size:100vh;min-inline-size:0;overflow-x:hidden;transition:margin-inline-start var(--sb-transition);}
+    .main-wrap.collapsed{margin-inline-start:var(--sb-collapsed);}
+    .topbar{position:sticky;inset-block-start:0;z-index:50;background:var(--tb-bg);border-block-end:1px solid var(--tb-border);display:flex;align-items:center;gap:16px;padding:0 24px;block-size:58px;flex-shrink:0;transition:background 200ms,border-color 200ms;}
+    .topbar-left{flex:1;overflow:hidden;min-inline-size:0;}
+    .topbar-title{font-size:15px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .topbar-meta{font-size:11px;color:var(--text-muted);display:block;margin-block-start:1px;}
+    .topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+    .admin-badge{background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;letter-spacing:0.4px;}
+    .toggle-wrap{position:relative;flex-shrink:0;}
+    .toggle-wrap input{opacity:0;position:absolute;inline-size:0;block-size:0;}
+    .toggle-track{display:block;inline-size:40px;block-size:22px;background:var(--border);border-radius:11px;position:relative;transition:background 200ms;cursor:pointer;}
+    .toggle-track::after{content:'';position:absolute;inset-block-start:3px;inset-inline-start:3px;inline-size:16px;block-size:16px;border-radius:50%;background:#fff;transition:transform 200ms;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+    .toggle-wrap input:checked + .toggle-track{background:var(--accent);}
+    .toggle-wrap input:checked + .toggle-track::after{transform:translateX(18px);}
+
+    /* ── VIEWS ── */
+    .view-area{flex:1;padding:22px 24px;min-inline-size:0;overflow-x:hidden;}
+    .portal-view{display:none;flex-direction:column;gap:16px;animation:fadeUp 0.25s ease both;}
+    .portal-view.on{display:flex;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── PAGE HEADER ── */
+    .page-hdr{margin-bottom:20px;}
+    .page-hdr h1{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text-primary);margin-bottom:4px;line-height:1.2;}
+    .page-hdr h1 em{color:var(--accent);font-style:italic;}
+    .page-hdr h1 em.red{color:var(--red);}
+    .page-hdr p{font-size:13.5px;color:var(--text-secondary);}
+
+    /* ── STATS ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    .stats-grid.col3{grid-template-columns:repeat(3,1fr);}
+    .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;display:flex;align-items:center;gap:14px;}
+    .stat-icon{inline-size:40px;block-size:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .si-blue{background:var(--accent-light);color:var(--accent);}
+    .si-teal{background:var(--teal-light);color:var(--teal);}
+    .si-amber{background:var(--amber-light);color:var(--amber);}
+    .si-purple{background:var(--purple-light);color:var(--purple);}
+    .si-red{background:var(--red-light);color:var(--red);}
+    .si-gold{background:var(--gold-light);color:var(--gold);}
+    .stat-val{font-size:22px;font-weight:600;color:var(--text-primary);line-height:1;font-family:var(--font-display);}
+    .stat-val.zero{color:var(--text-muted);font-size:20px;}
+    .stat-lbl{font-size:11px;color:var(--text-muted);margin-block-start:3px;}
+
+    /* ── CARD / SH ── */
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+    .card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-block-end:1px solid var(--border-light);}
+    .card-head-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--text-primary);}
+    .card-head-title .fa{color:var(--text-secondary);font-size:16px;}
+    .card-body{padding:16px 18px;}
+    .sh{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .sh h2{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text-primary);white-space:nowrap;}
+    .sh .line{flex:1;height:1px;background:var(--border-light);}
+
+    /* ── TABLE ── */
+    .tbl-wrap{overflow-x:auto;}
+    table.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+    table.data-table th{text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;padding:10px 14px;border-bottom:1px solid var(--border-light);background:var(--bg-page);}
+    table.data-table td{padding:12px 14px;border-bottom:1px solid var(--border-light);color:var(--text-primary);vertical-align:middle;}
+    table.data-table tr:last-child td{border-bottom:none;}
+    table.data-table tr:hover td{background:var(--bg-page);}
+    .td-muted{color:var(--text-muted);font-size:12px;}
+    .role-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:600;}
+    .rb-student{background:var(--accent-light);color:var(--accent);}
+    .rb-teacher{background:var(--purple-light);color:var(--purple);}
+    .status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;}
+    .sd-active{background:var(--teal);}
+    .sd-inactive{background:var(--text-muted);}
+
+    /* score badges */
+    .score-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11.5px;font-weight:600;font-family:var(--font-display);}
+    .sb-hi{background:var(--teal-light);color:var(--teal);}
+    .sb-mid{background:var(--amber-light);color:var(--amber);}
+    .sb-lo{background:var(--red-light);color:var(--red);}
+
+    /* ── FILTER BAR ── */
+    .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+    .filter-bar input{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;color:var(--text-primary);outline:none;font-size:13px;min-width:200px;transition:border-color 0.2s;}
+    .filter-bar input:focus{border-color:var(--accent);}
+    .filter-bar select{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;color:var(--text-primary);outline:none;font-size:13px;cursor:pointer;}
+
+    /* ── BUTTONS ── */
+    .btn-primary{background:var(--accent);border:none;border-radius:var(--r-md);padding:9px 18px;color:white;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-danger{background:var(--red);border:none;border-radius:var(--r-md);padding:9px 18px;color:white;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+    .btn-danger:hover{opacity:0.88;}
+    .btn-ghost{background:none;border:1px solid var(--border);border-radius:var(--r-md);padding:9px 18px;color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-icon{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 9px;color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:4px;}
+    .btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-icon.danger:hover{border-color:var(--red);color:var(--red);}
+
+    /* ── MODAL ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:0;inline-size:460px;max-inline-size:calc(100vw - 40px);box-shadow:0 20px 60px rgba(0,0,0,0.18);animation:fadeUp 0.2s ease;}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light);}
+    .modal-head h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);}
+    .modal-close{background:none;border:none;font-size:18px;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:var(--r-sm);transition:color 150ms;}
+    .modal-close:hover{color:var(--text-primary);}
+    .modal-body{padding:20px;}
+    .modal-foot{padding:14px 20px;border-top:1px solid var(--border-light);display:flex;gap:8px;justify-content:flex-end;}
+    .form-group{margin-bottom:14px;}
+    .form-group label{display:block;font-size:11.5px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
+    .form-group input,.form-group select{width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;color:var(--text-primary);outline:none;transition:border-color 0.2s;}
+    .form-group input:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .confirm-body{text-align:center;padding:28px 24px;}
+    .confirm-icon{font-size:36px;margin-bottom:12px;}
+    .confirm-body h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px;color:var(--text-primary);}
+    .confirm-body p{font-size:13px;color:var(--text-secondary);}
+
+    /* ── ACTIVITY ── */
+    .activity-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);padding:13px 16px;display:flex;align-items:flex-start;gap:12px;transition:border-color 150ms;}
+    .activity-row:hover{border-color:var(--accent);}
+    .act-icon{width:32px;height:32px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+    .ai-quiz{background:var(--accent-light);color:var(--accent);}
+    .ai-peer{background:var(--gold-light);color:var(--gold);}
+    .ai-login{background:var(--purple-light);color:var(--purple);}
+    .act-body{flex:1;}
+    .act-title{font-size:13px;font-weight:500;color:var(--text-primary);}
+    .act-meta{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+
+    /* ── PEER ── */
+    .peer-review-card{background:var(--bg-card);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:8px;}
+    .prcard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .prcard-meta{font-size:12px;color:var(--text-muted);}
+    .prcard-subj{font-size:13.5px;font-weight:500;color:var(--text-primary);}
+    .pr-q-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+    .pr-q{background:var(--bg-page);border-radius:var(--r-sm);padding:9px 12px;font-size:12.5px;color:var(--text-primary);}
+    .pr-q .qtext{font-weight:500;margin-bottom:4px;}
+    .pr-q .qopts{color:var(--text-secondary);font-size:12px;}
+    .pr-q .qans{color:var(--teal);font-size:11.5px;margin-top:4px;font-weight:500;}
+    .pr-actions{display:flex;gap:8px;}
+    .btn-approve{background:var(--teal-light);border:1px solid rgba(15,110,86,0.3);border-radius:var(--r-sm);padding:6px 14px;color:var(--teal);font-size:12.5px;cursor:pointer;transition:all 0.2s;}
+    .btn-approve:hover{background:var(--teal);color:white;}
+    .btn-reject{background:var(--red-light);border:1px solid rgba(220,38,38,0.3);border-radius:var(--r-sm);padding:6px 14px;color:var(--red);font-size:12.5px;cursor:pointer;transition:all 0.2s;}
+    .btn-reject:hover{background:var(--red);color:white;}
+    .pr-status{padding:4px 12px;border-radius:10px;font-size:11.5px;font-weight:600;}
+    .prs-pending{background:var(--amber-light);color:var(--amber);}
+    .prs-approved{background:var(--teal-light);color:var(--teal);}
+    .prs-rejected{background:var(--red-light);color:var(--red);}
+
+    /* ── LOGS ── */
+    .log-list{display:flex;flex-direction:column;gap:6px;}
+    .log-row{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);padding:11px 15px;display:flex;align-items:flex-start;gap:12px;transition:border-color 150ms;}
+    .log-row:hover{border-color:var(--accent);}
+    .log-icon{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .li-add{background:var(--teal-light);color:var(--teal);}
+    .li-remove{background:var(--red-light);color:var(--red);}
+    .li-edit{background:var(--accent-light);color:var(--accent);}
+    .li-peer{background:var(--amber-light);color:var(--amber);}
+    .log-msg{font-size:13px;color:var(--text-primary);line-height:1.45;}
+    .log-time{font-size:11px;color:var(--text-muted);margin-top:3px;}
+
+    /* ── NO DATA ── */
+    .no-data{text-align:center;padding:32px 20px;color:var(--text-muted);font-size:13.5px;background:var(--bg-card);border:1px dashed var(--border);border-radius:var(--r-lg);}
+    .no-data span{display:block;font-size:28px;margin-bottom:8px;opacity:0.5;}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#0d1b2e;border:1px solid rgba(255,255,255,0.08);border-radius:var(--r-lg);padding:12px 22px;font-size:13px;color:#e2eaf6;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    @media(max-width:900px){.stats-grid,.stats-grid.col3{grid-template-columns:1fr 1fr;}.form-row{grid-template-columns:1fr;}}
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="fa fa-graduation-cap"></i></div>
+      <span class="sb-brand-name">QuizVerse <em>Admin</em></span>
+    </div>
+    <button class="sb-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+  </div>
+  <div class="sb-avatar">
+    <div class="sb-av-circle" id="sbAvCircle">A</div>
+    <div class="sb-av-info">
+      <div class="sb-av-name" id="sbAvName">Administrator</div>
+      <div class="sb-av-role">System Admin · PoU</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+
+    <button class="sb-group-header" onclick="toggleGroup(this)">
+      <span class="sb-group-label">Overview</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items">
+      <button class="nav-item active" id="nav-overview" onclick="showView('overview');setActiveNav(this)">
+        <i class="fa fa-th-large"></i><span>Dashboard</span>
+        <span class="nav-tooltip">Dashboard</span>
+      </button>
+    </div>
+
+    <button class="sb-group-header" onclick="toggleGroup(this)">
+      <span class="sb-group-label">User Management</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items">
+      <button class="nav-item" id="nav-students" onclick="showView('students');setActiveNav(this)">
+        <i class="fa fa-users"></i><span>Students</span>
+        <span class="nav-tooltip">Students</span>
+      </button>
+      <button class="nav-item" id="nav-teachers" onclick="showView('teachers');setActiveNav(this)">
+        <i class="fa fa-user-circle-o"></i><span>Teachers</span>
+        <span class="nav-tooltip">Teachers</span>
+      </button>
+    </div>
+
+    <button class="sb-group-header" onclick="toggleGroup(this)">
+      <span class="sb-group-label">Activity</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items">
+      <button class="nav-item" id="nav-stactivity" onclick="showView('stactivity');setActiveNav(this)">
+        <i class="fa fa-bar-chart"></i><span>Student Activity</span>
+        <span class="nav-tooltip">Student Activity</span>
+      </button>
+      <button class="nav-item" id="nav-tcactivity" onclick="showView('tcactivity');setActiveNav(this)">
+        <i class="fa fa-line-chart"></i><span>Teacher Activity</span>
+        <span class="nav-tooltip">Teacher Activity</span>
+      </button>
+    </div>
+
+    <button class="sb-group-header" onclick="toggleGroup(this)">
+      <span class="sb-group-label">Content</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items">
+      <button class="nav-item" id="nav-peer" onclick="showView('peer');setActiveNav(this)">
+        <i class="fa fa-pencil-square-o"></i><span>Peer Submissions</span>
+        <span class="nav-badge-red" id="peerBadge">0</span>
+        <span class="nav-tooltip">Peer Submissions</span>
+      </button>
+    </div>
+
+    <button class="sb-group-header" onclick="toggleGroup(this)">
+      <span class="sb-group-label">System</span>
+      <i class="fa fa-chevron-down sb-group-arrow"></i>
+    </button>
+    <div class="sb-group-items">
+      <button class="nav-item" id="nav-logs" onclick="showView('logs');setActiveNav(this)">
+        <i class="fa fa-list-alt"></i><span>System Logs</span>
+        <span class="nav-tooltip">System Logs</span>
+      </button>
+    </div>
+
+  </nav>
+  <div class="sb-footer">
+    <button class="sb-logout" onclick="signOut()"><i class="fa fa-sign-out"></i><span>Sign Out</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap" id="mainWrap">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbarTitle">Admin Dashboard</div>
+      <span class="topbar-meta">Pokhara University · QuizVerse Administration</span>
+    </div>
+    <div class="topbar-right">
+      <span class="admin-badge"><i class="fa fa-shield"></i> &nbsp;Admin</span>
+      <label class="toggle-wrap" title="Dark mode">
+        <input type="checkbox" id="darkToggle" onchange="toggleDark(this)"/>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </header>
+
+  <main class="view-area">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="portal-view on" id="view-overview">
+      <div class="page-hdr">
+        <h1>Welcome, <em id="welcomeName">Administrator</em></h1>
+        <p>System overview for QuizVerse PoU.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-users"></i></div><div><div class="stat-val zero" id="ovStudents">0</div><div class="stat-lbl">Total Students</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fa fa-user-circle-o"></i></div><div><div class="stat-val zero" id="ovTeachers">0</div><div class="stat-lbl">Total Teachers</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-amber"><i class="fa fa-pencil"></i></div><div><div class="stat-val zero" id="ovPeerPending">0</div><div class="stat-lbl">Pending Reviews</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-bolt"></i></div><div><div class="stat-val zero" id="ovQuizzes">0</div><div class="stat-lbl">Quizzes Taken</div></div></div>
+      </div>
+      <div class="sh"><h2>Recent Activity</h2><div class="line"></div></div>
+      <div id="ovRecentLogs"></div>
+    </div>
+
+    <!-- ══ STUDENTS ══ -->
+    <div class="portal-view" id="view-students">
+      <div class="page-hdr">
+        <h1>Manage <em>Students</em></h1>
+        <p>Add, view, and remove student accounts.</p>
+      </div>
+      <div class="stats-grid col3">
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-users"></i></div><div><div class="stat-val zero" id="stTotal">0</div><div class="stat-lbl">Total Students</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-check"></i></div><div><div class="stat-val zero" id="stActive">0</div><div class="stat-lbl">Active</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-amber"><i class="fa fa-graduation-cap"></i></div><div><div class="stat-val zero" id="stSems">0</div><div class="stat-lbl">Semesters</div></div></div>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="studentSearch" placeholder="Search by name or email…" oninput="renderStudents()"/>
+        <select id="studentSemFilter" onchange="renderStudents()">
+          <option value="">All Semesters</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+        </select>
+        <button class="btn-primary" onclick="openModal('modalAddStudent')"><i class="fa fa-plus"></i> Add Student</button>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Semester</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody id="studentTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TEACHERS ══ -->
+    <div class="portal-view" id="view-teachers">
+      <div class="page-hdr">
+        <h1>Manage <em>Teachers</em></h1>
+        <p>Add, view, and remove teacher accounts.</p>
+      </div>
+      <div class="stats-grid col3">
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fa fa-user-circle-o"></i></div><div><div class="stat-val zero" id="tcTotal">0</div><div class="stat-lbl">Total Teachers</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-check"></i></div><div><div class="stat-val zero" id="tcActive">0</div><div class="stat-lbl">Active</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-book"></i></div><div><div class="stat-val zero" id="tcSubjs">0</div><div class="stat-lbl">Subjects Assigned</div></div></div>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="teacherSearch" placeholder="Search by name or email…" oninput="renderTeachers()"/>
+        <button class="btn-primary" onclick="openModal('modalAddTeacher')"><i class="fa fa-plus"></i> Add Teacher</button>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Subject</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody id="teacherTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ STUDENT ACTIVITY ══ -->
+    <div class="portal-view" id="view-stactivity">
+      <div class="page-hdr">
+        <h1>Student <em>Activity</em></h1>
+        <p>All quiz attempts submitted by students across the platform.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-bolt"></i></div><div><div class="stat-val zero" id="saTotalQuizzes">0</div><div class="stat-lbl">Total Quizzes</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-line-chart"></i></div><div><div class="stat-val zero" id="saAvgScore">0%</div><div class="stat-lbl">Platform Average</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-amber"><i class="fa fa-trophy"></i></div><div><div class="stat-val zero" id="saTopScore">0%</div><div class="stat-lbl">Top Score</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fa fa-clock-o"></i></div><div><div class="stat-val zero" id="saToday">0</div><div class="stat-lbl">Attempts Today</div></div></div>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="saSearch" placeholder="Search by name or subject…" oninput="renderStudentActivity()"/>
+        <select id="saModeFilter" onchange="renderStudentActivity()">
+          <option value="">All Modes</option>
+          <option value="timed">Timed</option>
+          <option value="practice">Practice</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="data-table">
+            <thead><tr><th>Student</th><th>Subject</th><th>Semester</th><th>Score</th><th>Mode</th><th>Date</th></tr></thead>
+            <tbody id="saTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TEACHER ACTIVITY ══ -->
+    <div class="portal-view" id="view-tcactivity">
+      <div class="page-hdr">
+        <h1>Teacher <em>Activity</em></h1>
+        <p>Actions performed by teachers — question uploads, approvals, and logins.</p>
+      </div>
+      <div class="stats-grid col3">
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fa fa-user-circle-o"></i></div><div><div class="stat-val zero" id="taActiveTeachers">0</div><div class="stat-lbl">Active Teachers</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-upload"></i></div><div><div class="stat-val zero" id="taUploads">0</div><div class="stat-lbl">Questions Uploaded</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-check-circle"></i></div><div><div class="stat-val zero" id="taApprovals">0</div><div class="stat-lbl">Approved This Month</div></div></div>
+      </div>
+      <div class="sh"><h2>Teacher Action Log</h2><div class="line"></div></div>
+      <div id="tcActivityList"></div>
+    </div>
+
+    <!-- ══ PEER SUBMISSIONS ══ -->
+    <div class="portal-view" id="view-peer">
+      <div class="page-hdr">
+        <h1>Peer <em>Submissions</em></h1>
+        <p>Review student-submitted questions before they enter the question bank.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon si-amber"><i class="fa fa-clock-o"></i></div><div><div class="stat-val zero" id="prPending">0</div><div class="stat-lbl">Pending</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-teal"><i class="fa fa-check-circle"></i></div><div><div class="stat-val zero" id="prApproved">0</div><div class="stat-lbl">Approved</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-red"><i class="fa fa-times-circle"></i></div><div><div class="stat-val zero" id="prRejected">0</div><div class="stat-lbl">Rejected</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fa fa-database"></i></div><div><div class="stat-val zero" id="prTotal">0</div><div class="stat-lbl">Total Questions</div></div></div>
+      </div>
+      <div class="sh"><h2>All Submissions</h2><div class="line"></div></div>
+      <div id="peerReviewList"><div class="no-data"><span>✏️</span>No peer submissions yet.</div></div>
+    </div>
+
+    <!-- ══ SYSTEM LOGS ══ -->
+    <div class="portal-view" id="view-logs">
+      <div class="page-hdr">
+        <h1>System <em>Logs</em></h1>
+        <p>A record of all admin actions and key system events.</p>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="logSearch" placeholder="Search logs…" oninput="renderLogs()"/>
+        <select id="logTypeFilter" onchange="renderLogs()">
+          <option value="">All Types</option>
+          <option value="add">Add</option>
+          <option value="remove">Remove</option>
+          <option value="edit">Edit</option>
+          <option value="peer">Peer Review</option>
+        </select>
+        <button class="btn-ghost" onclick="if(confirm('Clear all logs?')){clearLogs();}">Clear Logs</button>
+      </div>
+      <div id="logListWrap"><div class="no-data"><span>📋</span>No logs yet.</div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: ADD STUDENT -->
+<div class="modal-overlay" id="modalAddStudent">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Student</h3><button class="modal-close" onclick="closeModal('modalAddStudent')"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="stFname" placeholder="e.g. Aarav"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="stLname" placeholder="e.g. Sharma"/></div>
+      </div>
+      <div class="form-group"><label>Email Address</label><input type="text" id="stEmail" placeholder="student@pu.edu.np"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Semester</label>
+          <select id="stSem"><option value="">Select…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+        </div>
+        <div class="form-group"><label>Status</label>
+          <select id="stStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal('modalAddStudent')">Cancel</button>
+      <button class="btn-primary" onclick="addStudent()"><i class="fa fa-plus"></i> Add Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD TEACHER -->
+<div class="modal-overlay" id="modalAddTeacher">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Teacher</h3><button class="modal-close" onclick="closeModal('modalAddTeacher')"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="tcFname" placeholder="e.g. Priya"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="tcLname" placeholder="e.g. Thapa"/></div>
+      </div>
+      <div class="form-group"><label>Email Address</label><input type="text" id="tcEmail" placeholder="teacher@pu.edu.np"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Department</label>
+          <select id="tcDept"><option value="">Select…</option><option>Computer Engineering</option><option>Electronics Engineering</option><option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>Management</option></select>
+        </div>
+        <div class="form-group"><label>Status</label>
+          <select id="tcStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Assigned Subject</label><input type="text" id="tcSubject" placeholder="e.g. Data Structure and Algorithm"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal('modalAddTeacher')">Cancel</button>
+      <button class="btn-primary" onclick="addTeacher()"><i class="fa fa-plus"></i> Add Teacher</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="modal-overlay" id="modalConfirmDelete">
+  <div class="modal" style="max-width:380px;">
+    <div class="confirm-body">
+      <div class="confirm-icon">🗑️</div>
+      <h3 id="confirmDeleteTitle">Remove User?</h3>
+      <p id="confirmDeleteMsg">This action cannot be undone.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal('modalConfirmDelete')">Cancel</button>
+      <button class="btn-danger" id="confirmDeleteBtn">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── CURRENT USER ─── */
+function getCurrentUsername() {
+  try {
+    const name = localStorage.getItem('userName');
+    if (name && name.trim()) return name.trim();
+    return 'Administrator';
+  } catch (e) {
+    return 'Administrator';
+  }
+}
+function applyCurrentUsername() {
+  const name = getCurrentUsername();
+  const sbName = document.getElementById('sbAvName');
+  const welcomeName = document.getElementById('welcomeName');
+  const sbCircle = document.getElementById('sbAvCircle');
+  if (sbName) sbName.textContent = name;
+  if (welcomeName) welcomeName.textContent = name;
+  if (sbCircle) sbCircle.textContent = name.charAt(0).toUpperCase();
+}
+
+/* ─── SIDEBAR / DARK ─── */
+let sbCollapsed = false;
+function toggleSidebar() {
+  sbCollapsed = !sbCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', sbCollapsed);
+  document.getElementById('mainWrap').classList.toggle('collapsed', sbCollapsed);
+}
+function toggleGroup(btn) {
+  btn.classList.toggle('collapsed');
+  const items = btn.nextElementSibling;
+  if (items) items.classList.toggle('collapsed');
+}
+function setActiveNav(btn) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleDark(cb) { document.body.classList.toggle('dark-theme', cb.checked); }
+
+/* ─── TOAST / MODAL ─── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+/* ─── VIEW ROUTER ─── */
+const VIEW_TITLES = {
+  overview:'Admin Dashboard', students:'Manage Students', teachers:'Manage Teachers',
+  stactivity:'Student Activity', tcactivity:'Teacher Activity',
+  peer:'Peer Submissions', logs:'System Logs'
+};
+function showView(v) {
+  document.querySelectorAll('.portal-view').forEach(el => el.classList.remove('on'));
+  document.getElementById('view-' + v).classList.add('on');
+  document.getElementById('topbarTitle').textContent = VIEW_TITLES[v];
+  if (v === 'overview')    loadOverview();
+  if (v === 'students')    { renderStudents(); updateStudentStats(); }
+  if (v === 'teachers')    { renderTeachers(); updateTeacherStats(); }
+  if (v === 'stactivity')  renderStudentActivity();
+  if (v === 'tcactivity')  renderTeacherActivity();
+  if (v === 'peer')        renderPeerSubmissions();
+  if (v === 'logs')        renderLogs();
+}
+
+/* ─── DATA HELPERS ─── */
+const get  = k => JSON.parse(localStorage.getItem(k) || '[]');
+const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const getStudents  = () => get('adminStudents');
+const getTeachers  = () => get('adminTeachers');
+const getLogs      = () => get('adminLogs');
+const getPeerSubs  = () => get('peerSubmissions');
+const getStudentAct= () => get('studentActivityLog');
+const getTeacherAct= () => get('teacherActivityLog');
+
+function addLog(type, msg) {
+  const logs = getLogs();
+  const now  = new Date();
+  logs.push({ type, msg, time: now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), date: now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) });
+  save('adminLogs', logs);
+}
+
+function nowDate() { return new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function setStatVal(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+  el.className = 'stat-val' + (val === 0 || val === '0%' ? ' zero' : '');
+}
+
+/* ─── OVERVIEW ─── */
+function loadOverview() {
+  const students = getStudents();
+  const teachers = getTeachers();
+  const subs     = getPeerSubs();
+  const quizzes  = getStudentAct();
+  setStatVal('ovStudents',   students.length);
+  setStatVal('ovTeachers',   teachers.length);
+  setStatVal('ovPeerPending',subs.filter(s => s.status === 'pending').length);
+  setStatVal('ovQuizzes',    quizzes.length);
+
+  const allAct = [
+    ...quizzes.map(a => ({ icon:'fa-bolt', cls:'ai-quiz', title:`${a.name} completed a quiz — ${a.subject}`, meta:`Score: ${a.pct}% · ${a.date}`, ts: a.date })),
+    ...getLogs().map(l => ({ icon:'fa-cog', cls:'ai-login', title: l.msg, meta:`${l.date} · ${l.time}`, ts: l.date }))
+  ].slice(-8).reverse();
+
+  const wrap = document.getElementById('ovRecentLogs');
+  if (!allAct.length) {
+    wrap.innerHTML = '<div class="no-data"><span>📋</span>No activity yet.</div>';
+  } else {
+    wrap.innerHTML = '<div class="log-list">' + allAct.map(a => `
+      <div class="log-row">
+        <div class="log-icon ${a.cls}"><i class="fa ${a.icon}"></i></div>
+        <div><div class="log-msg">${a.title}</div><div class="log-time">${a.meta}</div></div>
+      </div>`).join('') + '</div>';
+  }
+  updatePeerBadge();
+}
+
+/* ─── STUDENTS ─── */
+function addStudent() {
+  const fname  = document.getElementById('stFname').value.trim();
+  const lname  = document.getElementById('stLname').value.trim();
+  const email  = document.getElementById('stEmail').value.trim();
+  const sem    = document.getElementById('stSem').value;
+  const status = document.getElementById('stStatus').value;
+  if (!fname || !lname || !email || !sem) { showToast('Please fill all required fields.'); return; }
+  const students = getStudents();
+  students.push({ id: Date.now(), fname, lname, email, sem, status, added: nowDate() });
+  save('adminStudents', students);
+  addLog('add', `Added student: ${fname} ${lname} (Semester ${sem})`);
+  ['stFname','stLname','stEmail'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('stSem').value = '';
+  closeModal('modalAddStudent');
+  renderStudents(); updateStudentStats();
+  showToast(`${fname} ${lname} added.`);
+}
+
+function removeStudent(id, name) {
+  document.getElementById('confirmDeleteTitle').textContent = 'Remove Student?';
+  document.getElementById('confirmDeleteMsg').textContent = `"${name}" will be permanently removed.`;
+  document.getElementById('confirmDeleteBtn').onclick = () => {
+    save('adminStudents', getStudents().filter(s => s.id !== id));
+    addLog('remove', `Removed student: ${name}`);
+    closeModal('modalConfirmDelete');
+    renderStudents(); updateStudentStats();
+    showToast(`${name} removed.`);
+  };
+  openModal('modalConfirmDelete');
+}
+
+function toggleStudentStatus(id) {
+  const list = getStudents();
+  const idx  = list.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  list[idx].status = list[idx].status === 'active' ? 'inactive' : 'active';
+  save('adminStudents', list);
+  addLog('edit', `Updated student status: ${list[idx].fname} ${list[idx].lname} → ${list[idx].status}`);
+  renderStudents(); updateStudentStats();
+  showToast('Status updated.');
+}
+
+function renderStudents() {
+  const q   = (document.getElementById('studentSearch')?.value || '').toLowerCase();
+  const sem = document.getElementById('studentSemFilter')?.value || '';
+  let list  = getStudents();
+  if (q)   list = list.filter(s => `${s.fname} ${s.lname} ${s.email}`.toLowerCase().includes(q));
+  if (sem) list = list.filter(s => s.sem === sem);
+  const tbody = document.getElementById('studentTbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-muted);">${getStudents().length === 0 ? 'No students yet. Click "Add Student" to get started.' : 'No results.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.slice().reverse().map(s => `<tr>
+    <td><strong>${s.fname} ${s.lname}</strong></td>
+    <td class="td-muted">${s.email}</td>
+    <td><span class="role-badge rb-student">Sem ${s.sem}</span></td>
+    <td><span class="status-dot ${s.status==='active'?'sd-active':'sd-inactive'}"></span>${s.status==='active'?'Active':'Inactive'}</td>
+    <td class="td-muted">${s.added}</td>
+    <td style="display:flex;gap:6px;">
+      <button class="btn-icon" onclick="toggleStudentStatus(${s.id})" title="Toggle status"><i class="fa fa-toggle-on"></i></button>
+      <button class="btn-icon danger" onclick="removeStudent(${s.id},'${s.fname} ${s.lname}')" title="Remove"><i class="fa fa-trash"></i></button>
+    </td></tr>`).join('');
+}
+function updateStudentStats() {
+  const list = getStudents();
+  setStatVal('stTotal',  list.length);
+  setStatVal('stActive', list.filter(s => s.status==='active').length);
+  setStatVal('stSems',   new Set(list.map(s=>s.sem)).size);
+}
+
+/* ─── TEACHERS ─── */
+function addTeacher() {
+  const fname   = document.getElementById('tcFname').value.trim();
+  const lname   = document.getElementById('tcLname').value.trim();
+  const email   = document.getElementById('tcEmail').value.trim();
+  const dept    = document.getElementById('tcDept').value;
+  const subject = document.getElementById('tcSubject').value.trim();
+  const status  = document.getElementById('tcStatus').value;
+  if (!fname || !lname || !email || !dept) { showToast('Please fill all required fields.'); return; }
+  const teachers = getTeachers();
+  teachers.push({ id: Date.now(), fname, lname, email, dept, subject, status, added: nowDate() });
+  save('adminTeachers', teachers);
+  addLog('add', `Added teacher: ${fname} ${lname} (${dept})`);
+  ['tcFname','tcLname','tcEmail','tcSubject'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tcDept').value = '';
+  closeModal('modalAddTeacher');
+  renderTeachers(); updateTeacherStats();
+  showToast(`${fname} ${lname} added.`);
+}
+
+function removeTeacher(id, name) {
+  document.getElementById('confirmDeleteTitle').textContent = 'Remove Teacher?';
+  document.getElementById('confirmDeleteMsg').textContent = `"${name}" will be permanently removed.`;
+  document.getElementById('confirmDeleteBtn').onclick = () => {
+    save('adminTeachers', getTeachers().filter(t => t.id !== id));
+    addLog('remove', `Removed teacher: ${name}`);
+    closeModal('modalConfirmDelete');
+    renderTeachers(); updateTeacherStats();
+    showToast(`${name} removed.`);
+  };
+  openModal('modalConfirmDelete');
+}
+
+function toggleTeacherStatus(id) {
+  const list = getTeachers();
+  const idx  = list.findIndex(t => t.id === id);
+  if (idx === -1) return;
+  list[idx].status = list[idx].status === 'active' ? 'inactive' : 'active';
+  save('adminTeachers', list);
+  addLog('edit', `Updated teacher status: ${list[idx].fname} ${list[idx].lname} → ${list[idx].status}`);
+  renderTeachers(); updateTeacherStats();
+  showToast('Status updated.');
+}
+
+function renderTeachers() {
+  const q    = (document.getElementById('teacherSearch')?.value || '').toLowerCase();
+  let list   = getTeachers();
+  if (q) list = list.filter(t => `${t.fname} ${t.lname} ${t.email} ${t.dept}`.toLowerCase().includes(q));
+  const tbody = document.getElementById('teacherTbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--text-muted);">${getTeachers().length === 0 ? 'No teachers yet. Click "Add Teacher" to get started.' : 'No results.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.slice().reverse().map(t => `<tr>
+    <td><strong>${t.fname} ${t.lname}</strong></td>
+    <td class="td-muted">${t.email}</td>
+    <td><span class="role-badge rb-teacher">${t.dept}</span></td>
+    <td class="td-muted">${t.subject||'—'}</td>
+    <td><span class="status-dot ${t.status==='active'?'sd-active':'sd-inactive'}"></span>${t.status==='active'?'Active':'Inactive'}</td>
+    <td class="td-muted">${t.added}</td>
+    <td style="display:flex;gap:6px;">
+      <button class="btn-icon" onclick="toggleTeacherStatus(${t.id})" title="Toggle status"><i class="fa fa-toggle-on"></i></button>
+      <button class="btn-icon danger" onclick="removeTeacher(${t.id},'${t.fname} ${t.lname}')" title="Remove"><i class="fa fa-trash"></i></button>
+    </td></tr>`).join('');
+}
+function updateTeacherStats() {
+  const list = getTeachers();
+  setStatVal('tcTotal',  list.length);
+  setStatVal('tcActive', list.filter(t => t.status==='active').length);
+  setStatVal('tcSubjs',  list.filter(t => t.subject).length);
+}
+
+/* ─── STUDENT ACTIVITY ─── */
+function renderStudentActivity() {
+  const q    = (document.getElementById('saSearch')?.value || '').toLowerCase();
+  const mode = document.getElementById('saModeFilter')?.value || '';
+  let acts   = getStudentAct();
+  if (q)    acts = acts.filter(a => `${a.name||''} ${a.subject}`.toLowerCase().includes(q));
+  if (mode) acts = acts.filter(a => a.mode === mode);
+
+  const today = nowDate();
+  const todayCount = getStudentAct().filter(a => a.date === today).length;
+  const allPcts    = getStudentAct().map(a => a.pct).filter(Boolean);
+  const avg        = allPcts.length ? Math.round(allPcts.reduce((a,b)=>a+b,0)/allPcts.length) : 0;
+  const top        = allPcts.length ? Math.max(...allPcts) : 0;
+
+  setStatVal('saTotalQuizzes', getStudentAct().length);
+  const avgEl = document.getElementById('saAvgScore');
+  if (avgEl) { avgEl.textContent = avg + '%'; avgEl.className = 'stat-val' + (avg===0?' zero':''); }
+  const topEl = document.getElementById('saTopScore');
+  if (topEl) { topEl.textContent = top + '%'; topEl.className = 'stat-val' + (top===0?' zero':''); }
+  setStatVal('saToday', todayCount);
+
+  const tbody = document.getElementById('saTableBody');
+  if (!acts.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-muted);">${getStudentAct().length===0?'No quiz activity yet. Students will appear here after submitting quizzes.':'No results match your filter.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = acts.slice().reverse().map(a => {
+    const grade = a.pct >= 75 ? 'sb-hi' : a.pct >= 50 ? 'sb-mid' : 'sb-lo';
+    return `<tr>
+      <td><strong>${a.name||'Unknown'}</strong></td>
+      <td>${a.subject}</td>
+      <td><span class="role-badge rb-student">Sem ${a.sem}</span></td>
+      <td><span class="score-badge ${grade}">${a.score}/${a.total} (${a.pct}%)</span></td>
+      <td class="td-muted" style="text-transform:capitalize;">${a.mode}</td>
+      <td class="td-muted">${a.date}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── TEACHER ACTIVITY ─── */
+function renderTeacherActivity() {
+  const teachers = getTeachers();
+  setStatVal('taActiveTeachers', teachers.filter(t => t.status==='active').length);
+
+  const peerSubs = getPeerSubs();
+  const approved = peerSubs.filter(s => s.status==='approved').reduce((a,b)=>a+b.questions.length,0);
+  setStatVal('taUploads',   0);
+  setStatVal('taApprovals', approved);
+
+  const wrap = document.getElementById('tcActivityList');
+  const tcLogs = getLogs().filter(l => l.type === 'add' || l.type === 'edit' || l.type === 'remove' || l.type === 'peer');
+  if (!tcLogs.length && !teachers.length) {
+    wrap.innerHTML = '<div class="no-data"><span>👩‍🏫</span>No teacher activity yet. Add teachers to get started.</div>';
+    return;
+  }
+  const rows = [];
+  teachers.forEach(t => {
+    rows.push({ icon:'fa-user-plus', cls:'ai-login', title:`${t.fname} ${t.lname} joined as teacher`, meta:`${t.dept}${t.subject?' · '+t.subject:''} · Added ${t.added}` });
+  });
+  peerSubs.filter(s=>s.status!=='pending').forEach(s => {
+    const label = s.status==='approved'?'Approved':'Rejected';
+    rows.push({ icon:'fa-check-square-o', cls:'ai-peer', title:`Admin ${label.toLowerCase()} peer submission: ${s.subject}`, meta:`Semester ${s.sem} · ${s.date} · ${s.questions.length} question${s.questions.length>1?'s':''}` });
+  });
+  if (!rows.length) {
+    wrap.innerHTML = '<div class="no-data"><span>👩‍🏫</span>No teacher activity recorded yet.</div>';
+    return;
+  }
+  wrap.innerHTML = '<div class="log-list">' + rows.map(r => `
+    <div class="log-row">
+      <div class="log-icon ${r.cls}"><i class="fa ${r.icon}"></i></div>
+      <div><div class="log-msg">${r.title}</div><div class="log-time">${r.meta}</div></div>
+    </div>`).join('') + '</div>';
+}
+
+/* ─── PEER SUBMISSIONS ─── */
+function renderPeerSubmissions() {
+  const subs     = getPeerSubs();
+  const pending  = subs.filter(s=>s.status==='pending').length;
+  const approved = subs.filter(s=>s.status==='approved').length;
+  const rejected = subs.filter(s=>s.status==='rejected').length;
+  const total    = subs.reduce((a,b)=>a+b.questions.length,0);
+  setStatVal('prPending',  pending);
+  setStatVal('prApproved', approved);
+  setStatVal('prRejected', rejected);
+  setStatVal('prTotal',    total);
+  updatePeerBadge();
+
+  const wrap = document.getElementById('peerReviewList');
+  if (!subs.length) { wrap.innerHTML = '<div class="no-data"><span>✏️</span>No peer submissions yet.</div>'; return; }
+
+  wrap.innerHTML = subs.slice().reverse().map((s, ri) => {
+    const idx = subs.length - 1 - ri;
+    const sc  = s.status==='approved'?'prs-approved':s.status==='rejected'?'prs-rejected':'prs-pending';
+    const sl  = s.status==='approved'?'Approved':s.status==='rejected'?'Rejected':'Pending Review';
+    const qs  = s.questions.map(q=>`<div class="pr-q"><div class="qtext">${q.text}</div><div class="qopts">A: ${q.optA||'—'} · B: ${q.optB||'—'} · C: ${q.optC||'—'} · D: ${q.optD||'—'}</div><div class="qans">✓ Correct: Option ${q.correct}</div></div>`).join('');
+    const actions = s.status==='pending'?`<div class="pr-actions"><button class="btn-approve" onclick="reviewPeer(${idx},'approved')"><i class="fa fa-check"></i> Approve</button><button class="btn-reject" onclick="reviewPeer(${idx},'rejected')"><i class="fa fa-times"></i> Reject</button></div>`:'';
+    return `<div class="peer-review-card"><div class="prcard-head"><div><div class="prcard-subj">${s.subject}</div><div class="prcard-meta">Semester ${s.sem} · ${s.date} · ${s.questions.length} question${s.questions.length>1?'s':''}</div></div><span class="pr-status ${sc}">${sl}</span></div><div class="pr-q-list">${qs}</div>${actions}</div>`;
+  }).join('');
+}
+
+function reviewPeer(idx, status) {
+  const subs = getPeerSubs();
+  if (!subs[idx]) return;
+  subs[idx].status = status;
+  save('peerSubmissions', subs);
+  const label = status==='approved'?'Approved':'Rejected';
+  addLog('peer', `${label} peer submission: ${subs[idx].subject} (Semester ${subs[idx].sem})`);
+  renderPeerSubmissions();
+  showToast(`Submission ${label.toLowerCase()}.`);
+}
+
+function updatePeerBadge() {
+  document.getElementById('peerBadge').textContent = getPeerSubs().filter(s=>s.status==='pending').length;
+}
+
+/* ─── LOGS ─── */
+const LOG_ICONS = {
+  add:    { cls:'li-add',    icon:'fa-user-plus' },
+  remove: { cls:'li-remove', icon:'fa-user-times' },
+  edit:   { cls:'li-edit',   icon:'fa-pencil' },
+  peer:   { cls:'li-peer',   icon:'fa-check-square-o' },
+};
+function logRowHTML(l) {
+  const info = LOG_ICONS[l.type] || { cls:'li-edit', icon:'fa-info-circle' };
+  return `<div class="log-row"><div class="log-icon ${info.cls}"><i class="fa ${info.icon}"></i></div><div><div class="log-msg">${l.msg}</div><div class="log-time">${l.date} · ${l.time}</div></div></div>`;
+}
+function renderLogs() {
+  const q    = (document.getElementById('logSearch')?.value || '').toLowerCase();
+  const type = document.getElementById('logTypeFilter')?.value || '';
+  let logs   = getLogs().slice().reverse();
+  if (q)    logs = logs.filter(l => l.msg.toLowerCase().includes(q));
+  if (type) logs = logs.filter(l => l.type === type);
+  const wrap = document.getElementById('logListWrap');
+  if (!logs.length) { wrap.innerHTML = '<div class="no-data"><span>📋</span>No logs match your filter.</div>'; return; }
+  wrap.innerHTML = '<div class="log-list">' + logs.map(logRowHTML).join('') + '</div>';
+}
+function clearLogs() { save('adminLogs',[]); renderLogs(); showToast('Logs cleared.'); }
+
+/* ─── SIGN OUT ─── */
+function signOut() {
+  document.getElementById('confirmDeleteTitle').textContent = 'Sign Out?';
+  document.getElementById('confirmDeleteMsg').textContent = 'You will be logged out of the admin dashboard.';
+  document.getElementById('confirmDeleteBtn').textContent = 'Sign Out';
+  document.getElementById('confirmDeleteBtn').onclick = () => {
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
+    addLog('logout', 'Admin logged out');
+    window.location.href = 'login.html';
+  };
+  openModal('modalConfirmDelete');
+}
+
+/* ─── INIT ─── */
+window.onload = () => { applyCurrentUsername(); loadOverview(); updatePeerBadge(); };
+</script>
+</body>
+</html>
