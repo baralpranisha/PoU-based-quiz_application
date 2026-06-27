@@ -1704,7 +1704,7 @@ function init() {
     }
 
     document.getElementById('btnPrev').disabled    = cur === 0;
-    document.getElementById('btnNext').textContent = cur === TOTAL-1 ? 'Review' : 'Next →';
+    document.getElementById('btnNext').textContent = cur === TOTAL-1 ? 'Submit Quiz' : 'Next →';
   }
 
   function pick(i) {
@@ -1715,7 +1715,7 @@ function init() {
     render();
   }
 
-  window.nextQ  = () => { if (cur < TOTAL-1) { cur++; render(); } };
+  window.nextQ  = () => { if (cur < TOTAL-1) { cur++; render(); } else { openModal(); } };
   window.prevQ  = () => { if (cur > 0)       { cur--; render(); } };
   window.skipQ  = () => { skipped[cur]=true; if (cur < TOTAL-1) { cur++; render(); } };
   window.jump   = (i) => { cur = i; render(); };
@@ -1747,3 +1747,4 @@ function init() {
 </script>
 </body>
 </html>
+
