@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuizVerse PoU — Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-page:#f1f4f8; --bg-card:#ffffff; --bg-input:#f9fafb;
+      --tb-bg:#ffffff; --tb-border:#e5e7eb;
+      --text-primary:#111827; --text-secondary:#6b7280; --text-muted:#9ca3af;
+      --border:#e5e7eb; --border-light:#f3f4f6;
+      --accent:#1a56db; --accent-hover:#1648c0; --accent-light:#e6f0ff;
+      --teal:#0f6e56; --teal-light:#e1f5ee;
+      --amber:#854f0b; --amber-light:#faeeda;
+      --purple:#534ab7; --purple-light:#eeedfe;
+      --gold:#b45309; --gold-light:#fef3c7;
+      --gold-dim:rgba(180,83,9,0.08); --gold-border:rgba(180,83,9,0.30);
+      --green:#0f6e56; --red:#dc2626;
+      --font:'Outfit',system-ui,sans-serif; --font-display:'Cormorant Garamond',Georgia,serif;
+      --r-sm:6px; --r-md:8px; --r-lg:12px;
+    }
+    body { font-family:var(--font); background:var(--bg-page); color:var(--text-primary); min-height:100vh; }
+
+    nav {
+      position:sticky; top:0; z-index:100;
+      background:var(--tb-bg); border-bottom:1px solid var(--tb-border);
+      padding:0 32px; height:58px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-left { display:flex; align-items:center; gap:12px; }
+    .nav-logo { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-primary); }
+    .nav-logo span { color:var(--accent); font-style:italic; }
+    .nav-sep { width:1px; height:16px; background:var(--border); }
+    .nav-subj { font-size:13px; color:var(--text-muted); }
+    .nav-subj strong { color:var(--text-primary); font-weight:500; }
+    .nav-link { font-size:13px; color:var(--accent); text-decoration:none; font-weight:500; }
+    .nav-link:hover { color:var(--accent-hover); }
+
+    .main { max-width:780px; margin:0 auto; padding:32px 20px 80px; }
+
+    /* ── SCORE HERO ── */
+    .hero { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-lg); padding:36px 28px; text-align:center; margin-bottom:22px; }
+    .hero .ring-wrap { position:relative; width:148px; height:148px; margin:0 auto 18px; }
+    .hero svg { transform:rotate(-90deg); }
+    .hero .ring-bg { fill:none; stroke:var(--border-light); stroke-width:10; }
+    .hero .ring-fg { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1s ease; }
+    .hero .ring-pct { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .hero .ring-pct .v { font-family:var(--font-display); font-size:34px; font-weight:700; line-height:1; color:var(--text-primary); }
+    .hero .ring-pct .l { font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+    .hero h2 { font-family:var(--font-display); font-size:22px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+    .hero p.subline { font-size:13.5px; color:var(--text-secondary); }
+    .hero .verdict { display:inline-block; margin-top:14px; padding:5px 16px; border-radius:20px; font-size:12.5px; font-weight:500; }
+    .verdict.excellent { background:var(--teal-light); color:var(--teal); }
+    .verdict.good       { background:var(--accent-light); color:var(--accent); }
+    .verdict.okay        { background:var(--gold-light); color:var(--gold); }
+    .verdict.poor        { background:#fef2f2; color:var(--red); }
+
+    /* ── STAT STRIP ── */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px; }
+    .stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; text-align:center; }
+    .stat-card .sv { font-family:var(--font-display); font-size:22px; font-weight:700; }
+    .stat-card .sl { font-size:11px; color:var(--text-muted); margin-top:3px; }
+    .sv.green { color:var(--teal); } .sv.red { color:var(--red); } .sv.gold { color:var(--gold); } .sv.blue { color:var(--accent); }
+
+    /* ── ACTIONS ── */
+    .actions { display:flex; gap:10px; margin-bottom:26px; flex-wrap:wrap; }
+    .btn { padding:11px 22px; border-radius:var(--r-md); font-family:var(--font); font-size:13.5px; font-weight:500; cursor:pointer; transition:all 0.18s; text-decoration:none; display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; }
+    .btn-primary { background:var(--accent); color:white; }
+    .btn-primary:hover { background:var(--accent-hover); transform:translateY(-1px); }
+    .btn-ghost { background:none; border:1px solid var(--border); color:var(--text-secondary); }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── REVIEW LIST ── */
+    .sh { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .sh h2 { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text-primary); white-space:nowrap; }
+    .sh .line { flex:1; height:1px; background:var(--border-light); }
+    .filter-row { display:flex; gap:8px; margin-bottom:14px; }
+    .filter-btn { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:500; background:var(--bg-card); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; transition:all 0.18s; }
+    .filter-btn.on { background:var(--accent); border-color:var(--accent); color:white; }
+
+    .review-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; margin-bottom:12px; }
+    .review-card.hidden { display:none; }
+    .rc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; }
+    .rc-num { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+    .rc-q { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-primary); line-height:1.4; }
+    .rc-tag { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+    .rc-tag.correct { background:var(--teal-light); color:var(--teal); }
+    .rc-tag.wrong { background:#fef2f2; color:var(--red); }
+    .rc-tag.skipped { background:var(--gold-light); color:var(--gold); }
+    .rc-opts { display:flex; flex-direction:column; gap:7px; }
+    .rc-opt { padding:9px 13px; border-radius:var(--r-sm); border:1px solid var(--border); font-size:13px; color:var(--text-secondary); display:flex; align-items:center; gap:10px; }
+    .rc-opt .lbl { width:20px; height:20px; border-radius:var(--r-sm); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; flex-shrink:0; background:var(--bg-input); color:var(--text-muted); }
+    .rc-opt.is-correct { border-color:var(--teal); background:var(--teal-light); color:var(--teal); }
+    .rc-opt.is-correct .lbl { background:var(--teal); border-color:var(--teal); color:white; }
+    .rc-opt.is-wrong-pick { border-color:var(--red); background:#fef2f2; color:var(--red); }
+    .rc-opt.is-wrong-pick .lbl { background:var(--red); border-color:var(--red); color:white; }
+
+    .empty { text-align:center; padding:50px 20px; color:var(--text-muted); }
+    .empty h3 { font-family:var(--font-display); font-size:19px; color:var(--text-primary); margin-bottom:8px; }
+    .empty a { color:var(--accent); text-decoration:none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="nav-logo">QuizVerse <span>PoU</span></div>
+    <div class="nav-sep"></div>
+    <div class="nav-subj"><strong id="navSubj">Results</strong></div>
+  </div>
+  <a class="nav-link" href="student-dashboard.html">← Dashboard</a>
+</nav>
+
+<div class="main" id="mainWrap">
+  <!-- content injected by script -->
+</div>
+
+<script>
+const TOTAL    = parseInt(localStorage.getItem('quizTotal') || '0');
+const SCORE    = parseInt(localStorage.getItem('quizScore') || '0');
+const SUBJECT  = localStorage.getItem('quizSubject') || 'Unknown Subject';
+const SEM      = localStorage.getItem('quizSem') || '';
+const MODE     = localStorage.getItem('quizMode') || 'timed';
+
+let answers, correct, qs;
+try {
+  answers = JSON.parse(localStorage.getItem('quizAnswers') || '[]');
+  correct = JSON.parse(localStorage.getItem('quizCorrect') || '[]');
+  qs      = JSON.parse(localStorage.getItem('quizQs') || '[]');
+} catch (e) {
+  answers = []; correct = []; qs = [];
+}
+
+document.getElementById('navSubj').textContent = SUBJECT;
+
+const mainWrap = document.getElementById('mainWrap');
+
+// Guard: if there's no actual attempt data for this subject, don't fabricate one.
+if (!TOTAL || !qs.length || qs.length !== TOTAL || answers.length !== TOTAL || correct.length !== TOTAL) {
+  mainWrap.innerHTML = `
+    <div class="empty">
+      <h3>No recent quiz attempt found</h3>
+      <p>We couldn't find a completed quiz to show results for.<br/>
+      Please take a quiz first, then come back here.</p>
+      <br/>
+      <a href="student-dashboard.html">← Go back to Dashboard</a>
+    </div>`;
+} else {
+  render();
+}
+
+function render() {
+  const pct = Math.round((SCORE / TOTAL) * 100);
+  const wrong = TOTAL - SCORE - (answers.filter(a => a === null).length - 0); // placeholder, recomputed below
+  const skippedCount = answers.filter(a => a === null).length;
+  const wrongCount = TOTAL - SCORE - skippedCount;
+
+  let verdictClass = 'poor', verdictText = 'Needs more practice';
+  if (pct >= 85) { verdictClass = 'excellent'; verdictText = 'Excellent work!'; }
+  else if (pct >= 70) { verdictClass = 'good'; verdictText = 'Good job!'; }
+  else if (pct >= 50) { verdictClass = 'okay'; verdictText = 'Decent attempt'; }
+
+  const circumference = 2 * Math.PI * 64;
+  const offset = circumference - (pct / 100) * circumference;
+  const ringColor = pct >= 85 ? 'var(--teal)' : pct >= 70 ? 'var(--accent)' : pct >= 50 ? 'var(--gold)' : 'var(--red)';
+
+  mainWrap.innerHTML = `
+    <div class="hero">
+      <div class="ring-wrap">
+        <svg width="148" height="148" viewBox="0 0 148 148">
+          <circle class="ring-bg" cx="74" cy="74" r="64"/>
+          <circle class="ring-fg" cx="74" cy="74" r="64"
+            stroke="${ringColor}"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="ring-pct">
+          <div class="v">${pct}%</div>
+          <div class="l">Score</div>
+        </div>
+      </div>
+      <h2>${SUBJECT}</h2>
+      <p class="subline">Semester ${SEM} · ${MODE === 'timed' ? 'Timed Mode' : 'Practice Mode'} · ${SCORE} / ${TOTAL} correct</p>
+      <span class="verdict ${verdictClass}">${verdictText}</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sv green">${SCORE}</div><div class="sl">Correct</div></div>
+      <div class="stat-card"><div class="sv red">${wrongCount}</div><div class="sl">Incorrect</div></div>
+      <div class="stat-card"><div class="sv gold">${skippedCount}</div><div class="sl">Skipped</div></div>
+      <div class="stat-card"><div class="sv blue">${TOTAL}</div><div class="sl">Total Questions</div></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn btn-primary" href="student-dashboard.html">Back to Dashboard</a>
+      <button class="btn btn-ghost" onclick="retakeQuiz()">Retake This Quiz</button>
+    </div>
+
+    <div class="sh"><h2>Answer Review</h2><div class="line"></div></div>
+    <div class="filter-row">
+      <button class="filter-btn on" data-f="all" onclick="filterReview('all',this)">All (${TOTAL})</button>
+      <button class="filter-btn" data-f="wrong" onclick="filterReview('wrong',this)">Incorrect (${wrongCount})</button>
+      <button class="filter-btn" data-f="skipped" onclick="filterReview('skipped',this)">Skipped (${skippedCount})</button>
+    </div>
+    <div id="reviewList"></div>
+  `;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = qs.map((q, i) => {
+    const userAns = answers[i];
+    const correctAns = correct[i];
+    const wasSkipped = userAns === null;
+    const wasCorrect = userAns === correctAns;
+    const tagClass = wasSkipped ? 'skipped' : (wasCorrect ? 'correct' : 'wrong');
+    const tagText  = wasSkipped ? 'Skipped' : (wasCorrect ? 'Correct' : 'Incorrect');
+    const status   = wasSkipped ? 'skipped' : (wasCorrect ? 'correct' : 'wrong');
+
+    const optsHtml = q.opts.map((opt, oi) => {
+      let cls = '';
+      if (oi === correctAns) cls = 'is-correct';
+      else if (oi === userAns && !wasCorrect) cls = 'is-wrong-pick';
+      const lbl = ['A','B','C','D'][oi];
+      return `<div class="rc-opt ${cls}"><span class="lbl">${lbl}</span>${opt}</div>`;
+    }).join('');
+
+    return `<div class="review-card" data-status="${status}">
+      <div class="rc-top">
+        <div>
+          <div class="rc-num">Question ${i+1}</div>
+          <div class="rc-q">${q.q}</div>
+        </div>
+        <span class="rc-tag ${tagClass}">${tagText}</span>
+      </div>
+      <div class="rc-opts">${optsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterReview(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.review-card').forEach(card => {
+    if (f === 'all' || card.dataset.status === f) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+
+function retakeQuiz() {
+  // quizSubject / quizMode / quizSem are already set from this attempt
+  window.location.href = 'quiz.html';
+}
+</script>
+
+<script>
+// ─── BACKEND CONNECTION FOR RESULTS ───
+const token = localStorage.getItem('token');
+if (!token) window.location.href = 'login.html';
+
+// If localStorage is missing quiz data, fetch latest result from backend
+async function loadFromBackendIfNeeded() {
+  const total = parseInt(localStorage.getItem('quizTotal') || '0');
+  if (total > 0) return; // localStorage has data, no need to fetch
+
+  try {
+    const res  = await fetch('http://localhost:5000/api/results/me/latest', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+
+    const r = data.result;
+
+    // Populate localStorage from backend result
+    localStorage.setItem('quizTotal',   r.total);
+    localStorage.setItem('quizScore',   r.score);
+    localStorage.setItem('quizSubject', r.subject);
+    localStorage.setItem('quizSem',     r.semester);
+    localStorage.setItem('quizMode',    r.mode);
+    localStorage.setItem('quizAnswers', JSON.stringify(r.answers));
+    localStorage.setItem('quizCorrect', JSON.stringify(r.correct));
+    localStorage.setItem('quizQs',      JSON.stringify(r.questions));
+
+    // Reload page so render() picks up the new localStorage values
+    window.location.reload();
+
+  } catch (err) {
+    console.log('Result fetch error:', err.message);
+  }
+}
+
+loadFromBackendIfNeeded();
+</script>
+
+</body>
+</html>

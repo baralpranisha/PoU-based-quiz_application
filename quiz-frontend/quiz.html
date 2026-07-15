@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuizVerse PoU — Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:  #0d0f18; --deep: #12151f; --panel: #181c29; --card: #1d2133;
+      --rim:  #242840; --blue: #4b72ff; --sky:  #67c6f0;
+      --text: #dce2f5; --muted:#5a6182; --soft: #8b9ab8; --white:#f4f6ff;
+      --green:#3dd68c; --gold: #f5c842; --red:  #f26b6b;
+      --blue-dim: rgba(75,114,255,0.09);
+    }
+    body.light {
+      --ink:  #f1f4f8; --deep: #e8ecf2; --panel: #ffffff; --card: #f9fafb;
+      --rim:  #e5e7eb; --blue: #1a56db; --sky:  #0284c7;
+      --text: #111827; --muted:#6b7280; --soft: #6b7280; --white:#111827;
+      --green:#0f6e56; --gold: #b45309; --red:  #dc2626;
+      --blue-dim: rgba(26,86,219,0.07);
+    }
+    body { font-family:'Outfit',sans-serif; background:var(--ink); color:var(--text); min-block-size:100vh; transition:background 0.2s,color 0.2s; }
+    .theme-toggle { background:none; border:1px solid var(--rim); border-radius:8px; padding:5px 10px; color:var(--soft); font-size:14px; cursor:pointer; transition:border-color 0.2s,color 0.2s; line-height:1; }
+    .theme-toggle:hover { border-color:var(--blue); color:var(--blue); }
+
+    /* ── NAV ── */
+    nav {
+      position:sticky; inset-block-start:0; z-index:100;
+      background:rgba(13,15,24,0.92); backdrop-filter:blur(16px);
+    }
+    body.light nav { background:rgba(255,255,255,0.92); }
+      border-block-end:1px solid var(--rim);
+      padding:0 30px; block-size:58px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .nl { display:flex; align-items:center; gap:10px; }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:700; color:var(--white); }
+    .logo em { color:var(--blue); font-style:italic; }
+    .vsep { inline-size:1px; block-size:15px; background:var(--rim); }
+    .nav-subj { font-size:13px; color:var(--soft); }
+    .nav-subj strong { color:var(--text); font-weight:500; }
+
+    /* ── TIMER ── */
+    .timer-wrap { display:flex; align-items:center; gap:8px; }
+    .timer-lbl { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
+    .timer-val {
+      font-family:'Cormorant Garamond',serif;
+      font-size:20px; font-weight:700; color:var(--gold);
+      background:var(--panel); border:1px solid var(--rim);
+      padding:5px 13px; border-radius:8px; min-inline-size:74px; text-align:center;
+      transition:color 0.3s, border-color 0.3s;
+    }
+    .timer-val.warn { color:var(--gold); border-color:rgba(245,200,66,0.35); }
+    .timer-val.crit { color:var(--red);  border-color:rgba(242,107,107,0.4); animation:blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+    .prac-badge {
+      font-size:12px; color:var(--soft);
+      background:var(--panel); border:1px solid var(--rim);
+      padding:5px 13px; border-radius:8px;
+    }
+
+    /* ── MAIN ── */
+    .main { max-inline-size:720px; margin:0 auto; padding:30px 20px 80px; }
+
+    /* ── PROGRESS ── */
+    .prog-wrap { margin-block-end:18px; }
+    .prog-row { display:flex; justify-content:space-between; align-items:baseline; margin-block-end:7px; }
+    .prog-row .pl { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
+    .prog-row .pr { font-size:13px; color:var(--blue); font-weight:500; }
+    .prog-track { inline-size:100%; block-size:3px; background:var(--rim); border-radius:4px; overflow:hidden; }
+    .prog-bar { block-size:100%; background:linear-gradient(90deg,var(--blue),var(--sky)); border-radius:4px; transition:width 0.4s ease; }
+
+    /* ── DOTS ── */
+    .dot-row { display:flex; gap:4px; flex-wrap:wrap; margin-block-end:20px; }
+    .qdot {
+      inline-size:24px; block-size:24px; border-radius:6px;
+      border:1px solid var(--rim); background:var(--panel);
+      display:flex; align-items:center; justify-content:center;
+      font-size:10.5px; color:var(--muted); cursor:pointer; transition:all 0.18s;
+    }
+    .qdot.cur      { border-color:var(--blue); background:var(--blue); color:white; }
+    .qdot.answered { border-color:var(--green); color:var(--green); background:rgba(61,214,140,0.08); }
+    .qdot.skipped  { border-color:var(--gold);  color:var(--gold);  background:rgba(245,200,66,0.08); }
+
+    /* ── Q CARD ── */
+    .q-card {
+      background:var(--panel); border:1px solid var(--rim);
+      border-radius:14px; padding:28px;
+      margin-block-end:16px; animation:up 0.22s ease both;
+    }
+    @keyframes up { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+    .q-num { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-block-end:10px; }
+    .q-text {
+      font-family:'Cormorant Garamond',serif;
+      font-size:20px; font-weight:700; line-height:1.45;
+      color:var(--white); margin-block-end:24px;
+    }
+
+    /* ── OPTIONS ── */
+    .opts { display:flex; flex-direction:column; gap:9px; }
+    .opt {
+      inline-size:100%; padding:13px 16px;
+      background:var(--card); border:1px solid var(--rim);
+      border-radius:10px; color:var(--text);
+      font-family:'Outfit',sans-serif; font-size:13.5px;
+      cursor:pointer; transition:all 0.16s; text-align:start;
+      display:flex; align-items:center; gap:12px;
+    }
+    .opt:hover:not(:disabled) { border-color:var(--blue); background:var(--blue-dim); }
+    .opt-lbl {
+      inline-size:25px; block-size:25px; border-radius:6px;
+      border:1px solid var(--rim);
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:600; color:var(--muted); flex-shrink:0;
+      transition:all 0.16s;
+    }
+    .opt:hover:not(:disabled) .opt-lbl { border-color:var(--blue); color:var(--blue); }
+    .opt.chosen { border-color:var(--blue); background:var(--blue-dim); }
+    .opt.chosen .opt-lbl { background:var(--blue); border-color:var(--blue); color:white; }
+    .opt.right  { border-color:var(--green) !important; background:rgba(61,214,140,0.07) !important; }
+    .opt.right .opt-lbl { background:var(--green) !important; border-color:var(--green) !important; color:white !important; }
+    .opt.wrong  { border-color:var(--red) !important; background:rgba(242,107,107,0.07) !important; }
+    .opt.wrong .opt-lbl { background:var(--red) !important; border-color:var(--red) !important; color:white !important; }
+
+    /* ── FEEDBACK ── */
+    .feedback {
+      margin-block-start:13px; padding:10px 14px;
+      border-radius:8px; font-size:13px; line-height:1.5; display:none;
+    }
+    .feedback.right { background:rgba(61,214,140,0.07); border:1px solid rgba(61,214,140,0.2); color:#86efb8; display:block; }
+    .feedback.wrong { background:rgba(242,107,107,0.07); border:1px solid rgba(242,107,107,0.2); color:#f9a8a8; display:block; }
+
+    /* ── CONTROLS ── */
+    .controls { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .ctrl-grp { display:flex; gap:7px; }
+    .btn {
+      padding:10px 18px; border-radius:8px;
+      font-family:'Outfit',sans-serif; font-size:13px; font-weight:500;
+      cursor:pointer; transition:all 0.16s;
+    }
+    .btn-ghost  { background:none; border:1px solid var(--rim); color:var(--muted); }
+    .btn-ghost:hover  { border-color:var(--blue); color:var(--blue); }
+    .btn-blue   { background:var(--blue); border:none; color:white; }
+    .btn-blue:hover   { opacity:0.85; transform:translateY(-1px); }
+    .btn-skip   { background:none; border:1px solid rgba(245,200,66,0.3); color:var(--gold); }
+    .btn-skip:hover   { background:rgba(245,200,66,0.07); }
+    .btn-danger { background:none; border:1px solid rgba(242,107,107,0.3); color:var(--red); }
+    .btn-danger:hover { background:rgba(242,107,107,0.07); }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(6px); z-index:200;
+      display:none; align-items:center; justify-content:center;
+    }
+    .overlay.show { display:flex; }
+    .modal {
+      background:var(--panel); border:1px solid var(--rim);
+      border-radius:14px; padding:30px; max-inline-size:370px; inline-size:90%;
+      text-align:center; animation:pop 0.22s ease both;
+    }
+    @keyframes pop { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+    .modal h3 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:21px; font-weight:700; color:var(--white); margin-block-end:7px;
+    }
+    .modal p { font-size:13px; color:var(--muted); margin-block-end:20px; line-height:1.6; }
+    .modal-stats { display:flex; gap:9px; justify-content:center; margin-bottom:20px; }
+    .mstat { background:var(--card); border:1px solid var(--rim); border-radius:8px; padding:9px 13px; flex:1; }
+    .mstat .mv { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; }
+    .mstat .mk { font-size:11px; color:var(--muted); margin-top:2px; }
+    .modal-btns { display:flex; gap:8px; }
+    .modal-btns button { flex:1; padding:11px; border-radius:8px; font-family:'Outfit',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.16s; }
+    .mbtn-cancel { background:none; border:1px solid var(--rim); color:var(--muted); }
+    .mbtn-cancel:hover { border-color:var(--blue); color:var(--blue); }
+    .mbtn-submit { background:var(--blue); border:none; color:white; }
+    .mbtn-submit:hover { opacity:0.85; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nl">
+    <div class="logo">QuizVerse <em>PoU</em></div>
+    <div class="vsep"></div>
+    <div class="nav-subj"><strong id="navSubj">Loading…</strong></div>
+  </div>
+  <div class="timer-wrap">
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">☀</button>
+    <span class="timer-lbl" id="timerLbl">Time</span>
+    <div class="timer-val" id="timerVal">20:00</div>
+    <div class="prac-badge" id="pracBadge" style="display:none">Practice Mode</div>
+  </div>
+</nav>
+
+<div class="main">
+
+  <div class="prog-wrap">
+    <div class="prog-row">
+      <span class="pl">Progress</span>
+      <span class="pr" id="progText">1 / 20</span>
+    </div>
+    <div class="prog-track"><div class="prog-bar" id="progBar" style="width:5%"></div></div>
+  </div>
+
+  <div class="dot-row" id="dotRow"></div>
+
+  <div class="q-card">
+    <div class="q-num" id="qNum">Question 1 of 20</div>
+    <div class="q-text" id="qText">Loading…</div>
+    <div class="opts" id="optsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-ghost" onclick="prevQ()" id="btnPrev">← Previous</button>
+    <div class="ctrl-grp">
+      <button class="btn btn-skip"   onclick="skipQ()">Skip</button>
+      <button class="btn btn-danger" onclick="openModal()">Submit Quiz</button>
+    </div>
+    <button class="btn btn-blue" onclick="nextQ()" id="btnNext">Next →</button>
+  </div>
+
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Submit Quiz?</h3>
+    <p>Once submitted you cannot change your answers. Review your progress below.</p>
+    <div class="modal-stats">
+      <div class="mstat"><div class="mv" id="mAns" style="color:var(--green)">0</div><div class="mk">Answered</div></div>
+      <div class="mstat"><div class="mv" id="mSkip" style="color:var(--gold)">0</div><div class="mk">Skipped</div></div>
+      <div class="mstat"><div class="mv" id="mLeft" style="color:var(--red)">20</div><div class="mk">Remaining</div></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mbtn-cancel" onclick="closeModal()">Continue Quiz</button>
+      <button class="mbtn-submit" onclick="submitQuiz()">Confirm Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── THEME ──
+  (function(){
+    const light = localStorage.getItem('theme') === 'light';
+    if (light) document.body.classList.add('light');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = light ? '🌙' : '☀';
+  })();
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀';
+  }
+
+  const subject = localStorage.getItem('quizSubject') || 'Programming in C';
+  const mode    = localStorage.getItem('quizMode')    || 'timed';
+  const sem     = localStorage.getItem('quizSem')     || '1';
+  document.getElementById('navSubj').textContent = subject;
+
+  if (mode === 'practice') {
+    document.getElementById('timerVal').style.display  = 'none';
+    document.getElementById('pracBadge').style.display = 'block';
+    document.getElementById('timerLbl').style.display  = 'none';
+  }
+
+  // ── FALLBACK QUESTIONS ──
+  const FALLBACK = [
+    {q:'What does CPU stand for?',                               opts:['Central Processing Unit','Computer Personal Unit','Central Process Utility','Core Processing Unit'],   ans:0},
+    {q:'Which data structure follows LIFO order?',               opts:['Queue','Stack','Array','Linked List'],                                                                  ans:1},
+    {q:'What is the result of 2 + "3" in JavaScript?',           opts:['5','23','TypeError','Undefined'],                                                                      ans:1},
+    {q:'Which logic gate outputs 1 only when all inputs are 1?', opts:['OR','NOT','AND','XOR'],                                                                                ans:2},
+    {q:'What does RAM stand for?',                               opts:['Read Access Memory','Random Access Memory','Run Access Memory','Read And Memory'],                     ans:1},
+    {q:'Which of these is NOT a programming language?',          opts:['Python','Java','HTML','C++'],                                                                          ans:2},
+    {q:'What is the base of the binary number system?',          opts:['8','10','2','16'],                                                                                     ans:2},
+    {q:'Which symbol denotes single-line comments in C?',        opts:['#','//','/* */','--'],                                                                                 ans:1},
+    {q:'What does HTTP stand for?',                              opts:['HyperText Transfer Protocol','High Text Transfer Protocol','HyperText Transmission Protocol','High Transfer Text Protocol'], ans:0},
+    {q:'The operation to add an element to a stack is called?',  opts:['Enqueue','Push','Insert','Append'],                                                                    ans:1},
+    {q:'What is the time complexity of binary search?',          opts:['O(n)','O(n log n)','O(log n)','O(1)'],                                                                ans:2},
+    {q:'Which of the following is an input device?',             opts:['Monitor','Printer','Keyboard','Speaker'],                                                              ans:2},
+    {q:'What does SQL stand for?',                               opts:['Structured Query Language','Simple Query Language','Standard Query Logic','Structured Question Language'], ans:0},
+    {q:'Which OSI layer handles routing?',                       opts:['Data Link','Network','Transport','Session'],                                                           ans:1},
+    {q:'What is the result of 5 % 2?',                          opts:['2','2.5','1','0'],                                                                                     ans:2},
+    {q:'Which sorting algorithm has average O(n log n)?',        opts:['Bubble Sort','Selection Sort','Merge Sort','Insertion Sort'],                                          ans:2},
+    {q:'What does GUI stand for?',                               opts:['General User Interface','Graphical User Interface','General Unified Interface','Graphical Unified Interface'], ans:1},
+    {q:'Which protocol is used to send emails?',                 opts:['HTTP','FTP','SMTP','SSH'],                                                                             ans:2},
+    {q:'What does an OS primarily manage?',                      opts:['Only memory','Only files','Hardware and software resources','Only processes'],                         ans:2},
+    {q:'Which of these is a NoSQL database?',                    opts:['MySQL','Oracle','PostgreSQL','MongoDB'],                                                               ans:3},
+  ];
+
+  // ── STATE ──
+  let Qs      = FALLBACK.slice();
+  let cur     = 0;
+  let answers = new Array(Qs.length).fill(null);
+  let skipped = new Array(Qs.length).fill(false);
+  let revealed= new Array(Qs.length).fill(false);
+  let secLeft = 20 * 60;
+  let ticker  = null;
+
+  // ── INIT DOTS ──
+  function buildDots() {
+    const dotRow = document.getElementById('dotRow');
+    dotRow.innerHTML = '';
+    for (let i = 0; i < Qs.length; i++) {
+      const d = document.createElement('div');
+      d.className = 'qdot' + (i === 0 ? ' cur' : '');
+      d.textContent = i + 1;
+      d.onclick = (function(idx){ return function(){ jump(idx); }; })(i);
+      dotRow.appendChild(d);
+    }
+  }
+
+  // ── INIT TIMER ──
+  function startTimer() {
+    if (mode !== 'timed') return;
+    ticker = setInterval(function() {
+      secLeft--;
+      const m = Math.floor(secLeft / 60).toString().padStart(2, '0');
+      const s = (secLeft % 60).toString().padStart(2, '0');
+      const tv = document.getElementById('timerVal');
+      tv.textContent = m + ':' + s;
+      if (secLeft <= 60)       tv.className = 'timer-val crit';
+      else if (secLeft <= 300) tv.className = 'timer-val warn';
+      if (secLeft <= 0) { clearInterval(ticker); submitQuiz(); }
+    }, 1000);
+  }
+
+  // ── START QUIZ ──
+  function startQuiz(questions) {
+    if (questions && questions.length > 0) Qs = questions;
+    answers  = new Array(Qs.length).fill(null);
+    skipped  = new Array(Qs.length).fill(false);
+    revealed = new Array(Qs.length).fill(false);
+    buildDots();
+    startTimer();
+    render();
+  }
+
+  // ── LOAD FROM BACKEND ──
+  const quizToken = localStorage.getItem('token');
+  if (!quizToken) { window.location.href = 'login.html'; }
+
+  fetch('http://localhost:5000/api/questions/quiz?subject=' + encodeURIComponent(subject) + '&semester=' + sem + '&count=20', {
+    headers: { 'Authorization': 'Bearer ' + quizToken }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.questions && data.questions.length > 0) {
+      console.log('Backend: loaded ' + data.questions.length + ' questions for ' + subject);
+      startQuiz(data.questions);
+    } else {
+      console.log('No backend questions for ' + subject + ' — using fallback');
+      startQuiz(null);
+    }
+  })
+  .catch(function(err) {
+    console.log('Backend error, using fallback:', err.message);
+    startQuiz(null);
+  });
+
+  // ── RENDER ──
+  function render() {
+    const q = Qs[cur];
+    document.getElementById('qNum').textContent     = 'Question ' + (cur+1) + ' of ' + Qs.length;
+    document.getElementById('qText').textContent    = q.q;
+    document.getElementById('progText').textContent = (cur+1) + ' / ' + Qs.length;
+    document.getElementById('progBar').style.width  = (((cur+1) / Qs.length) * 100) + '%';
+
+    document.querySelectorAll('.qdot').forEach(function(d, i) {
+      d.className = 'qdot';
+      if (i === cur)               d.classList.add('cur');
+      else if (answers[i] !== null) d.classList.add('answered');
+      else if (skipped[i])          d.classList.add('skipped');
+    });
+
+    const grid = document.getElementById('optsGrid');
+    grid.innerHTML = '';
+    ['A','B','C','D'].forEach(function(lbl, i) {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = '<span class="opt-lbl">' + lbl + '</span>' + q.opts[i];
+      btn.onclick = function(){ pick(i); };
+      btn.disabled = revealed[cur];
+      if (revealed[cur]) {
+        if (i === q.ans)              btn.classList.add('right');
+        else if (i === answers[cur])  btn.classList.add('wrong');
+      } else if (answers[cur] === i) {
+        btn.classList.add('chosen');
+      }
+      grid.appendChild(btn);
+    });
+
+    const fb = document.getElementById('feedback');
+    if (revealed[cur] && mode === 'practice') {
+      const ok = answers[cur] === q.ans;
+      fb.className  = 'feedback ' + (ok ? 'right' : 'wrong');
+      fb.textContent = ok ? 'Correct. Well done.' : 'Incorrect. The correct answer is: ' + q.opts[q.ans];
+    } else {
+      fb.className = 'feedback';
+    }
+
+    document.getElementById('btnPrev').disabled       = (cur === 0);
+    document.getElementById('btnNext').textContent    = (cur === Qs.length - 1) ? 'Submit Quiz' : 'Next →';
+  }
+
+  function pick(i) {
+    if (revealed[cur]) return;
+    answers[cur] = i; skipped[cur] = false;
+    if (mode === 'practice') revealed[cur] = true;
+    render();
+  }
+  function nextQ()  { if (cur < Qs.length - 1) { cur++; render(); } else { openModal(); } }
+  function prevQ()  { if (cur > 0) { cur--; render(); } }
+  function skipQ()  { skipped[cur] = true; if (cur < Qs.length - 1) { cur++; render(); } }
+  function jump(i)  { cur = i; render(); }
+
+  function openModal() {
+    const ans  = answers.filter(function(a){ return a !== null; }).length;
+    const skip = skipped.filter(Boolean).length;
+    document.getElementById('mAns').textContent  = ans;
+    document.getElementById('mSkip').textContent = skip;
+    document.getElementById('mLeft').textContent = Math.max(0, Qs.length - ans - skip);
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+
+  async function submitQuiz() {
+    clearInterval(ticker);
+    let score = 0;
+    answers.forEach(function(a, i){ if (a === Qs[i].ans) score++; });
+
+    const pct     = Math.round((score / Qs.length) * 100);
+    const taken   = parseInt(localStorage.getItem('quizzesTaken') || '0') + 1;
+    const scores  = JSON.parse(localStorage.getItem('scoreHistory') || '[]');
+    const subs    = JSON.parse(localStorage.getItem('subjectsList') || '[]');
+    const attempts= JSON.parse(localStorage.getItem('attemptHistory') || '[]');
+    const now     = new Date();
+
+    scores.push(pct);
+    if (!subs.includes(subject)) subs.push(subject);
+    attempts.push({ subject: subject, sem: sem, mode: mode, score: score, total: Qs.length, date: now.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) });
+
+    localStorage.setItem('quizzesTaken',   taken);
+    localStorage.setItem('scoreHistory',   JSON.stringify(scores));
+    localStorage.setItem('subjectsList',   JSON.stringify(subs));
+    localStorage.setItem('attemptHistory', JSON.stringify(attempts));
+    localStorage.setItem('quizScore',      score);
+    localStorage.setItem('quizTotal',      Qs.length);
+    localStorage.setItem('quizAnswers',    JSON.stringify(answers));
+    localStorage.setItem('quizCorrect',    JSON.stringify(Qs.map(function(q){ return q.ans; })));
+    localStorage.setItem('quizQs',         JSON.stringify(Qs));
+
+    // ── SAVE TO BACKEND ──
+    try {
+      if (quizToken) {
+        await fetch('http://localhost:5000/api/results', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + quizToken },
+          body: JSON.stringify({
+            subject:   subject,
+            semester:  parseInt(sem),
+            mode:      mode,
+            total:     Qs.length,
+            score:     score,
+            answers:   answers,
+            correct:   Qs.map(function(q){ return q.ans; }),
+            questions: Qs.map(function(q){ return { q: q.q, opts: q.opts, ans: q.ans }; }),
+            timeTaken: null
+          })
+        });
+        console.log('Result saved to backend');
+      }
+    } catch(err) {
+      console.log('Result save error:', err.message);
+    }
+
+    window.location = 'results.html';
+  }
+</script>
+</body>
+</html>
